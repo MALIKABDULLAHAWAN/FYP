@@ -26,6 +26,13 @@ from therapy.api.game_images import (
     get_scenario_detail,
     get_image_dataset_stats,
 )
+from therapy.api.image_validation import (
+    validate_all_images,
+    validate_single_image,
+    batch_validate,
+    get_validation_report,
+    fix_recommendations,
+)
 
 urlpatterns = [
     # --- Existing therapy APIs (unchanged & correct) ---
@@ -70,4 +77,11 @@ urlpatterns = [
     # --- Scenario Images (Scene Description) ---
     path("scenarios", list_scenario_images, name="scenario-images-list"),
     path("scenarios/<int:pk>", get_scenario_detail, name="scenario-images-detail"),
+    
+    # --- Image Validation API ---
+    path("validate-images", validate_all_images, name="validate-all-images"),
+    path("validate-image/<str:game_key>/<str:item_name>", validate_single_image, name="validate-single-image"),
+    path("validate-images/batch", batch_validate, name="batch-validate"),
+    path("validation-report", get_validation_report, name="validation-report"),
+    path("fix-recommendations", fix_recommendations, name="fix-recommendations"),
 ]
