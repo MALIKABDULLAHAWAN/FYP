@@ -1,0 +1,292 @@
+/**
+ * Memory Match Game - Professional Styles
+ */
+
+@import '../../styles/design-tokens.css';
+
+/* ============================================
+   GAME HEADER
+   ============================================ */
+
+.game-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.game-header-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.game-header-title > svg {
+  color: var(--color-primary-500);
+  flex-shrink: 0;
+}
+
+.game-title {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-1) 0;
+  line-height: var(--leading-tight);
+}
+
+.game-subtitle {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.game-header-actions {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+/* ============================================
+   GAME INTRO CARD
+   ============================================ */
+
+.game-intro-card {
+  text-align: center;
+  padding: var(--space-10);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.game-intro-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-6);
+  color: var(--color-primary-500);
+}
+
+.game-intro-title {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-3) 0;
+}
+
+.game-intro-desc {
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-6) 0;
+  line-height: var(--leading-relaxed);
+}
+
+/* ============================================
+   GAME LOADING CARD
+   ============================================ */
+
+.game-loading-card {
+  text-align: center;
+  padding: var(--space-10);
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--color-border-light);
+  border-top-color: var(--color-primary-500);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto var(--space-4);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================
+   MEMORY CARDS
+   ============================================ */
+
+.memory-grid {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0 auto;
+  padding: var(--space-4);
+}
+
+.memory-card {
+  aspect-ratio: 1;
+  cursor: pointer;
+  perspective: 1000px;
+}
+
+.memory-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  border-radius: var(--radius-xl);
+}
+
+.memory-card.flipped .memory-card-inner {
+  transform: rotateY(180deg);
+}
+
+.memory-card.matched .memory-card-inner {
+  transform: rotateY(180deg);
+}
+
+.memory-card-front,
+.memory-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--duration-fast);
+}
+
+.memory-card-front {
+  background: linear-gradient(135deg, var(--color-primary-100), var(--color-secondary-100));
+  border: 2px solid var(--color-primary-200);
+  color: var(--color-primary-500);
+}
+
+.memory-card-back {
+  background: var(--color-bg-primary);
+  border: 2px solid var(--color-border-default);
+  transform: rotateY(180deg);
+  overflow: hidden;
+}
+
+.memory-card:hover .memory-card-front,
+.memory-card:hover .memory-card-back {
+  box-shadow: var(--shadow-md);
+}
+
+.memory-card.matched .memory-card-back {
+  border-color: var(--color-success);
+  box-shadow: 0 0 0 3px var(--color-success-light);
+}
+
+.memory-card-back img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: calc(var(--radius-xl) - 2px);
+}
+
+/* ============================================
+   GAME STATS BAR
+   ============================================ */
+
+.game-stats {
+  display: flex;
+  justify-content: space-around;
+  padding: var(--space-4) var(--space-6);
+  margin-bottom: var(--space-4);
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.game-stat {
+  text-align: center;
+}
+
+.game-stat-label {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-1);
+}
+
+.game-stat-value {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  line-height: 1;
+}
+
+.game-stat-value.warning {
+  color: var(--color-error);
+}
+
+/* ============================================
+   GAME HINT
+   ============================================ */
+
+.game-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-primary-50);
+  border-radius: var(--radius-lg);
+  color: var(--color-primary-700);
+  font-size: var(--text-sm);
+}
+
+.game-hint svg {
+  color: var(--color-primary-500);
+  flex-shrink: 0;
+}
+
+/* ============================================
+   MOBILE RESPONSIVE
+   ============================================ */
+
+@media (max-width: 640px) {
+  .game-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .game-header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .memory-grid {
+    gap: var(--space-2);
+    padding: var(--space-2);
+  }
+
+  .game-stats {
+    flex-direction: row;
+    gap: var(--space-4);
+    padding: var(--space-3);
+  }
+
+  .game-intro-card {
+    padding: var(--space-6);
+  }
+}
+
+@media (max-width: 480px) {
+  .memory-card-front svg,
+  .memory-card-back span {
+    transform: scale(0.8);
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .memory-card-front,
+  .memory-card-back {
+    border-width: 3px;
+  }
+}

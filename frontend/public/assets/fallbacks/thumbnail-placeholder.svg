@@ -1,0 +1,5 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="120" height="120" fill="#E0E7FF"/>
+  <rect x="30" y="30" width="60" height="60" fill="#4A90E2" opacity="0.5"/>
+  <text x="60" y="105" text-anchor="middle" fill="#666" font-family="Arial, sans-serif" font-size="10">Preview</text>
+</svg>
