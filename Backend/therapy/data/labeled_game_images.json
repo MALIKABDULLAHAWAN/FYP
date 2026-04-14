@@ -112,7 +112,7 @@
       "metadata": {
         "description": "Toy: ball"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/soccer_ball"
+      "fallback_image_url": "https://loremflickr.com/320/320/soccer_ball?lock=6"
     },
     {
       "name": "Flower",
@@ -167,7 +167,7 @@
       "metadata": {
         "description": "Building: house"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/house"
+      "fallback_image_url": "https://loremflickr.com/320/320/house?lock=13"
     },
     {
       "name": "Sun",
@@ -203,7 +203,7 @@
       "metadata": {
         "description": "Nature: moon"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/moon"
+      "fallback_image_url": "https://loremflickr.com/320/320/moon?lock=14"
     },
     {
       "name": "Star",
@@ -221,7 +221,7 @@
       "metadata": {
         "description": "Nature: star"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/star"
+      "fallback_image_url": "https://loremflickr.com/320/320/star?lock=15"
     },
     {
       "name": "Fish",
@@ -239,7 +239,7 @@
       "metadata": {
         "description": "Animal: fish"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/fish"
+      "fallback_image_url": "https://loremflickr.com/320/320/fish?lock=16"
     },
     {
       "name": "Bird",
@@ -257,7 +257,7 @@
       "metadata": {
         "description": "Animal: bird"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/bird"
+      "fallback_image_url": "https://loremflickr.com/320/320/bird?lock=17"
     },
     {
       "name": "Book",
@@ -293,7 +293,7 @@
       "metadata": {
         "description": "Object: clock"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/clock"
+      "fallback_image_url": "https://loremflickr.com/320/320/clock?lock=18"
     }
   ],
   "object_discovery": [
@@ -352,7 +352,7 @@
       "metadata": {
         "description": "Furniture: bed"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/bed"
+      "fallback_image_url": "https://loremflickr.com/320/320/bed?lock=19"
     },
     {
       "name": "Phone",
@@ -371,7 +371,7 @@
       "metadata": {
         "description": "Electronics: phone"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/phone"
+      "fallback_image_url": "https://loremflickr.com/320/320/phone?lock=20"
     },
     {
       "name": "Computer",
@@ -390,7 +390,7 @@
       "metadata": {
         "description": "Electronics: computer"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/computer"
+      "fallback_image_url": "https://loremflickr.com/320/320/computer?lock=21"
     },
     {
       "name": "Shoe",
@@ -409,7 +409,7 @@
       "metadata": {
         "description": "Clothing: shoe"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/shoe"
+      "fallback_image_url": "https://loremflickr.com/320/320/shoe?lock=22"
     },
     {
       "name": "Shirt",
@@ -427,7 +427,7 @@
       "metadata": {
         "description": "Clothing: shirt"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/shirt"
+      "fallback_image_url": "https://loremflickr.com/320/320/shirt?lock=23"
     },
     {
       "name": "Hat",
@@ -446,7 +446,7 @@
       "metadata": {
         "description": "Clothing: hat"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/hat"
+      "fallback_image_url": "https://loremflickr.com/320/320/hat?lock=24"
     },
     {
       "name": "Cup",
@@ -465,7 +465,7 @@
       "metadata": {
         "description": "Kitchen: cup"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/cup"
+      "fallback_image_url": "https://loremflickr.com/320/320/cup?lock=25"
     },
     {
       "name": "Plate",
@@ -484,7 +484,7 @@
       "metadata": {
         "description": "Kitchen: plate"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/plate"
+      "fallback_image_url": "https://loremflickr.com/320/320/plate?lock=26"
     },
     {
       "name": "Spoon",
@@ -503,7 +503,7 @@
       "metadata": {
         "description": "Kitchen: spoon"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/spoon"
+      "fallback_image_url": "https://loremflickr.com/320/320/spoon?lock=27"
     },
     {
       "name": "Bottle",
@@ -522,7 +522,7 @@
       "metadata": {
         "description": "Kitchen: bottle"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/bottle"
+      "fallback_image_url": "https://loremflickr.com/320/320/bottle?lock=28"
     },
     {
       "name": "Bag",
@@ -541,7 +541,7 @@
       "metadata": {
         "description": "Accessory: bag"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/bag"
+      "fallback_image_url": "https://loremflickr.com/320/320/bag?lock=29"
     },
     {
       "name": "Key",
@@ -560,7 +560,7 @@
       "metadata": {
         "description": "Object: key"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/key"
+      "fallback_image_url": "https://loremflickr.com/320/320/key?lock=30"
     },
     {
       "name": "Umbrella",
@@ -578,7 +578,7 @@
       "metadata": {
         "description": "Object: umbrella"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/umbrella"
+      "fallback_image_url": "https://loremflickr.com/320/320/umbrella?lock=31"
     }
   ],
   "scene_description": [
@@ -615,7 +615,7 @@
         ],
         "description": "Scene: birthday celebration"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/birthday_party"
+      "fallback_image_url": "https://loremflickr.com/320/320/birthday_party?lock=40"
     },
     {
       "title": "Zoo Visit",
@@ -648,7 +648,7 @@
         ],
         "description": "Scene: zoo"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/zoo"
+      "fallback_image_url": "https://loremflickr.com/320/320/zoo?lock=41"
     },
     {
       "title": "Supermarket",
@@ -681,7 +681,7 @@
         ],
         "description": "Scene: supermarket"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/supermarket"
+      "fallback_image_url": "https://loremflickr.com/320/320/supermarket?lock=42"
     },
     {
       "title": "Doctor Office",
@@ -714,7 +714,7 @@
         ],
         "description": "Scene: medical office"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/doctor_office"
+      "fallback_image_url": "https://loremflickr.com/320/320/doctor_office?lock=43"
     },
     {
       "title": "Farm Life",
@@ -748,7 +748,7 @@
         ],
         "description": "Scene: farm"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/farm"
+      "fallback_image_url": "https://loremflickr.com/320/320/farm?lock=44"
     },
     {
       "title": "City Traffic",
@@ -782,7 +782,7 @@
         ],
         "description": "Scene: urban traffic"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/city_traffic"
+      "fallback_image_url": "https://loremflickr.com/320/320/city_traffic?lock=45"
     },
     {
       "title": "Sports Day",
@@ -815,7 +815,7 @@
         ],
         "description": "Scene: sports event"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/sports_day"
+      "fallback_image_url": "https://loremflickr.com/320/320/sports_day?lock=46"
     },
     {
       "title": "Construction Site",
