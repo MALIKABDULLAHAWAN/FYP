@@ -1589,20 +1589,24 @@ function VoiceAgent({ userName, stats }) {
     setIsListeningForWakeWord(false);
   }, []);
 
-  // NEW: Toggle wake word
+  // NEW: Toggle wake word - FIXED: Added visual feedback
   const toggleWakeWord = useCallback(() => {
     setWakeWordEnabled(prev => {
       const newValue = !prev;
       if (newValue) {
-        speak("Wake word detection enabled. Say 'Hey Dhyan' anytime to call me!", "happy");
+        const msg = "🎧 Wake word enabled! Say 'Hey Dhyan' anytime to call me!";
+        setCurrentMessage(msg);
+        speak(msg, "happy");
         startWakeWordListening();
       } else {
-        speak("Wake word detection disabled. Click the microphone button when you need me!", "thinking");
+        const msg = "🔇 Wake word disabled. Click the microphone when you need me!";
+        setCurrentMessage(msg);
+        speak(msg, "thinking");
         stopWakeWordListening();
       }
       return newValue;
     });
-  }, [speak, startWakeWordListening, stopWakeWordListening]);
+  }, [speak, startWakeWordListening, stopWakeWordListening, setCurrentMessage]);
 
   // Initialize speech recognition
   useEffect(() => {
@@ -2016,7 +2020,7 @@ function VoiceAgent({ userName, stats }) {
   const breathingIntervalRef = useRef(null);
   const breathingTimeoutRef = useRef(null);
 
-  // NEW: Breathing Exercise - FIXED memory leaks
+  // NEW: Breathing Exercise - FIXED: Added visual feedback
   const startBreathingExercise = useCallback(() => {
     // Clear any existing breathing timers
     if (breathingIntervalRef.current) clearInterval(breathingIntervalRef.current);
@@ -2024,18 +2028,27 @@ function VoiceAgent({ userName, stats }) {
 
     setBreathingActive(true);
     setBreathingPhase("inhale");
-    speak("Let's take a deep breath together. Breathe in slowly... hold... and breathe out. Feel your body relax.", "calm");
+    const startMsg = "🧘 Let's take a deep breath together. Breathe in slowly... hold... and breathe out. Feel your body relax.";
+    setCurrentMessage(startMsg);
+    speak(startMsg, "calm");
 
     const cycle = ["inhale", "hold", "exhale", "hold"];
+    const phaseEmojis = { "inhale": "🌬️", "hold": "⏸️", "exhale": "💨" };
     let step = 0;
 
     breathingIntervalRef.current = setInterval(() => {
       step = (step + 1) % 4;
-      setBreathingPhase(cycle[step]);
+      const phase = cycle[step];
+      setBreathingPhase(phase);
 
-      if (step === 0) speak("Breathe in...", "calm");
-      else if (step === 1) speak("Hold...", "calm");
-      else if (step === 2) speak("Breathe out...", "calm");
+      let msg;
+      if (step === 0) msg = `${phaseEmojis.inhale} Breathe in...`;
+      else if (step === 1) msg = `${phaseEmojis.hold} Hold...`;
+      else if (step === 2) msg = `${phaseEmojis.exhale} Breathe out...`;
+      else msg = `${phaseEmojis.hold} Hold...`;
+      
+      setCurrentMessage(msg);
+      if (step !== 3) speak(msg, "calm");
     }, 4000);
 
     // Stop after 2 minutes
@@ -2045,10 +2058,12 @@ function VoiceAgent({ userName, stats }) {
         breathingIntervalRef.current = null;
       }
       setBreathingActive(false);
-      speak("Great job! You did a wonderful job relaxing. Feel free to come back anytime you need to calm down.", "happy");
+      const endMsg = "✨ Great job! You did a wonderful job relaxing. Feel free to come back anytime you need to calm down.";
+      setCurrentMessage(endMsg);
+      speak(endMsg, "happy");
       unlockAchievement("Zen Master", "Completed a breathing exercise!", "🧘");
     }, 120000);
-  }, [speak, unlockAchievement]);
+  }, [speak, unlockAchievement, setCurrentMessage]);
 
   // FIX: Cleanup breathing timers on unmount
   useEffect(() => {
@@ -2124,12 +2139,14 @@ function VoiceAgent({ userName, stats }) {
     if (newStreak === 30) unlockAchievement("Monthly Master", "30 day streak!", "👑");
   }, [streakData.lastActiveDate, unlockAchievement]);
 
-  // NEW: Change Avatar
+  // NEW: Change Avatar - FIXED: Added visual feedback
   const changeAvatar = useCallback((avatar) => {
     setSelectedAvatar(avatar);
-    speak(`Your new friend ${avatar} is ready to play!`, "happy");
+    const msg = `🎉 Your new friend ${avatar} is ready to play!`;
+    setCurrentMessage(msg);
+    speak(msg, "happy");
     createParticles(150, 150, 'emoji');
-  }, [speak, createParticles]);
+  }, [speak, createParticles, setCurrentMessage]);
 
   // NEW: Change Theme
   const changeTheme = useCallback((theme) => {
@@ -3319,10 +3336,16 @@ function VoiceAgent({ userName, stats }) {
               </button>
             </div>
 
-            {/* Utility Buttons */}
+            {/* Utility Buttons - FIXED: Added visual feedback */}
             <div style={{ display: "flex", gap: 8 }}>
               <button
-                onClick={() => processCommand("tell me my stats")}
+                onClick={() => {
+                  const msg = stats 
+                    ? `📊 Your Progress: ${stats.total_sessions || 0} games played, ${stats.completed_sessions || 0} completed. ${stats.total_sessions >= 5 ? "You're doing amazing! 🌟" : "Keep playing to improve! 💪"}`
+                    : "📊 No stats yet. Try playing some games first! 🎮";
+                  setCurrentMessage(msg);
+                  speak(msg, "thinking");
+                }}
                 style={{
                   flex: 1,
                   padding: "10px 14px",
@@ -3335,15 +3358,29 @@ function VoiceAgent({ userName, stats }) {
                   fontWeight: 700,
                   cursor: "pointer",
                   boxShadow: "0 4px 12px rgba(255, 154, 158, 0.25)",
-                  transition: "all 0.2s ease"
+                  transition: "all 0.2s ease",
+                  transform: "scale(1)",
                 }}
-                onMouseEnter={(e) => e.target.style.transform = "translateY(-2px)"}
-                onMouseLeave={(e) => e.target.style.transform = "translateY(0)"}
+                onMouseDown={(e) => e.target.style.transform = "scale(0.95)"}
+                onMouseUp={(e) => e.target.style.transform = "scale(1)"}
+                onMouseEnter={(e) => e.target.style.transform = "scale(1.05)"}
+                onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
               >
                 📊 Stats
               </button>
               <button
-                onClick={() => processCommand("encourage me")}
+                onClick={() => {
+                  const encouragements = [
+                    "🌟 You are capable of amazing things! Every expert was once a beginner. Keep going!",
+                    "💪 Believe in yourself! You have unique talents that nobody else has. Shine bright!",
+                    "🌈 Mistakes help us learn and grow. Don't give up - you're getting better every day!",
+                    "⭐ You are braver than you believe, stronger than you seem, and smarter than you think!",
+                    "🎯 The only way to do great work is to love what you do. You're doing great!"
+                  ];
+                  const msg = encouragements[Math.floor(Math.random() * encouragements.length)];
+                  setCurrentMessage(msg);
+                  speak(msg, "celebrating");
+                }}
                 style={{
                   flex: 1,
                   padding: "10px 14px",
@@ -3356,15 +3393,28 @@ function VoiceAgent({ userName, stats }) {
                   fontWeight: 700,
                   cursor: "pointer",
                   boxShadow: "0 4px 12px rgba(250, 208, 196, 0.25)",
-                  transition: "all 0.2s ease"
+                  transition: "all 0.2s ease",
+                  transform: "scale(1)",
                 }}
-                onMouseEnter={(e) => e.target.style.transform = "translateY(-2px)"}
-                onMouseLeave={(e) => e.target.style.transform = "translateY(0)"}
+                onMouseDown={(e) => e.target.style.transform = "scale(0.95)"}
+                onMouseUp={(e) => e.target.style.transform = "scale(1)"}
+                onMouseEnter={(e) => e.target.style.transform = "scale(1.05)"}
+                onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
               >
                 💪 Encourage
               </button>
               <button
-                onClick={() => processCommand("tell me a joke")}
+                onClick={() => {
+                  const jokes = [
+                    "😄 Why don't scientists trust atoms? Because they make up everything!",
+                    "🤣 Why did the scarecrow win an award? Because he was outstanding in his field!",
+                    "😂 Why don't eggs tell jokes? They'd crack each other up!",
+                    "🎭 What do you call a fake noodle? An impasta!"
+                  ];
+                  const msg = jokes[Math.floor(Math.random() * jokes.length)];
+                  setCurrentMessage(msg);
+                  speak(msg, "excited");
+                }}
                 style={{
                   flex: 1,
                   padding: "10px 14px",
@@ -3377,10 +3427,13 @@ function VoiceAgent({ userName, stats }) {
                   fontWeight: 700,
                   cursor: "pointer",
                   boxShadow: "0 4px 12px rgba(137, 247, 254, 0.25)",
-                  transition: "all 0.2s ease"
+                  transition: "all 0.2s ease",
+                  transform: "scale(1)",
                 }}
-                onMouseEnter={(e) => e.target.style.transform = "translateY(-2px)"}
-                onMouseLeave={(e) => e.target.style.transform = "translateY(0)"}
+                onMouseDown={(e) => e.target.style.transform = "scale(0.95)"}
+                onMouseUp={(e) => e.target.style.transform = "scale(1)"}
+                onMouseEnter={(e) => e.target.style.transform = "scale(1.05)"}
+                onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
               >
                 😄 Joke
               </button>
