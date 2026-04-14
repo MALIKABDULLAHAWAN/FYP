@@ -206,17 +206,35 @@
       "fallback_image_url": "https://loremflickr.com/320/320/moon?lock=14"
     },
     {
+      "name": "Heart",
+      "label": "heart",
+      "category": "shape",
+      "color": [
+        255,
+        100,
+        150
+      ],
+      "loremflickr_tags": [
+        "heart-shape",
+        "valentine"
+      ],
+      "metadata": {
+        "description": "Shape: heart"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/heart?lock=23"
+    },
+    {
       "name": "Star",
       "label": "star",
-      "category": "nature",
+      "category": "shape",
       "color": [
         255,
         220,
         150
       ],
       "loremflickr_tags": [
-        "star",
-        "stars"
+        "star-shape",
+        "geometric"
       ],
       "metadata": {
         "description": "Nature: star"
@@ -233,7 +251,7 @@
         255
       ],
       "loremflickr_tags": [
-        "fish",
+        "tropical-fish",
         "aquarium"
       ],
       "metadata": {

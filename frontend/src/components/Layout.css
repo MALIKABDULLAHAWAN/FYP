@@ -142,13 +142,27 @@
 }
 
 .nav-link-active {
-  background-color: var(--color-primary-blue);
+  background: linear-gradient(135deg, var(--color-primary-blue), #4a90e2);
   color: white;
   box-shadow: var(--shadow-medium);
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-link-active::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #ffd700, #ffed4e);
+  border-radius: 2px;
 }
 
 .nav-link-active:hover {
-  background-color: #2e5c8a;
+  background: linear-gradient(135deg, #2e5c8a, #3a7bc8);
+  transform: scale(1.05);
 }
 
 .nav-link-icon {
