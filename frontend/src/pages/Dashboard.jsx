@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { useVoiceAPI } from "../hooks/useVoiceAPI";
 import { getDashboardStats, getSessionHistory, getChildProgress } from "../api/games";
 import { listChildren } from "../api/patients";
 import { SkeletonStatCards, SkeletonTable } from "../components/Skeleton";

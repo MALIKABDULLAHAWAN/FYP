@@ -33,6 +33,13 @@ from therapy.api.image_validation import (
     get_validation_report,
     fix_recommendations,
 )
+from therapy.api.voice_assistant import (
+    process_voice_command,
+    process_voice_audio,
+    stop_voice_playback,
+    clear_voice_history,
+    voice_assistant_status,
+)
 
 urlpatterns = [
     # --- Existing therapy APIs (unchanged & correct) ---
@@ -84,4 +91,11 @@ urlpatterns = [
     path("validate-images/batch", batch_validate, name="batch-validate"),
     path("validation-report", get_validation_report, name="validation-report"),
     path("fix-recommendations", fix_recommendations, name="fix-recommendations"),
+    
+    # --- Voice Assistant API ---
+    path("voice/command", process_voice_command, name="voice-command"),
+    path("voice/audio", process_voice_audio, name="voice-audio"),
+    path("voice/stop", stop_voice_playback, name="voice-stop"),
+    path("voice/clear-history", clear_voice_history, name="voice-clear-history"),
+    path("voice/status", voice_assistant_status, name="voice-status"),
 ]
