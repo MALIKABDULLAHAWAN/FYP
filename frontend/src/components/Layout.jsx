@@ -6,6 +6,7 @@ import { StickerLayer } from "./StickerLayer";
 import UiIcon from "./ui/UiIcon";
 import "./Layout.css";
 import "../styles/professional.css";
+import "../styles/colorful-theme.css";
 
 const NAV_ITEMS = [
   { to: "/dashboard", label: "My Home", icon: "home" },
@@ -33,7 +34,11 @@ export default function Layout({ children }) {
   const displayName = user?.full_name || user?.email || "User";
 
   return (
-    <div className="app-layout">
+    <div className="app-layout" style={{ position: 'relative', overflow: 'hidden' }}>
+      {/* Colorful Background Orbs */}
+      <div className="color-orb orb-1" />
+      <div className="color-orb orb-2" />
+      <div className="color-orb orb-3" />
       <StickerLayer pageType="layout" sessionCount={0} visible={true} />
       
       <nav className="top-nav child-friendly-nav">
@@ -42,22 +47,35 @@ export default function Layout({ children }) {
             <span
               className="brand-icon"
               style={{
-                width: 44,
-                height: 44,
-                borderRadius: 12,
-                background: "linear-gradient(135deg, var(--cute-primary), var(--cute-success))",
+                width: 48,
+                height: 48,
+                borderRadius: 16,
+                background: "linear-gradient(135deg, #ff6b9d 0%, #c44569 25%, #f8b500 50%, #20bf6b 75%, #4b7bec 100%)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                boxShadow: "0 2px 8px rgba(99, 102, 241, 0.2)",
+                boxShadow: "0 4px 20px rgba(255, 107, 157, 0.4)",
+                animation: "pulse-glow 2s infinite",
               }}
             >
-              <UiIcon name="rainbow" size={24} title="" />
+              <UiIcon name="rainbow" size={26} title="" />
             </span>
-            <span className="brand-text">DHYAN</span>
-            <span className="brand-sub">
+            <span 
+              className="brand-text"
+              style={{
+                background: "linear-gradient(90deg, #ff6b9d, #c44569, #f8b500, #20bf6b, #4b7bec)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+                fontWeight: 800,
+                fontSize: "1.5rem",
+              }}
+            >
+              DHYAN
+            </span>
+            <span className="brand-sub" style={{ color: "#6366f1", fontWeight: 600 }}>
               Fun Learning Place
-              <UiIcon name="palette" size={16} title="" />
+              <UiIcon name="palette" size={16} title="" style={{ color: "#ff6b9d" }} />
             </span>
           </div>
 

@@ -393,3 +393,90 @@
 .high-contrast-mode .nav-link-active {
   border: 2px solid white;
 }
+
+/* Colorful Animations */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(255, 107, 157, 0.4);
+  }
+  50% {
+    box-shadow: 0 4px 30px rgba(255, 107, 157, 0.7), 0 0 40px rgba(196, 69, 105, 0.4);
+  }
+}
+
+@keyframes float-orb {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.4;
+  }
+  33% {
+    transform: translate(30px, -30px) scale(1.1);
+    opacity: 0.3;
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+    opacity: 0.5;
+  }
+}
+
+/* Navigation Link Rainbow Hover */
+.nav-link {
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #ff6b9d, #c44569, #f8b500, #20bf6b, #4b7bec);
+  transition: width 0.3s ease;
+  border-radius: 2px;
+}
+
+.nav-link:hover::before {
+  width: 100%;
+}
+
+/* Active Nav Link Enhancement */
+.nav-link-active {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%) !important;
+  color: white !important;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+  animation: active-pulse 2s infinite;
+}
+
+@keyframes active-pulse {
+  0%, 100% {
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+  }
+  50% {
+    box-shadow: 0 4px 25px rgba(99, 102, 241, 0.7), 0 0 20px rgba(139, 92, 246, 0.4);
+  }
+}
+
+/* Logout Button Colorful */
+.nav-logout-btn {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a6f) !important;
+  color: white !important;
+  border: none !important;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+  transition: all 0.3s ease;
+}
+
+.nav-logout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.5);
+  background: linear-gradient(135deg, #ee5a6f, #ff6b6b) !important;
+}
+
+/* Main Content Area */
+.main-content {
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.95) 100%);
+  min-height: calc(100vh - 70px);
+}
