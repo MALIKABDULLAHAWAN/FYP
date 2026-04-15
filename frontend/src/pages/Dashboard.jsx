@@ -4340,7 +4340,6 @@ export default function Dashboard() {
       <div className="floating-decoration heart2">💖</div>
       
       <FloatingParticles />
-      <VoiceAgent userName={user?.full_name?.split(' ')[0]} stats={stats} />
       
       <div className="container page-content dashboard-container">
         <div className="page-header-cute" style={{ marginBottom: 32 }}>

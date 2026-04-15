@@ -32,6 +32,7 @@ import LandingPage from "./pages/LandingPage";
 import ProfilePage from "./pages/ProfilePage";
 import Settings from "./pages/Settings";
 import Help from "./pages/Help";
+import VoiceAssistant from "./pages/VoiceAssistant";
 
 function ProtectedLayout({ children }) {
   return (
@@ -112,6 +113,7 @@ export default function App() {
 
             {/* Protected routes with layout */}
             <Route path="/dashboard" element={<ProtectedLayout><Dashboard /></ProtectedLayout>} />
+            <Route path="/voice-assistant" element={<ProtectedLayout><VoiceAssistant /></ProtectedLayout>} />
             <Route path="/therapist" element={<ProtectedLayout><TherapistConsole /></ProtectedLayout>} />
             <Route path="/games" element={<ProtectedLayout><GameRouter /></ProtectedLayout>} />
             <Route path="/games/ja" element={<ProtectedLayout><JaGame /></ProtectedLayout>} />

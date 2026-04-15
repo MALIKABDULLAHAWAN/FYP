@@ -37,7 +37,15 @@ class VoiceAssistantService:
     """
     
     def __init__(self):
-        self.client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+        # Initialize Groq client only if API key is available
+        api_key = os.getenv("GROQ_API_KEY")
+        if api_key and api_key != "your_groq_api_key_here":
+            self.client = Groq(api_key=api_key)
+            self.ai_available = True
+        else:
+            self.client = None
+            self.ai_available = False
+            
         self.conversation_history = []
         self.current_playback_process = None
         self.global_stop_event = threading.Event()
@@ -214,6 +222,17 @@ class VoiceAssistantService:
                 "Mistakes help us learn. Don't give up - you're getting better every day! 🌈",
             ]
             return random.choice(encouragements), None
+        
+        # FALLBACK: If AI is not available, use pre-programmed responses
+        if not self.ai_available:
+            fallback_responses = [
+                "I can tell jokes, sing songs, and encourage you! Try saying 'tell me a joke' or 'sing a song'! 🎉",
+                "I love chatting with you! Ask me for a joke or some encouragement! 😊",
+                "I'm here to make you smile! What would you like - a joke, a song, or some encouragement? 🌟",
+                "You're awesome! I can tell jokes, sing songs, or give you a pep talk. What would you like? 💪",
+                "Hi friend! I'm Dhyan! I can tell jokes 🎭, sing songs 🎵, or encourage you 💪. What would you like?",
+            ]
+            return random.choice(fallback_responses), None
         
         # Build conversation context
         messages = [self.system_message]

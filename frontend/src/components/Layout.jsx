@@ -10,6 +10,7 @@ import "../styles/colorful-theme.css";
 
 const NAV_ITEMS = [
   { to: "/dashboard", label: "My Home", icon: "home" },
+  { to: "/voice-assistant", label: "🎙️ Dhyan", icon: "microphone" },
   { to: "/therapist", label: "Therapy", icon: "therapist" },
   { to: "/games", label: "Fun Games", icon: "games" },
   { to: "/speech-therapy", label: "Talking Time", icon: "speech" },
