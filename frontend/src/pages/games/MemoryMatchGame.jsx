@@ -78,6 +78,7 @@ export default function MemoryMatchGamePage() {
   const { selectedChild } = useChild();
 
   const [sessionId, setSessionId] = useState(null);
+  const [trialNum, setTrialNum] = useState(0);
   const [trial, setTrial] = useState(null);
   const [summary, setSummary] = useState(null);
   const [status, setStatus] = useState("");
@@ -162,8 +163,9 @@ export default function MemoryMatchGamePage() {
     setError("");
     setLoading(true);
     setSummary(null);
+    setTrialNum(0); // Reset trial num
     try {
-      const res = await startGameSession("memory_match", parseInt(selectedChild), 5);
+      const res = await startGameSession("memory_match", parseInt(selectedChild), 20);
       setSessionId(res.session?.session_id);
       if (res.first_trial && !res.first_trial.detail) {
         setupBoard(res.first_trial);
@@ -185,6 +187,7 @@ export default function MemoryMatchGamePage() {
     const cols = extra.grid_cols || 4;
 
     setTrial(trialData);
+    setTrialNum(n => n + 1); // Increment trial num
     setCards(boardCards);
     setNumPairs(pairs);
     setGridCols(cols);
@@ -484,12 +487,16 @@ export default function MemoryMatchGamePage() {
       {trial && cards.length > 0 && (
         <>
           <div className="card game-stats">
-            <div className="game-stat">
-              <div className="game-stat-label">Pairs Found</div>
-              <div className="game-stat-value">
-                {matchedPairs.size}/{numPairs}
+              <div className="stat-card">
+                <div className="stat-label">Trial</div>
+                <div className="stat-value">{trialNum} / 20</div>
               </div>
-            </div>
+              <div className="stat-card">
+                <div className="stat-label">Progress</div>
+                <div className="stat-value">
+                  {matchedPairs.size}/{numPairs}
+                </div>
+              </div>
             <div className="game-stat">
               <div className="game-stat-label">Moves</div>
               <div className="game-stat-value">{moves}</div>

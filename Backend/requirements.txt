@@ -16,3 +16,8 @@ SpeechRecognition==3.10.0
 torch==2.0.1
 torchaudio==2.0.2
 pydub==0.25.1
+speechbrain==0.5.16
+yt-dlp==2024.4.9
+Flask==3.0.3
+pyaudio==0.2.14
+numpy==1.26.4

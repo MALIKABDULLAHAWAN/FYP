@@ -10,6 +10,8 @@
  * @typedef {import('./types.js').Reference} Reference
  */
 
+import { apiFetch } from '../../api/client.js';
+
 class GameMetadataService {
   constructor(databaseConnection = null) {
     this.metadataCache = new Map();
@@ -232,6 +234,66 @@ class GameMetadataService {
           primaryMetrics: ['categorization-accuracy', 'sorting-speed', 'rule-flexibility'],
           secondaryMetrics: ['error-analysis', 'strategy-use']
         }
+      },
+      
+      'ja': {
+        id: 'ja',
+        name: 'Joint Attention',
+        therapeuticGoals: ['shared-attention', 'social-engagement'],
+        difficultyLevel: 1,
+        evidenceBase: [],
+        adaptations: [],
+        dataCollection: { primaryMetrics: ['gaze-accuracy', 'response-latency'], secondaryMetrics: [] }
+      },
+      
+      'matching': {
+        id: 'matching',
+        name: 'Shape Matching',
+        therapeuticGoals: ['cognitive-flexibility', 'pattern-recognition'],
+        difficultyLevel: 1,
+        evidenceBase: [],
+        adaptations: [],
+        dataCollection: { primaryMetrics: ['matching-accuracy', 'completion-time'], secondaryMetrics: [] }
+      },
+      
+      'memory_match': {
+        id: 'memory_match',
+        name: 'Memory Match',
+        therapeuticGoals: ['visual-memory', 'concentration'],
+        difficultyLevel: 2,
+        evidenceBase: [],
+        adaptations: [],
+        dataCollection: { primaryMetrics: ['pairs-found', 'flips-count'], secondaryMetrics: [] }
+      },
+      
+      'object_discovery': {
+        id: 'object_discovery',
+        name: 'Object Discovery',
+        therapeuticGoals: ['vocabulary-expansion', 'categorization'],
+        difficultyLevel: 2,
+        evidenceBase: [],
+        adaptations: [],
+        dataCollection: { primaryMetrics: ['objects-found', 'category-accuracy'], secondaryMetrics: [] }
+      },
+      
+      'problem_solving': {
+        id: 'problem_solving',
+        name: 'Problem Solving',
+        therapeuticGoals: ['logical-reasoning', 'sequencing'],
+        difficultyLevel: 3,
+        evidenceBase: [],
+        adaptations: [],
+        dataCollection: { primaryMetrics: ['steps-taken', 'solution-accuracy'], secondaryMetrics: [] }
+      },
+      
+      'scene_description': {
+        id: 'scene_description',
+        name: 'Scene Description',
+        therapeuticGoals: ['expressive-language', 'vocabulary'],
+        difficultyLevel: 3,
+        evidenceBase: [],
+        adaptations: [],
+        dataCollection: { primaryMetrics: ['description-quality', 'word-count'], secondaryMetrics: [] }
       }
     };
   }
@@ -249,8 +311,15 @@ class GameMetadataService {
 
     let metadata = null;
 
-    // Try database first if connected
-    if (this.isConnected) {
+    // Try backend API integration
+    try {
+      metadata = await apiFetch(`/api/v1/therapy/games/${gameId}/metadata/`, { auth: true });
+    } catch (error) {
+      console.warn(`Backend fetch failed for ${gameId}, falling back to local data:`, error.message);
+    }
+
+    // Try database first if connected (legacy)
+    if (!metadata && this.isConnected) {
       try {
         metadata = await this.fetchFromDatabase(gameId);
       } catch (error) {

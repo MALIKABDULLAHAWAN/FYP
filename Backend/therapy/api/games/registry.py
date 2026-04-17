@@ -26,6 +26,8 @@ class GamePlugin(Protocol):
         session_id: Optional[int] = None,
     ) -> Dict[str, Any]: ...
 
+    def get_metadata(self) -> Dict[str, Any]: ...
+
 
 GAMES: Dict[str, GamePlugin] = {}
 

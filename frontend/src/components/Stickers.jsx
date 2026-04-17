@@ -204,6 +204,15 @@ export const AnimalStickers = {
       <circle cx="65" cy="35" r="15" fill="#E8F4FD" stroke="#87CEEB" strokeWidth="2" opacity="0.6"/>
       <circle cx="70" cy="42" r="3" fill="#333"/>
     </svg>
+  ),
+  dinosaur: (
+    <svg viewBox="0 0 100 100" className="sticker">
+      <path d="M20,60 Q20,30 50,30 L80,30 Q90,30 90,45 L90,60 Q90,80 60,80 L40,80 Q20,80 20,60" fill="#4CAF50" stroke="#2E7D32" strokeWidth="3"/>
+      <path d="M80,30 Q90,10 95,25" fill="#4CAF50" stroke="#2E7D32" strokeWidth="3"/>
+      <circle cx="85" cy="35" r="3" fill="#333"/>
+      <path d="M30,80 L25,95 M45,80 L45,95 M65,80 L65,95 M80,80 L85,95" stroke="#2E7D32" strokeWidth="4" strokeLinecap="round"/>
+      <path d="M25,40 Q35,35 45,40" stroke="#2E7D32" strokeWidth="2" fill="none"/>
+    </svg>
   )
 };
 
@@ -347,6 +356,15 @@ export const ShapeStickers = {
       <ellipse cx="75" cy="60" rx="18" ry="15" fill="#FFF" stroke="#E0E0E0" strokeWidth="3"/>
       <circle cx="45" cy="50" r="8" fill="#E8F4FD" opacity="0.5"/>
     </svg>
+  ),
+  rainbow: (
+    <svg viewBox="0 0 100 100" className="sticker">
+      <path d="M10,80 Q50,10 90,80" fill="none" stroke="#FF6B6B" strokeWidth="8" strokeLinecap="round"/>
+      <path d="M20,80 Q50,25 80,80" fill="none" stroke="#FFD93D" strokeWidth="8" strokeLinecap="round"/>
+      <path d="M30,80 Q50,40 70,80" fill="none" stroke="#4D96FF" strokeWidth="8" strokeLinecap="round"/>
+      <ellipse cx="15" cy="80" rx="10" ry="8" fill="#FFF" stroke="#E0E0E0" strokeWidth="2"/>
+      <ellipse cx="85" cy="80" rx="10" ry="8" fill="#FFF" stroke="#E0E0E0" strokeWidth="2"/>
+    </svg>
   )
 };
 
@@ -483,6 +501,29 @@ export const ObjectStickers = {
           stroke="#FFA500" strokeWidth="5" strokeLinecap="round"/>
       ))}
       <circle cx="42" cy="45" r="5" fill="#FFF" opacity="0.6"/>
+    </svg>
+  ),
+  cup: (
+    <svg viewBox="0 0 100 100" className="sticker">
+      <path d="M30,30 L70,30 L65,80 L35,80 Z" fill="#E0F2F1" stroke="#009688" strokeWidth="3"/>
+      <path d="M70,40 Q85,40 85,55 Q85,70 70,70" fill="none" stroke="#009688" strokeWidth="3"/>
+      <path d="M35,40 Q50,35 65,40" stroke="#B2DFDB" strokeWidth="2" fill="none"/>
+    </svg>
+  ),
+  key: (
+    <svg viewBox="0 0 100 100" className="sticker">
+      <circle cx="30" cy="50" r="15" fill="none" stroke="#FFD700" strokeWidth="5"/>
+      <rect x="45" y="47" width="35" height="6" fill="#FFD700"/>
+      <rect x="65" y="53" width="5" height="10" fill="#FFD700"/>
+      <rect x="75" y="53" width="5" height="10" fill="#FFD700"/>
+      <circle cx="30" cy="50" r="5" fill="#FFD700"/>
+    </svg>
+  ),
+  umbrella: (
+    <svg viewBox="0 0 100 100" className="sticker">
+      <path d="M10,55 Q50,15 90,55 Z" fill="#FF69B4" stroke="#C2185B" strokeWidth="3"/>
+      <path x="50" y="55" d="M50,55 L50,85 Q50,95 40,95" fill="none" stroke="#8B4513" strokeWidth="3" strokeLinecap="round"/>
+      <circle cx="50" cy="15" r="4" fill="#C2185B"/>
     </svg>
   )
 };

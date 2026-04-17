@@ -1,14 +1,32 @@
 /**
- * AI Service - Groq API Integration
+ * AI Service - Backend API Integration
  * Multiple AI Agents for different tasks
+ * Now connects to Django backend AI endpoints
  */
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
+
+// Legacy direct Groq API (fallback if backend unavailable)
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 const GROQ_MODEL = import.meta.env.VITE_GROQ_MODEL || "llama3-8b-8192";
 const GROQ_TEMPERATURE = parseFloat(import.meta.env.VITE_GROQ_TEMPERATURE) || 0.7;
 const GROQ_MAX_TOKENS = parseInt(import.meta.env.VITE_GROQ_MAX_TOKENS) || 1024;
-
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
+
+// Gemini API (Primary Direct Fallback)
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+const GEMINI_MODEL = import.meta.env.VITE_GEMINI_MODEL || "gemini-1.5-flash";
+const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+
+// Agent key mapping (old keys to backend keys)
+const AGENT_KEY_MAP = {
+  gameHelper: "buddy",
+  storyTeller: "story_weaver",
+  mathTutor: "math_wizard",
+  therapyAssistant: "cozy",
+  creativityCoach: "artie",
+  knowledgeExplorer: "professor_paws"
+};
 
 // Multiple AI Agents Configuration
 const AI_AGENTS = {
@@ -87,27 +105,139 @@ and celebrate when kids ask great questions.`
 };
 
 /**
- * Call Groq API with a message
+ * Get authentication token from localStorage
+ * Uses same keys as api/client.js
+ */
+function getAuthToken() {
+  return localStorage.getItem('dhyan_jwt') || localStorage.getItem('token') || localStorage.getItem('access_token') || '';
+}
+
+/**
+ * Call AI chat endpoint (backend API)
  * @param {string} message - User's message
  * @param {string} agentKey - Which AI agent to use
- * @param {string} conversationHistory - Previous messages for context
- * @returns {Promise<string>} AI response
+ * @param {Array} conversationHistory - Previous messages for context
+ * @returns {Promise<string>} AI response text
  */
 export async function callGroqAI(message, agentKey = "gameHelper", conversationHistory = []) {
+  // Map old agent keys to backend keys
+  const backendAgentKey = AGENT_KEY_MAP[agentKey] || "buddy";
+  
+  // Try backend API first
+  try {
+    const token = getAuthToken();
+    const response = await fetch(`${API_BASE_URL}/therapy/ai/chat`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token && { "Authorization": `Bearer ${token}` })
+      },
+      body: JSON.stringify({
+        message,
+        agent: backendAgentKey,
+        history: conversationHistory,
+        stream: false
+      })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      return data.text || generateFallbackResponse(message, AI_AGENTS[agentKey]);
+    }
+    
+    // Backend failed, try direct Gemini first
+    if (GEMINI_API_KEY && GEMINI_API_KEY !== "your_gemini_key_here") {
+      return callGeminiDirect(message, agentKey, conversationHistory);
+    }
+    
+    // Make sure we have a fallback if Gemini is missing
+    if (response.status === 503 && GROQ_API_KEY && GROQ_API_KEY !== "gsk_your_api_key_here") {
+      return callGroqDirect(message, agentKey, conversationHistory);
+    }
+    
+    throw new Error(`Backend API error: ${response.status}`);
+  } catch (error) {
+    console.warn("Backend AI failed, trying fallbacks:", error);
+    
+    // Fallback to Gemini first if configured
+    if (GEMINI_API_KEY && GEMINI_API_KEY !== "your_gemini_key_here") {
+      return callGeminiDirect(message, agentKey, conversationHistory);
+    }
+    
+    // Next fallback to Groq if configured
+    if (GROQ_API_KEY && GROQ_API_KEY !== "gsk_your_api_key_here") {
+      return callGroqDirect(message, agentKey, conversationHistory);
+    }
+    
+    // Final fallback
+    return generateFallbackResponse(message, AI_AGENTS[agentKey] || AI_AGENTS.gameHelper);
+  }
+}
+
+/**
+ * Direct Gemini API call (primary fallback to take advantage of free tier)
+ */
+async function callGeminiDirect(message, agentKey = "gameHelper", conversationHistory = []) {
   const agent = AI_AGENTS[agentKey] || AI_AGENTS.gameHelper;
   
-  if (!GROQ_API_KEY || GROQ_API_KEY === "gsk_your_api_key_here") {
-    console.warn("Groq API key not configured. Using fallback response.");
+  try {
+    // Format history for Gemini
+    const contents = [];
+    
+    // Add system prompt context as first user message or system instruction if using v1beta
+    const historyToUse = [...conversationHistory];
+    
+    for (const msg of historyToUse) {
+      contents.push({
+        role: msg.role === "assistant" ? "model" : "user",
+        parts: [{ text: msg.content }]
+      });
+    }
+    
+    contents.push({
+      role: "user",
+      parts: [{ text: message }]
+    });
+
+    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        contents: contents,
+        systemInstruction: {
+          role: "user",
+          parts: [{ text: agent.systemPrompt }]
+        },
+        generationConfig: {
+          temperature: GROQ_TEMPERATURE,
+          maxOutputTokens: GROQ_MAX_TOKENS,
+        }
+      })
+    });
+
+    if (!response.ok) throw new Error(`Gemini API error: ${response.status}`);
+    
+    const data = await response.json();
+    return data.candidates[0]?.content?.parts[0]?.text || generateFallbackResponse(message, agent);
+  } catch (error) {
+    console.error("Direct Gemini failed:", error);
+    // If Gemini fails, we could try Groq here, but for simplicity we rely on fallback texts
+    if (GROQ_API_KEY && GROQ_API_KEY !== "gsk_your_api_key_here") {
+      return callGroqDirect(message, agentKey, conversationHistory);
+    }
     return generateFallbackResponse(message, agent);
   }
+}
 
+/**
+ * Direct Groq API call (fallback)
+ */
+async function callGroqDirect(message, agentKey = "gameHelper", conversationHistory = []) {
+  const agent = AI_AGENTS[agentKey] || AI_AGENTS.gameHelper;
+  
   try {
-    const messages = [
-      { role: "system", content: agent.systemPrompt },
-      ...conversationHistory,
-      { role: "user", content: message }
-    ];
-
     const response = await fetch(GROQ_API_URL, {
       method: "POST",
       headers: {
@@ -116,7 +246,11 @@ export async function callGroqAI(message, agentKey = "gameHelper", conversationH
       },
       body: JSON.stringify({
         model: GROQ_MODEL,
-        messages: messages,
+        messages: [
+          { role: "system", content: agent.systemPrompt },
+          ...conversationHistory,
+          { role: "user", content: message }
+        ],
         temperature: GROQ_TEMPERATURE,
         max_tokens: GROQ_MAX_TOKENS,
         top_p: 1,
@@ -124,14 +258,12 @@ export async function callGroqAI(message, agentKey = "gameHelper", conversationH
       })
     });
 
-    if (!response.ok) {
-      throw new Error(`Groq API error: ${response.status}`);
-    }
-
+    if (!response.ok) throw new Error(`Groq API error: ${response.status}`);
+    
     const data = await response.json();
     return data.choices[0]?.message?.content || generateFallbackResponse(message, agent);
   } catch (error) {
-    console.error("AI Service Error:", error);
+    console.error("Direct Groq failed:", error);
     return generateFallbackResponse(message, agent);
   }
 }
@@ -187,53 +319,126 @@ function generateFallbackResponse(message, agent) {
  * Generate a game question using AI
  */
 export async function generateGameQuestion(gameType, difficulty, agentKey = "gameHelper") {
-  const prompts = {
-    math: `Generate a ${difficulty} math problem for a child. Include the question and answer. Format: {"question": "...", "answer": "...", "hint": "..."}`,
-    spelling: `Generate a ${difficulty} spelling word for a child. Include the word and a hint. Format: {"word": "...", "hint": "..."}`,
-    riddle: `Generate a ${difficulty} riddle for a child. Include question and answer. Format: {"question": "...", "answer": "...", "hint": "..."}`,
-    trivia: `Generate a ${difficulty} trivia question for a child about science/nature. Format: {"question": "...", "answer": "...", "fact": "..."}`
-  };
-
-  const prompt = prompts[gameType] || prompts.math;
-  const response = await callGroqAI(prompt, agentKey);
+  const backendAgentKey = AGENT_KEY_MAP[agentKey] || "buddy";
   
   try {
-    // Try to parse JSON from response
-    const jsonMatch = response.match(/\{[^}]+\}/);
-    if (jsonMatch) {
-      return JSON.parse(jsonMatch[0]);
+    const token = getAuthToken();
+    const response = await fetch(`${API_BASE_URL}/therapy/ai/game-question`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token && { "Authorization": `Bearer ${token}` })
+      },
+      body: JSON.stringify({
+        game_type: gameType,
+        difficulty: difficulty,
+        agent: backendAgentKey
+      })
+    });
+
+    if (response.ok) {
+      return await response.json();
     }
-  } catch (e) {
-    console.log("Could not parse AI response as JSON, using text response");
+    throw new Error("Backend API error");
+  } catch (error) {
+    console.warn("Backend question generation failed, using fallback:", error);
+    
+    // Fallback to direct AI
+    const prompts = {
+      math: `Generate a ${difficulty} math problem for a child. Include the question and answer. Format: {"question": "...", "answer": "...", "hint": "..."}`,
+      spelling: `Generate a ${difficulty} spelling word for a child. Include the word and a hint. Format: {"word": "...", "hint": "..."}`,
+      riddle: `Generate a ${difficulty} riddle for a child. Include question and answer. Format: {"question": "...", "answer": "...", "hint": "..."}`,
+      trivia: `Generate a ${difficulty} trivia question for a child about science/nature. Format: {"question": "...", "answer": "...", "fact": "..."}`
+    };
+
+    const prompt = prompts[gameType] || prompts.math;
+    const response = await callGroqAI(prompt, agentKey); // callGroqAI handles Gemini inside now
+    
+    try {
+      const jsonMatch = response.match(/\{[^}]+\}/);
+      if (jsonMatch) {
+        return JSON.parse(jsonMatch[0]);
+      }
+    } catch (e) {
+      console.log("Could not parse AI response as JSON");
+    }
+    
+    return { question: response, answer: "", hint: "" };
   }
-  
-  return { question: response, answer: "", hint: "" };
 }
 
 /**
  * Get personalized hint based on child's performance
  */
 export async function getPersonalizedHint(gameType, question, wrongAttempts, agentKey = "gameHelper") {
-  const prompt = `The child is playing ${gameType}. The question is: "${question}". 
-    They've attempted ${wrongAttempts} times incorrectly. 
-    Give a gentle, encouraging hint without giving away the answer. 
-    Keep it simple and child-friendly.`;
+  const backendAgentKey = AGENT_KEY_MAP[agentKey] || "buddy";
   
-  return await callGroqAI(prompt, agentKey);
+  try {
+    const token = getAuthToken();
+    const response = await fetch(`${API_BASE_URL}/therapy/ai/hint`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token && { "Authorization": `Bearer ${token}` })
+      },
+      body: JSON.stringify({
+        game_type: gameType,
+        question,
+        wrong_attempts: wrongAttempts,
+        agent: backendAgentKey
+      })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      return data.hint;
+    }
+    throw new Error("Backend API error");
+  } catch (error) {
+    // Fallback to direct AI
+    const prompt = `The child is playing ${gameType}. The question is: "${question}". 
+      They've attempted ${wrongAttempts} times incorrectly. 
+      Give a gentle, encouraging hint without giving away the answer. 
+      Keep it simple and child-friendly.`;
+    
+    return await callGroqAI(prompt, agentKey);
+  }
 }
 
 /**
  * Generate a story continuation
  */
 export async function continueStory(currentStory, childChoice, agentKey = "storyTeller") {
-  const prompt = `Continue this story based on the child's choice:
-    
-    Story so far: "${currentStory}"
-    Child's choice: "${childChoice}"
-    
-    Write 2-3 engaging sentences that continue the story and end with a question or choice for the child.`;
+  const backendAgentKey = AGENT_KEY_MAP[agentKey] || "story_weaver";
   
-  return await callGroqAI(prompt, agentKey);
+  try {
+    const token = getAuthToken();
+    const response = await fetch(`${API_BASE_URL}/therapy/ai/continue-story`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token && { "Authorization": `Bearer ${token}` })
+      },
+      body: JSON.stringify({
+        current_story: currentStory,
+        child_choice: childChoice,
+        agent: backendAgentKey
+      })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      return data.continuation;
+    }
+    throw new Error("Backend API error");
+  } catch (error) {
+    // Fallback to direct AI
+    const prompt = `Continue this story based on the child's choice:
+      Story so far: "${currentStory}"
+      Child's choice: "${childChoice}"
+      Write 2-3 engaging sentences that continue the story.`;
+    return await callGroqAI(prompt, agentKey);
+  }
 }
 
 /**
@@ -254,10 +459,29 @@ export function getAllAIAgents() {
 }
 
 /**
- * Check if Groq API is configured
+ * Check if AI is configured (backend or direct)
  */
-export function isAIConfigured() {
-  return GROQ_API_KEY && GROQ_API_KEY !== "gsk_your_api_key_here" && GROQ_API_KEY.length > 10;
+export async function isAIConfigured() {
+  // First check if backend is available
+  try {
+    const response = await fetch(`${API_BASE_URL}/therapy/ai/health`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" }
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      return data.available;
+    }
+  } catch (e) {
+    console.warn("Backend AI health check failed");
+  }
+  
+  // Fallback to checking direct APIs
+  const hasGemini = !!(GEMINI_API_KEY && GEMINI_API_KEY !== "your_gemini_key_here" && GEMINI_API_KEY.length > 10);
+  const hasGroq = !!(GROQ_API_KEY && GROQ_API_KEY !== "gsk_your_api_key_here" && GROQ_API_KEY.length > 10);
+  
+  return hasGemini || hasGroq;
 }
 
 export { AI_AGENTS };

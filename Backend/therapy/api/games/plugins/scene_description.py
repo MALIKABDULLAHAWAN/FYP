@@ -284,7 +284,11 @@ class SceneDescriptionGame:
 
         avg_score = sum(scores) / len(scores)
 
-        if avg_score >= 80 and total >= 2:
+        if avg_score >= 90 and total >= 6:
+            return 5
+        elif avg_score >= 85 and total >= 4:
+            return 4
+        elif avg_score >= 80 and total >= 2:
             return 3
         elif avg_score >= 60:
             return 2
@@ -292,9 +296,11 @@ class SceneDescriptionGame:
 
     def build_trial(self, level: int, *, session_id: Optional[int] = None) -> Dict[str, Any]:
         """
-        Select a random scenario image from all available images (ignores level and scenario).
-        Returns scenario data for the frontend.
+        Select a random scenario image and adapt prompt complexity to level.
         """
+        if session_id:
+            level = self.compute_level(session_id)
+
         scenarios = ScenarioImage.objects.filter(is_active=True).order_by("?")[:1]
 
         if not scenarios:
@@ -309,9 +315,22 @@ class SceneDescriptionGame:
         scenario = scenarios[0]
         image_url = scenario.image.url if scenario.image else None
 
-        # Use generic prompt/hint since scenario is random
-        prompt = "Look at this picture. Can you tell me what you see?"
-        ai_hint = "Describe the main things — colors, objects, people, actions."
+        # Tiered prompt complexity
+        if level <= 1:
+            prompt = "Look at this picture. Can you tell me what you see?"
+            ai_hint = "Describe the main things \u2014 colors, objects, people, actions."
+        elif level == 2:
+            prompt = "Tell me a story about what's happening in this picture."
+            ai_hint = "What are the people doing? How do they feel?"
+        elif level == 3:
+            prompt = "Please describe the scene in detail. What is in the foreground and background?"
+            ai_hint = "Try to use complete sentences to describe the whole setting."
+        elif level == 4:
+            prompt = "Observe the image carefully. Describe the actions, the weather, and the small details."
+            ai_hint = "Think about the relationship between the objects and people in the scene."
+        else:
+            prompt = "Perform an expert analysis of this scene. Describe the narrative, the context, and any hidden details."
+            ai_hint = "Focus on the 'why' and 'how' of what you see. Use descriptive adjectives."
 
         return {
             "target": f"scenario_{scenario.id}",
@@ -320,6 +339,7 @@ class SceneDescriptionGame:
             "title": getattr(scenario, "title", ""),
             "prompt": prompt,
             "ai_hint": ai_hint,
+            "extra": {"level": level},
         }
 
     def evaluate(

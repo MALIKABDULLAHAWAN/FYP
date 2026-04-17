@@ -22,7 +22,7 @@ export default function JaGame() {
       gameCode="ja"
       gameName="Joint Attention"
       gameIconName="eye"
-      trialCount={10}
+      trialCount={20}
       multiSelect={false}
     />
   );

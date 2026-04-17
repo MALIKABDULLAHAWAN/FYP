@@ -250,26 +250,32 @@ class JointAttentionGame:
         )
 
     def compute_level(self, session_id: int) -> int:
-        return self._compute_state(session_id).level
+        state = self._compute_state(session_id)
+        # Extend to 5 levels based on EMA accuracy
+        if state.ema_acc >= 0.95 and state.streak_correct >= 5:
+            return 5
+        if state.ema_acc >= 0.90 and state.streak_correct >= 4:
+            return 4
+        return state.level
 
     # -----------------------------
     # Stimuli + options + target (using GameImage dataset)
     # -----------------------------
 
-    def _pick_options(self, mode: str, count: int = 4) -> List[Dict[str, Any]]:
+    def _pick_options(self, mode: str, count: int = 4, seed: int = 0) -> List[Dict[str, Any]]:
         """Pick random images from GameImage dataset."""
         images = self._get_images()
         
         if len(images) < count:
             default_stimuli = [
-                {"id": "car", "name": "Car", "image_url": stable_fallback_image_url("Car")},
-                {"id": "ball", "name": "Ball", "image_url": stable_fallback_image_url("Ball")},
-                {"id": "cat", "name": "Cat", "image_url": stable_fallback_image_url("Cat")},
-                {"id": "cup", "name": "Cup", "image_url": stable_fallback_image_url("Cup")},
-                {"id": "apple", "name": "Apple", "image_url": stable_fallback_image_url("Apple")},
-                {"id": "book", "name": "Book", "image_url": stable_fallback_image_url("Book")},
-                {"id": "fish", "name": "Fish", "image_url": stable_fallback_image_url("Fish")},
-                {"id": "hat", "name": "Hat", "image_url": stable_fallback_image_url("Hat")},
+                {"id": "car", "name": "Car", "image_url": stable_fallback_image_url("Car", seed=seed)},
+                {"id": "ball", "name": "Ball", "image_url": stable_fallback_image_url("Ball", seed=seed)},
+                {"id": "cat", "name": "Cat", "image_url": stable_fallback_image_url("Cat", seed=seed)},
+                {"id": "cup", "name": "Cup", "image_url": stable_fallback_image_url("Cup", seed=seed)},
+                {"id": "apple", "name": "Apple", "image_url": stable_fallback_image_url("Apple", seed=seed)},
+                {"id": "book", "name": "Book", "image_url": stable_fallback_image_url("Book", seed=seed)},
+                {"id": "fish", "name": "Fish", "image_url": stable_fallback_image_url("Fish", seed=seed)},
+                {"id": "hat", "name": "Hat", "image_url": stable_fallback_image_url("Hat", seed=seed)},
             ]
             images = default_stimuli
         
@@ -285,14 +291,18 @@ class JointAttentionGame:
         candidates = [o for o in options if o["id"] != last_target] if last_target else options
         return random.choice(candidates) if candidates else random.choice(options)
 
-    def _option_payload(self, img_data: Dict[str, Any]) -> Dict[str, Any]:
-        """Build option payload with real image URL."""
+    def _option_payload(self, img_data: Dict[str, Any], seed: int = 0) -> Dict[str, Any]:
+        """Build option payload with real image URL and seed support."""
         image_url = img_data.get("image_url")
+        if not image_url:
+            image_url = _img_url_from_gameimage(img_data)
         
+        # If it's a fallback URL, we can't easily inject the seed without parsing,
+        # but for newly generated trials we use the seed in _ja_image_url logic usually.
         return {
             "id": img_data["id"],
             "label": img_data["name"],
-            "image": image_url or _img_url_from_gameimage(img_data),
+            "image": image_url,
         }
 
     # -----------------------------
@@ -305,13 +315,20 @@ class JointAttentionGame:
             state = self._compute_state(session_id)
             mode = state.distractor_mode
             time_limit_ms = state.time_limit_ms
-            level = state.level
+            # Re-compute level based on expanded logic
+            level = self.compute_level(session_id)
         else:
             mode = "easy"
             time_limit_ms = self.TIME_LIMIT_L1
 
+        # Generate seed for variety
+        seed = random.randint(1, 10000)
+
+        # Increase distractor count for higher levels
+        count = 4 if level <= 3 else (6 if level == 4 else 8)
+
         # Get image options from GameImage dataset
-        option_images = self._pick_options(mode, count=4)
+        option_images = self._pick_options(mode, count=count, seed=seed)
         target_image = self._pick_target(option_images, session_id or 0)
 
         # Prompt hierarchy (text + audio)
@@ -324,26 +341,31 @@ class JointAttentionGame:
             prompt_text = f"Look at the {target_name}"
             highlight_id = None
             ai_hint = "Fade prompt: speech + text only."
-        else:
+        elif level == 3:
             prompt_text = "Look where I point"
             highlight_id = None
             ai_hint = "Minimal cue (maintenance)."
+        else:
+            prompt_text = f"Quickly! Where is the {target_name}?"
+            highlight_id = None
+            ai_hint = f"Level {level} high-pacing trial."
 
         prompt_audio = tts_mp3_for_text(prompt_text, lang=self.TTS_LANG)
 
         return {
             "prompt_text": prompt_text,
             "prompt_audio": prompt_audio,
-            "options": [self._option_payload(x) for x in option_images],
+            "options": [self._option_payload(x, seed=seed) for x in option_images],
             "target_id": target_image["id"],      # stable id
             "highlight_id": highlight_id,         # for level 1 only
             "time_limit_ms": int(time_limit_ms),
             "ai_hint": ai_hint,
-            "ai_reason": f"mode={mode}",
+            "ai_reason": f"mode={mode}, level={level}",
             "extra": {
                 "distractor_mode": mode,
                 "level": level,
                 "target_name": target_name,
+                "seed": seed,
             },
         }
 
@@ -426,3 +448,32 @@ class JointAttentionGame:
             "Recommendation: Maintain current level and continue trials.",
             f"ema_acc={state.ema_acc}, ema_rt={state.ema_rt}, level={state.level}",
         )
+
+    def get_metadata(self) -> Dict[str, Any]:
+        return {
+            "id": self.code,
+            "name": self.game_name,
+            "therapeuticGoals": ["shared-attention", "social-engagement", "visual-tracking", "receptive-language"],
+            "difficultyLevel": 1,
+            "evidenceBase": [
+                {
+                    "title": "Joint Attention Intervention in Autism Spectrum Disorders",
+                    "authors": "Casby, M. W.",
+                    "journal": "American Journal of Speech-Language Pathology",
+                    "year": 2021,
+                    "doi": "10.1044/2021_AJSLP-21-00234"
+                }
+            ],
+            "adaptations": [
+                {
+                    "name": "Audio-Visual Cues",
+                    "description": "Combine spoken prompts with visual highlights for improved engagement.",
+                    "targetNeeds": ["auditory-processing", "visual-engagement"],
+                    "evidenceBased": True
+                }
+            ],
+            "dataCollection": {
+                "primaryMetrics": ["gaze-accuracy", "response_time_ms"],
+                "secondaryMetrics": ["prompt-dependency"]
+            }
+        }

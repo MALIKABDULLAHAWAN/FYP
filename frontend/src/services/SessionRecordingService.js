@@ -60,7 +60,7 @@ class SessionRecordingService {
       
       console.log(`Session ${sessionId} started and recorded`);
       
-      return recordedSession;
+      return { ...sessionData, ...(recordedSession || {}) };
     } catch (error) {
       console.error('Failed to start session:', error);
       throw error;
@@ -173,7 +173,7 @@ class SessionRecordingService {
     }
 
     const endTime = new Date();
-    const durationMs = Date.now() - metrics.start_time;
+    const durationMs = Math.max(1, Date.now() - metrics.start_time);
 
     // Calculate final performance metrics
     const finalMetrics = this.calculateFinalMetrics(metrics);
@@ -182,7 +182,7 @@ class SessionRecordingService {
       ...sessionData,
       completed_at: endTime.toISOString(),
       client_end_timestamp: Date.now(),
-      duration_seconds: Math.round(durationMs / 1000),
+      duration_seconds: Math.max(1, Math.round(durationMs / 1000)),
       duration_ms: durationMs,
       performance_metrics: {
         ...finalMetrics,
@@ -216,7 +216,7 @@ class SessionRecordingService {
       
       console.log(`Session ${sessionId} completed and recorded`);
       
-      return recordedSession;
+      return { ...completedSession, ...(recordedSession || {}) };
     } catch (error) {
       console.error('Failed to complete session:', error);
       throw error;
@@ -344,7 +344,7 @@ class SessionRecordingService {
 
     return {
       score: scores.reduce((a, b) => a + b, 0) / scores.length,
-      accuracy: accuracies.reduce((a, b) => a + b, 0) / accuracies.length,
+      accuracy: Number((accuracies.reduce((a, b) => a + b, 0) / accuracies.length).toFixed(3)),
       completion_percentage: Math.max(...completions),
       difficulty_adjusted: metrics.difficulty_changes.length > 0,
       total_interactions: metrics.interactions.length,

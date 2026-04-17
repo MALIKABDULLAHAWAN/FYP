@@ -130,7 +130,7 @@ export default function SpeechTherapy() {
   // Setup state
   const [activities, setActivities] = useState([]);
   const [selectedActivity, setSelectedActivity] = useState("");
-  const [trialsPlanned, setTrialsPlanned] = useState(5);
+  const [trialsPlanned, setTrialsPlanned] = useState(20);
   const [promptLevel, setPromptLevel] = useState(0);
 
   // Session state
@@ -702,6 +702,24 @@ export default function SpeechTherapy() {
             <div style={{ fontSize: 22, fontWeight: 600, marginBottom: 8, lineHeight: 1.4 }}>
               {currentTrial.prompt || session.activity?.name}
             </div>
+            
+            {currentTrial.image_url && (
+              <div style={{ margin: "16px auto", maxWidth: 300 }}>
+                <img 
+                  src={currentTrial.image_url} 
+                  alt="Stimulus for speech therapy"
+                  style={{ 
+                    width: '100%', 
+                    height: 200, 
+                    objectFit: 'cover', 
+                    borderRadius: 12,
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+                    border: "3px solid white"
+                  }} 
+                />
+              </div>
+            )}
+
             {currentTrial.target_text && (
               <div style={{
                 fontSize: 32, fontWeight: 700,

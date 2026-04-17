@@ -6,7 +6,7 @@ export default function MatchingGame() {
       gameCode="matching"
       gameName="Shape Matching"
       gameIconName="shape-square"
-      trialCount={10}
+      trialCount={20}
       multiSelect={false}
     />
   );

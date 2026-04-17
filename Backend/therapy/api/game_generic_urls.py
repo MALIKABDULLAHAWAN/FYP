@@ -4,9 +4,11 @@ from .game_generic_views import (
     GameNextTrialView,
     GameSubmitTrialView,
     GameSummaryView,
+    GameMetadataView,
 )
 
 urlpatterns = [
+    path("<str:game_code>/metadata/", GameMetadataView.as_view()),
     path("<str:game_code>/start/", GameStartSessionView.as_view()),
     path("<str:game_code>/<int:session_id>/next/", GameNextTrialView.as_view()),
     path("<str:game_code>/trial/<int:trial_id>/submit/", GameSubmitTrialView.as_view()),

@@ -47,9 +47,15 @@ class GameMetadataService {
     }
 
     // Difficulty level validation
-    const validDifficulties = ['Easy', 'Medium', 'Hard'];
-    if (!data.difficulty_level || !validDifficulties.includes(data.difficulty_level)) {
-      errors.push('Difficulty level must be Easy, Medium, or Hard');
+    if (typeof data.difficulty_level === 'number') {
+      if (data.difficulty_level < 1 || data.difficulty_level > 5) {
+        errors.push('Difficulty level must be between 1 and 5');
+      }
+    } else {
+      const validDifficulties = ['Easy', 'Medium', 'Hard'];
+      if (!data.difficulty_level || !validDifficulties.includes(data.difficulty_level)) {
+        errors.push('Difficulty level must be 1-5 or Easy/Medium/Hard');
+      }
     }
 
     // Age range validation
@@ -835,7 +841,7 @@ class GameMetadataService {
     }
 
     const {
-      currentDifficulty = 'Medium',
+      currentDifficulty = 1,
       currentScore = 0,
       tasksCompleted = 0,
       tasksFailed = 0,
@@ -844,7 +850,7 @@ class GameMetadataService {
     } = performanceMetrics;
 
     let difficultyAdjusted = false;
-    let newDifficulty = currentDifficulty;
+    let newLevel = typeof currentDifficulty === 'number' ? currentDifficulty : 2; // Default to mid if non-numeric
     let reason = '';
 
     // Calculate real-time metrics
@@ -859,24 +865,16 @@ class GameMetadataService {
 
     if (failureRate >= STRUGGLE_THRESHOLD && currentScore < 40) {
       // Child is clearly struggling
-      if (currentDifficulty === 'Hard') {
-        newDifficulty = 'Medium';
-        reason = `Real-time adjustment: High failure rate (${(failureRate * 100).toFixed(0)}%) and low score (${currentScore}%)`;
-        difficultyAdjusted = true;
-      } else if (currentDifficulty === 'Medium') {
-        newDifficulty = 'Easy';
-        reason = `Real-time adjustment: High failure rate (${(failureRate * 100).toFixed(0)}%) and low score (${currentScore}%)`;
+      if (newLevel > 1) {
+        newLevel -= 1;
+        reason = `Real-time adjustment: High failure rate (${(failureRate * 100).toFixed(0)}%) and low score (${currentScore}%). Dropping to Level ${newLevel}.`;
         difficultyAdjusted = true;
       }
     } else if (successRate >= EXCEL_THRESHOLD && currentScore >= 90) {
       // Child is excelling
-      if (currentDifficulty === 'Easy') {
-        newDifficulty = 'Medium';
-        reason = `Real-time adjustment: Excellent performance (${(successRate * 100).toFixed(0)}% success, ${currentScore}% score)`;
-        difficultyAdjusted = true;
-      } else if (currentDifficulty === 'Medium') {
-        newDifficulty = 'Hard';
-        reason = `Real-time adjustment: Excellent performance (${(successRate * 100).toFixed(0)}% success, ${currentScore}% score)`;
+      if (newLevel < 5) {
+        newLevel += 1;
+        reason = `Real-time adjustment: Excellent performance (${(successRate * 100).toFixed(0)}% success, ${currentScore}% score). Raising to Level ${newLevel}.`;
         difficultyAdjusted = true;
       }
     }
@@ -884,7 +882,7 @@ class GameMetadataService {
     return {
       difficultyAdjusted,
       oldDifficulty: currentDifficulty,
-      newDifficulty,
+      newDifficulty: newLevel,
       reason,
       adjustmentTimestamp: new Date().toISOString(),
     };
@@ -906,33 +904,53 @@ class GameMetadataService {
    */
   getDifficultyIndicator(difficulty) {
     const indicators = {
-      Easy: {
-        difficulty: 'Easy',
-        displayLabel: 'Easy',
-        color: '#7ED321', // Soft Green
+      1: {
+        difficulty: 1,
+        displayLabel: 'Level 1',
+        color: '#2ECC71', // Green
         icon: '⭐',
-        description: 'Great for beginners and building confidence',
-        ageRange: 'Ages 3-5',
+        description: 'Foundation building and core skills',
+        ageRange: 'Beginner',
       },
-      Medium: {
-        difficulty: 'Medium',
-        displayLabel: 'Medium',
-        color: '#F5A623', // Warm Orange
+      2: {
+        difficulty: 2,
+        displayLabel: 'Level 2',
+        color: '#7ED321', // Light Green
         icon: '⭐⭐',
-        description: 'Provides appropriate challenge and engagement',
-        ageRange: 'Ages 6-8',
+        description: 'Developing independence and accuracy',
+        ageRange: 'Intermediate',
       },
-      Hard: {
-        difficulty: 'Hard',
-        displayLabel: 'Hard',
-        color: '#4A90E2', // Warm Blue
+      3: {
+        difficulty: 3,
+        displayLabel: 'Level 3',
+        color: '#F1C40F', // Yellow
         icon: '⭐⭐⭐',
-        description: 'For advanced learners seeking greater challenge',
-        ageRange: 'Ages 9-12',
+        description: 'Standard therapeutic challenge',
+        ageRange: 'Advanced',
       },
+      4: {
+        difficulty: 4,
+        displayLabel: 'Level 4',
+        color: '#F39C12', // Orange
+        icon: '⭐⭐⭐⭐',
+        description: 'Complex logic and rapid response',
+        ageRange: 'Mastery',
+      },
+      5: {
+        difficulty: 5,
+        displayLabel: 'Level 5',
+        color: '#E74C3C', // Red
+        icon: '⭐⭐⭐⭐⭐',
+        description: 'Peak cognitive and sensory integration',
+        ageRange: 'Elite',
+      },
+      // Legacy mapping
+      Easy: { difficulty: 1, displayLabel: 'Easy', color: '#2ECC71', icon: '⭐', description: 'Beginner', ageRange: 'Ages 3-5' },
+      Medium: { difficulty: 3, displayLabel: 'Medium', color: '#F1C40F', icon: '⭐⭐⭐', description: 'Intermediate', ageRange: 'Ages 6-8' },
+      Hard: { difficulty: 5, displayLabel: 'Hard', color: '#E74C3C', icon: '⭐⭐⭐⭐⭐', description: 'Advanced', ageRange: 'Ages 9-12' },
     };
 
-    return indicators[difficulty] || indicators.Medium;
+    return indicators[difficulty] || indicators[1] || indicators.Medium;
   }
 
   /**

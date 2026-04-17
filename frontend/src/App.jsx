@@ -28,11 +28,13 @@ import ObjectDiscovery from "./pages/games/ObjectDiscovery";
 import ProblemSolving from "./pages/games/ProblemSolving";
 import SpeechTherapy from "./pages/games/SpeechTherapy";
 import SceneDescriptionGame from "./pages/games/SceneDescriptionGame";
+import StoryAdventure from "./pages/games/StoryAdventure";
 import LandingPage from "./pages/LandingPage";
 import ProfilePage from "./pages/ProfilePage";
 import Settings from "./pages/Settings";
 import Help from "./pages/Help";
 import VoiceAssistant from "./pages/VoiceAssistant";
+import StickerPack from "./pages/StickerPack";
 
 function ProtectedLayout({ children }) {
   return (
@@ -88,15 +90,9 @@ export default function App() {
       }
     };
 
-    // Initialize both systems
-    const initializeSystems = async () => {
-      await Promise.all([
-        initializeEmojiSystem(),
-        initializePerformanceSystem()
-      ]);
-    };
-
-    initializeSystems();
+    // Initialize both systems - NON-BLOCKING
+    initializeEmojiSystem().catch(err => console.error('Emoji system error:', err));
+    initializePerformanceSystem().catch(err => console.error('Performance system error:', err));
   }, []);
 
   return (
@@ -122,7 +118,9 @@ export default function App() {
             <Route path="/games/object-discovery" element={<ProtectedLayout><ObjectDiscovery /></ProtectedLayout>} />
             <Route path="/games/problem-solving" element={<ProtectedLayout><ProblemSolving /></ProtectedLayout>} />
             <Route path="/games/scene-description" element={<ProtectedLayout><SceneDescriptionGame /></ProtectedLayout>} />
+            <Route path="/games/story-adventure" element={<ProtectedLayout><StoryAdventure /></ProtectedLayout>} />
             <Route path="/speech-therapy" element={<ProtectedLayout><SpeechTherapy /></ProtectedLayout>} />
+            <Route path="/sticker-pack" element={<ProtectedLayout><StickerPack /></ProtectedLayout>} />
             <Route path="/profile" element={<ProtectedLayout><ProfilePage /></ProtectedLayout>} />
             <Route path="/settings" element={<ProtectedLayout><Settings /></ProtectedLayout>} />
             <Route path="/help" element={<ProtectedLayout><Help /></ProtectedLayout>} />

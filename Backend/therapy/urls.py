@@ -40,6 +40,17 @@ from therapy.api.voice_assistant import (
     clear_voice_history,
     voice_assistant_status,
 )
+from therapy.api.ai_endpoints import (
+    ai_chat,
+    ai_agents,
+    generate_game_question,
+    get_personalized_hint,
+    continue_story,
+    generate_encouragement,
+    explain_concept,
+    ai_health,
+    generate_content,
+)
 
 urlpatterns = [
     # --- Existing therapy APIs (unchanged & correct) ---
@@ -98,4 +109,15 @@ urlpatterns = [
     path("voice/stop", stop_voice_playback, name="voice-stop"),
     path("voice/clear-history", clear_voice_history, name="voice-clear-history"),
     path("voice/status", voice_assistant_status, name="voice-status"),
+    
+    # --- AI Service API (Unified) ---
+    path("ai/chat", ai_chat, name="ai-chat"),
+    path("ai/agents", ai_agents, name="ai-agents"),
+    path("ai/health", ai_health, name="ai-health"),
+    path("ai/game-question", generate_game_question, name="ai-game-question"),
+    path("ai/hint", get_personalized_hint, name="ai-hint"),
+    path("ai/continue-story", continue_story, name="ai-continue-story"),
+    path("ai/encouragement", generate_encouragement, name="ai-encouragement"),
+    path("ai/explain", explain_concept, name="ai-explain"),
+    path("ai/generate-content", generate_content, name="ai-generate-content"),
 ]

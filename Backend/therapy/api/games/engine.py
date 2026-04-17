@@ -28,6 +28,17 @@ def _as_game_instance(game_obj):
     return game_obj
 
 
+def _get_game_instance_or_404(game_code: str):
+    """
+    Resolve a game plugin and normalize unknown-game failures as DRF NotFound.
+    """
+    try:
+        return _as_game_instance(get_game(game_code))
+    except KeyError as exc:
+        # registry raises KeyError("Unknown game code ..."); convert to API-safe 404
+        raise NotFound(str(exc))
+
+
 def require_assignment(user, child: ChildProfile) -> None:
     qs = TherapistChildAssignment.objects.filter(therapist_id=user.id)
     ok = (
@@ -64,7 +75,7 @@ def start_session(
     session_title: str | None = None,
     time_limit_ms: int = 10000,
 ) -> dict:
-    game = _as_game_instance(get_game(game_code))
+    game = _get_game_instance_or_404(game_code)
 
     child = ChildProfile.objects.filter(id=child_id, deleted_at__isnull=True).first()
     if not child:
@@ -100,7 +111,7 @@ def start_session(
 
 
 def next_trial(*, game_code: str, user, session_id: int) -> dict:
-    game = _as_game_instance(get_game(game_code))
+    game = _get_game_instance_or_404(game_code)
 
     session = (
         TherapySession.objects.filter(id=session_id)
@@ -182,7 +193,7 @@ def submit_trial(
     trial_id: int,
     **submit_data,
 ) -> dict:
-    game = _as_game_instance(get_game(game_code))
+    game = _get_game_instance_or_404(game_code)
 
     trial = SessionTrial.objects.filter(id=trial_id).first()
     if not trial:
@@ -262,7 +273,7 @@ def submit_trial(
 
 
 def summary(*, game_code: str, user, session_id: int) -> dict:
-    game = _as_game_instance(get_game(game_code))
+    game = _get_game_instance_or_404(game_code)
 
     session = TherapySession.objects.filter(id=session_id).select_related("therapist").first()
     if not session:
@@ -289,15 +300,20 @@ def summary(*, game_code: str, user, session_id: int) -> dict:
 
     level = int(game.compute_level(session.id))
 
-    # One solid therapist-facing suggestion (simple + deterministic)
+    # Multi-tier suggestion logic for 5 levels
     suggestion = ""
     if completed:
-        if accuracy >= 0.8 and (avg_rt is None or avg_rt <= 3200):
-            suggestion = "Suggestion: Fade prompts next session (L2/L3) and increase distractor difficulty."
-        elif accuracy < 0.5:
-            suggestion = "Suggestion: Return to Level 1, reduce distractors, and slow pacing."
+        if accuracy >= 0.9 and (avg_rt is None or avg_rt <= 2500):
+            if level < 5:
+                suggestion = f"Outstanding performance! Child is ready to progress to Level {level + 1}."
+            else:
+                suggestion = "Mastery achieved at highest level. Suggest adding new games or different modalities."
+        elif accuracy >= 0.75:
+            suggestion = f"Solid progress at Level {level}. Continue practicing for baseline stability before moving up."
+        elif accuracy < 0.4:
+            suggestion = f"Level {level} seems challenging. Suggest dropping to Level {max(1, level-1)} or providing more physical prompting."
         else:
-            suggestion = "Suggestion: Maintain current level and continue practice."
+            suggestion = f"Steady effort at Level {level}. Focus on reducing response time."
 
     return {
         "session_id": session.id,
@@ -310,4 +326,39 @@ def summary(*, game_code: str, user, session_id: int) -> dict:
         "avg_response_time_ms": avg_rt,
         "current_level": level,
         "suggestion": suggestion,
+    }
+
+
+def get_game_metadata(*, game_code: str) -> dict:
+    """
+    Get therapeutic metadata for a game.
+    """
+    game = _get_game_instance_or_404(game_code)
+    
+    # Try to get metadata from plugin
+    if hasattr(game, 'get_metadata'):
+        try:
+            return game.get_metadata()
+        except Exception:
+            pass
+            
+    # Generic fallback if plugin doesn't define it
+    return {
+        "id": game_code,
+        "name": getattr(game, 'game_name', game_code),
+        "therapeuticGoals": ["cognitive-development", "skill-building"],
+        "difficultyLevel": 1,
+        "evidenceBase": [],
+        "adaptations": [
+            {
+                "name": "General Support",
+                "description": "Provide general encouragement and support",
+                "targetNeeds": ["general"],
+                "evidenceBased": False
+            }
+        ],
+        "dataCollection": {
+            "primaryMetrics": ["accuracy", "response-time"],
+            "secondaryMetrics": []
+        }
     }

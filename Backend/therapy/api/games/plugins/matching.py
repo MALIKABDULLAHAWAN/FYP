@@ -49,23 +49,36 @@ HARD_ITEMS = MEDIUM_ITEMS + [
     {"id": "square", "label": "Square", "category": "shape"},
 ]
 
+EXTREME_ITEMS = HARD_ITEMS + [
+    {"id": "pineapple", "label": "Pineapple", "category": "fruit"},
+    {"id": "pomegranate", "label": "Pomegranate", "category": "fruit"},
+    {"id": "motorcycle", "label": "Motorcycle", "category": "vehicle"},
+    {"id": "spaceship", "label": "Spaceship", "category": "vehicle"},
+    {"id": "giraffe", "label": "Giraffe", "category": "animal"},
+    {"id": "elephant", "label": "Elephant", "category": "animal"},
+    {"id": "hexagon", "label": "Hexagon", "category": "shape"},
+    {"id": "octagon", "label": "Octagon", "category": "shape"},
+]
+
 
 def _pool_for_level(level: int):
     if level <= 1:
         return EASY_ITEMS
     elif level <= 2:
         return MEDIUM_ITEMS
-    return HARD_ITEMS
+    elif level <= 4:
+        return HARD_ITEMS
+    return EXTREME_ITEMS
 
 
-def _matching_image_url(label: str) -> str:
+def _matching_image_url(label: str, seed: int = 0) -> str:
     gi = GameImage.objects.filter(
         game_type="memory_match", name__iexact=label, is_active=True
     ).first()
     if gi and gi.image:
         return gi.image.url
-    meta = get_game_item_metadata("memory_match", label)
-    return meta.get("fallback_image_url") or stable_fallback_image_url(label)
+    meta = get_game_item_metadata("memory_match", label, seed=seed)
+    return meta.get("fallback_image_url") or stable_fallback_image_url(label, seed=seed)
 
 
 def _num_options(level: int) -> int:
@@ -73,7 +86,11 @@ def _num_options(level: int) -> int:
         return 3
     elif level <= 2:
         return 4
-    return 5
+    elif level == 3:
+        return 5
+    elif level == 4:
+        return 6
+    return 8
 
 
 @register
@@ -93,7 +110,11 @@ class MatchingGame:
         correct = completed.filter(success=True).count()
         accuracy = correct / total
 
-        if accuracy >= 0.85 and total >= 3:
+        if accuracy >= 0.90 and total >= 6:
+            return 5
+        elif accuracy >= 0.85 and total >= 4:
+            return 4
+        elif accuracy >= 0.80 and total >= 3:
             return 3
         elif accuracy >= 0.65:
             return 2
@@ -102,6 +123,9 @@ class MatchingGame:
     def build_trial(self, level: int, *, session_id: Optional[int] = None) -> Dict[str, Any]:
         pool = _pool_for_level(level)
         n_opts = _num_options(level)
+        
+        # Generate a random seed for image variety in this trial
+        seed = random.randint(1, 10000)
 
         target_item = random.choice(pool)
         distractors = [i for i in pool if i["id"] != target_item["id"]]
@@ -119,8 +143,12 @@ class MatchingGame:
             prompt = f"Find the {target_item['label']}!"
             highlight = None
             ai_hint = f"Which one is the {target_item['label']}?"
-        else:
+        elif level == 3:
             prompt = f"Can you find the {target_item['label']}?"
+            highlight = None
+            ai_hint = None
+        else:
+            prompt = f"Where is the {target_item['label']} located?"
             highlight = None
             ai_hint = None
 
@@ -133,14 +161,14 @@ class MatchingGame:
                 {
                     "id": o["id"],
                     "label": o["label"],
-                    "image_url": _matching_image_url(o["label"]),
+                    "image_url": _matching_image_url(o["label"], seed=seed),
                 }
                 for o in options
             ],
-            "time_limit_ms": max(6000, 12000 - (level * 2000)),
+            "time_limit_ms": max(4000, 12000 - (level * 1800)),
             "ai_hint": ai_hint,
             "ai_reason": f"Level {level} matching trial",
-            "extra": {"level": level, "category": target_item["category"]},
+            "extra": {"level": level, "category": target_item["category"], "seed": seed},
         }
 
     def evaluate(
@@ -159,9 +187,9 @@ class MatchingGame:
         score = 10 if success else (3 if clicked == target else 0)
 
         if success:
-            if response_time_ms < 2000:
+            if response_time_ms < 1500:
                 feedback = "Lightning fast! Amazing match!"
-            elif response_time_ms < 4000:
+            elif response_time_ms < 3000:
                 feedback = "Great job matching!"
             else:
                 feedback = "Correct match! Well done!"
@@ -193,4 +221,25 @@ class MatchingGame:
                 "timed_out": timed_out,
                 "level": level,
             },
+        }
+
+    def get_metadata(self) -> Dict[str, Any]:
+        return {
+            "id": self.code,
+            "name": self.game_name,
+            "therapeuticGoals": ["cognitive-flexibility", "pattern-recognition", "visual-discrimination"],
+            "difficultyLevel": 1,
+            "evidenceBase": [],
+            "adaptations": [
+                {
+                    "name": "Visual Prompts",
+                    "description": "Highlight the correct answer for initial learning trials.",
+                    "targetNeeds": ["initial-learning", "low-confidence"],
+                    "evidenceBased": True
+                }
+            ],
+            "dataCollection": {
+                "primaryMetrics": ["matching-accuracy", "completion-time"],
+                "secondaryMetrics": []
+            }
         }

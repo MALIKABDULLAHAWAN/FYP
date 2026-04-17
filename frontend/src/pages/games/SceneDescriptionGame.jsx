@@ -11,8 +11,14 @@ import { startGameSession, nextGameTrial } from "../../api/games";
 import { apiFetch } from "../../api/client";
 import SummaryPanel from "../../components/summarypanel";
 import UiIcon from "../../components/ui/UiIcon";
+import DifficultyIndicator from "../../components/DifficultyIndicator";
 
-const API_BASE = (import.meta.env.VITE_API_BASE || "http://127.0.0.1:8000").replace(/\/+$/, "");
+const API_BASE = (
+  import.meta.env.VITE_API_BASE ||
+  import.meta.env.VITE_API_URL ||
+  import.meta.env.VITE_API_BASE_URL ||
+  "http://127.0.0.1:8000"
+).replace(/\/+$/, "").replace(/\/api$/, "");
 
 export default function SceneDescriptionGame() {
   const navigate = useNavigate();
@@ -38,6 +44,7 @@ export default function SceneDescriptionGame() {
   const [submitting, setSubmitting] = useState(false);
   const [evaluation, setEvaluation] = useState(null);
   const [voiceEnabled, setVoiceEnabled] = useState(false);
+  const [difficulty, setDifficulty] = useState(1);
 
   // ── TTS ──
   const speak = useCallback(
@@ -80,7 +87,7 @@ export default function SceneDescriptionGame() {
     setLoading(true);
     setError("");
     try {
-      const res = await startGameSession("scene_description", selectedChild, 5);
+      const res = await startGameSession("scene_description", selectedChild, 20, { difficulty_level: difficulty });
       const sid = res.session?.session_id;
       setSessionId(sid);
       setStatus(res.session?.status);
@@ -183,6 +190,13 @@ export default function SceneDescriptionGame() {
             You will be shown scenario images. Describe what you see as completely as you can.
             An AI will evaluate your description and give you feedback.
           </p>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 24 }}>
+            <DifficultyIndicator 
+              difficulty={difficulty} 
+              interactive={true} 
+              onDifficultyChange={setDifficulty} 
+            />
+          </div>
           <button className="btn btn-primary btn-lg" onClick={startGame} disabled={loading}>
             {loading ? <><span className="spinner" style={{ width: 18, height: 18, marginRight: 8 }} /> Starting...</> : "Start Game"}
           </button>
@@ -209,7 +223,7 @@ export default function SceneDescriptionGame() {
         <div>
           <div className="h1">Scene Description</div>
           <div className="sub">
-            Trial {trialNum} / 5{scenarioTitle ? ` — ${scenarioTitle}` : ""}
+            Trial {trialNum} / 20{scenarioTitle ? ` — ${scenarioTitle}` : ""}
           </div>
         </div>
         <div className="row" style={{ gap: 10 }}>

@@ -6,7 +6,7 @@ export default function ObjectDiscovery() {
       gameCode="object_discovery"
       gameName="Object Discovery"
       gameIconName="search"
-      trialCount={8}
+      trialCount={20}
       multiSelect={true}
     />
   );

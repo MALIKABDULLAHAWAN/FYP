@@ -71,7 +71,11 @@ class SystemIntegration {
       const healthCheck = await this.performHealthCheck();
       
       if (!healthCheck.healthy) {
-        throw new Error(`System health check failed: ${healthCheck.issues.join(', ')}`);
+        console.warn(`System health issues detected: ${healthCheck.issues.join(', ')}`);
+        // Continue but marked as degraded if health check fails
+        this.systemHealth.status = 'degraded';
+      } else {
+        this.systemHealth.status = 'healthy';
       }
       
       this.initialized = true;

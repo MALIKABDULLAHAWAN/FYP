@@ -38,7 +38,7 @@
       "metadata": {
         "description": "Fruit: banana"
       },
-      "fallback_image_url": "https://loremflickr.com/320/320/ball?lock=6"
+      "fallback_image_url": "https://loremflickr.com/320/320/banana?lock=2"
     },
     {
       "name": "Cat",

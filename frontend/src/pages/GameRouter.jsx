@@ -87,7 +87,20 @@ const GAMES = [
     difficulty: "Advanced",
     difficultyColor: "#fc8181",
     recommended: false,
-    playTime: "15-20 min",
+  },
+  {
+    code: "story_adventure",
+    path: "/games/story-adventure",
+    name: "AI Story Adventures",
+    iconName: "book",
+    description: "Go on a magical, infinite journey created just for you by the Story Weaver AI!",
+    color: "rgba(107, 70, 193, 0.25)",
+    border: "rgba(107, 70, 193, 0.4)",
+    skills: ["Imagination", "Reading", "Decision Making", "Creativity"],
+    difficulty: "Advanced",
+    difficultyColor: "#fc8181",
+    recommended: true,
+    playTime: "10-20 min",
   },
 ];
 
@@ -188,6 +201,7 @@ function GameCard({ game, navigate }) {
     if (game.code === "matching") return "card-cute-mint";
     if (game.code === "memory_match") return "card-cute-lavender";
     if (game.code === "object_discovery") return "card-cute-cream";
+    if (game.code === "story_adventure") return "card-cute-purple";
     return "";
   };
 

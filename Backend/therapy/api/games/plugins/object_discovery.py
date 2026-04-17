@@ -89,7 +89,7 @@ CATEGORIES = {
 CAT_KEYS = list(CATEGORIES.keys())
 
 
-def _object_discovery_image_url(item_id: str) -> str:
+def _object_discovery_image_url(item_id: str, seed: int = 0) -> str:
     """Photo URL from seeded media, or deterministic placeholder from dataset metadata."""
     label = item_id.replace("_", " ").strip().title()
     gi = GameImage.objects.filter(
@@ -99,8 +99,8 @@ def _object_discovery_image_url(item_id: str) -> str:
     ).first()
     if gi and gi.image:
         return gi.image.url
-    meta = get_game_item_metadata("object_discovery", label)
-    return meta.get("fallback_image_url") or stable_fallback_image_url(label)
+    meta = get_game_item_metadata("object_discovery", label, seed=seed)
+    return meta.get("fallback_image_url") or stable_fallback_image_url(label, seed=seed)
 
 
 def _cats_for_level(level: int) -> int:
@@ -108,7 +108,9 @@ def _cats_for_level(level: int) -> int:
         return 1
     elif level <= 2:
         return 2
-    return 3
+    elif level <= 4:
+        return 3
+    return 4
 
 
 def _target_count(level: int) -> int:
@@ -116,7 +118,9 @@ def _target_count(level: int) -> int:
         return 2
     elif level <= 2:
         return 3
-    return 3
+    elif level <= 4:
+        return 4
+    return 5
 
 
 @register
@@ -136,7 +140,11 @@ class ObjectDiscoveryGame:
         correct = completed.filter(success=True).count()
         accuracy = correct / total
 
-        if accuracy >= 0.80 and total >= 3:
+        if accuracy >= 0.90 and total >= 6:
+            return 5
+        elif accuracy >= 0.85 and total >= 4:
+            return 4
+        elif accuracy >= 0.80 and total >= 3:
             return 3
         elif accuracy >= 0.60:
             return 2
@@ -145,6 +153,9 @@ class ObjectDiscoveryGame:
     def build_trial(self, level: int, *, session_id: Optional[int] = None) -> Dict[str, Any]:
         target_cat_key = random.choice(CAT_KEYS)
         target_cat = CATEGORIES[target_cat_key]
+        
+        # Generate a random seed for image variety in this trial
+        seed = random.randint(1, 10000)
 
         n_correct = _target_count(level)
         n_distractor_cats = _cats_for_level(level)
@@ -158,9 +169,12 @@ class ObjectDiscoveryGame:
         chosen_distractor_keys = distractor_cat_keys[:n_distractor_cats]
 
         distractor_items = []
+        # Increase number of items per distractor category for higher levels
+        items_per_dist = 2 if level <= 3 else 3
+        
         for dk in chosen_distractor_keys:
             items = CATEGORIES[dk]["items"]
-            distractor_items.extend(random.sample(items, min(2, len(items))))
+            distractor_items.extend(random.sample(items, min(items_per_dist, len(items))))
 
         all_options = correct_items + distractor_items
         random.shuffle(all_options)
@@ -175,8 +189,12 @@ class ObjectDiscoveryGame:
             prompt = f"Can you find all the {target_cat['label']}?"
             highlight = None
             ai_hint = f"How many {target_cat_key} can you spot?"
-        else:
+        elif level == 3:
             prompt = f"Select all the {target_cat['label']}!"
+            highlight = None
+            ai_hint = None
+        else:
+            prompt = f"Identify every {target_cat['label']} in the group."
             highlight = None
             ai_hint = None
 
@@ -185,7 +203,7 @@ class ObjectDiscoveryGame:
             row = {
                 "id": o["id"],
                 "label": o["label"],
-                "image_url": _object_discovery_image_url(o["id"]),
+                "image_url": _object_discovery_image_url(o["id"], seed=seed),
             }
             options_out.append(row)
 
@@ -195,15 +213,16 @@ class ObjectDiscoveryGame:
             "target_id": ",".join(target_ids),
             "highlight": highlight,
             "options": options_out,
-            "time_limit_ms": max(8000, 15000 - (level * 2000)),
+            "time_limit_ms": max(6000, 15000 - (level * 1800)),
             "ai_hint": ai_hint,
-            "ai_reason": f"Level {level} object discovery – category: {target_cat_key}",
+            "ai_reason": f"Level {level} object discovery \u2013 category: {target_cat_key}",
             "extra": {
                 "level": level,
                 "category": target_cat_key,
                 "category_label": target_cat["label"],
                 "correct_count": len(target_ids),
                 "game_mode": "category_select",
+                "seed": seed,
             },
         }
 
@@ -270,4 +289,33 @@ class ObjectDiscoveryGame:
                 "wrong_picks": list(clicked_ids - target_ids),
                 "missed": list(target_ids - clicked_ids),
             },
+        }
+
+    def get_metadata(self) -> Dict[str, Any]:
+        return {
+            "id": self.code,
+            "name": self.game_name,
+            "therapeuticGoals": ["vocabulary-expansion", "categorization", "receptive-language"],
+            "difficultyLevel": 2,
+            "evidenceBase": [
+                {
+                    "title": "Categorization Skills in Autism: Intervention Approaches",
+                    "authors": "Roberts, S., et al.",
+                    "journal": "Research in Autism Spectrum Disorders",
+                    "year": 2022,
+                    "doi": "10.1016/j.rasd.2022.101987"
+                }
+            ],
+            "adaptations": [
+                {
+                    "name": "Category Highlighting",
+                    "description": "Provide a visual cue for the target category.",
+                    "targetNeeds": ["visual-processing", "comprehension-support"],
+                    "evidenceBased": True
+                }
+            ],
+            "dataCollection": {
+                "primaryMetrics": ["accuracy", "response_time_ms"],
+                "secondaryMetrics": ["category_accuracy"]
+            }
         }

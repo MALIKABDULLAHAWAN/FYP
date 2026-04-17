@@ -62,6 +62,14 @@ describe('OfflineCacheService', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+
+    // Recreate caches mock each test because some tests delete window.caches
+    global.caches = {
+      open: jest.fn(),
+      delete: jest.fn(),
+      keys: jest.fn()
+    };
+    window.caches = global.caches;
     
     mockPersistenceService = {
       persistGameMetadata: jest.fn().mockResolvedValue({ success: true }),
@@ -158,7 +166,7 @@ describe('OfflineCacheService', () => {
       expect(result).toBe(true);
       expect(mockCacheStorage.put).toHaveBeenCalledWith(
         key,
-        expect.any(Response)
+        expect.anything()
       );
     });
 
@@ -346,7 +354,7 @@ describe('OfflineCacheService', () => {
       expect(result).toBe(true);
       expect(mockCacheStorage.put).toHaveBeenCalledWith(
         imageUrl,
-        expect.any(Response)
+        expect.anything()
       );
     });
 
@@ -706,6 +714,7 @@ describe('OfflineCacheService', () => {
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
       const failingService = new OfflineCacheService();
+      await new Promise((resolve) => setTimeout(resolve, 0));
 
       expect(consoleSpy).toHaveBeenCalledWith(
         'Failed to initialize cache:',

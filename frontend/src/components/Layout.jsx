@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useNotifications, NotificationBell, NotificationsPanel } from "./NotificationsCenter";
 import { StickerLayer } from "./StickerLayer";
+import { MusicPlayer, MusicPlayerButton } from "./MusicPlayer";
 import UiIcon from "./ui/UiIcon";
 import "./Layout.css";
 import "../styles/professional.css";
@@ -13,6 +14,7 @@ const NAV_ITEMS = [
   { to: "/voice-assistant", label: "🎙️ Dhyan", icon: "microphone" },
   { to: "/therapist", label: "Therapy", icon: "therapist" },
   { to: "/games", label: "Fun Games", icon: "games" },
+  { to: "/sticker-pack", label: "Sticker Album", icon: "star" },
   { to: "/speech-therapy", label: "Talking Time", icon: "speech" },
   { to: "/profile", label: "My Profile", icon: "profile" },
   { to: "/settings", label: "Settings", icon: "settings" },
@@ -24,6 +26,7 @@ export default function Layout({ children }) {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [musicOpen, setMusicOpen] = useState(false);
   const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification, clearAll } = useNotifications();
 
   const handleLogout = () => {
@@ -154,6 +157,13 @@ export default function Layout({ children }) {
       <main className="main-content">
         {children}
       </main>
+
+      {/* Background Music Player - available on every page */}
+      {musicOpen ? (
+        <MusicPlayer isOpen={musicOpen} onClose={() => setMusicOpen(false)} />
+      ) : (
+        <MusicPlayerButton onClick={() => setMusicOpen(true)} />
+      )}
     </div>
   );
 }

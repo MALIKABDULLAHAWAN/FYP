@@ -51,24 +51,28 @@ from speech.permissions import CanAccessSpeechTrial, is_admin, is_therapist, the
 logger = logging.getLogger(__name__)
 
 
+from therapy.dataset_metadata import stable_fallback_image_url
+
+
 def _is_speech_trial(trial: SessionTrial) -> bool:
     return (trial.trial_type or "").lower() in {
         "speech_prompt", "speech", "speech_therapy",
     }
 
 
-def _resolve_prompt(activity: SpeechActivity, trial_index: int, used: set) -> tuple[str, str]:
+def _resolve_prompt(activity: SpeechActivity, trial_index: int, used: set, seed: int = 0) -> tuple[str, str, str | None]:
     """
     Pick a concrete item from the activity's prompt pool and fill in the
-    template.  Returns (prompt_text, target_text).
+    template.  Returns (prompt_text, target_text, image_url).
 
     Pool keys tried (in order):
-      questions_pool → phrases_pool → sentences_pool → words_pool → items_pool
+      questions_pool \u2192 phrases_pool \u2192 sentences_pool \u2192 words_pool \u2192 items_pool
 
     Falls back to the raw template text if no pool is found.
     """
     payload = activity.prompt_payload or {}
     template = payload.get("text", activity.name)
+    image_url = None
 
     # ── Questions (yes/no, WH) ──────────────────────────────────────────
     pool = payload.get("questions_pool")
@@ -79,29 +83,31 @@ def _resolve_prompt(activity: SpeechActivity, trial_index: int, used: set) -> tu
             target = item.get("answer", item.get("expected_keywords", ""))
             if isinstance(target, list):
                 target = ", ".join(target)
-            return question, str(target)
-        return str(item), ""
+            return question, str(target), None
+        return str(item), "", None
 
     # ── Sentences ────────────────────────────────────────────────────────
     pool = payload.get("sentences_pool")
     if pool:
         sentence = _pick_unique(pool, used)
         prompt = template.replace("{sentence}", sentence)
-        return prompt, sentence
+        return prompt, sentence, None
 
     # ── Phrases ──────────────────────────────────────────────────────────
     pool = payload.get("phrases_pool")
     if pool:
         phrase = _pick_unique(pool, used)
         prompt = template.replace("{phrase}", phrase)
-        return prompt, phrase
+        return prompt, phrase, None
 
     # ── Words ────────────────────────────────────────────────────────────
     pool = payload.get("words_pool")
     if pool:
         word = _pick_unique(pool, used)
         prompt = template.replace("{word}", word)
-        return prompt, word
+        # Variety: use seeding even for words
+        image_url = stable_fallback_image_url(word, seed=seed)
+        return prompt, word, image_url
 
     # ── Items (picture naming) ───────────────────────────────────────────
     pool = payload.get("items_pool")
@@ -109,10 +115,12 @@ def _resolve_prompt(activity: SpeechActivity, trial_index: int, used: set) -> tu
         item = _pick_unique(pool, used, key=lambda x: x if isinstance(x, str) else x.get("word", ""))
         word = item.get("word", str(item)) if isinstance(item, dict) else str(item)
         prompt = template.replace("{item}", word)
-        return prompt, word
+        # Variety: use seeding for Picture Naming
+        image_url = stable_fallback_image_url(word, seed=seed)
+        return prompt, word, image_url
 
-    # ── No pool — use template as-is ────────────────────────────────────
-    return template, activity.expected_text or ""
+    # ── No pool \u2014 use template as-is ────────────────────────────────────
+    return template, activity.expected_text or "", None
 
 
 def _pick_unique(pool: list, used: set, key=None) -> object:
@@ -242,7 +250,9 @@ class SpeechSessionStartView(APIView):
         used_prompts: set = set()     # avoid duplicate prompts across trials
         trials = []
         for i in range(data["trials_planned"]):
-            prompt_text, target_text = _resolve_prompt(activity, i, used_prompts)
+            # Generate a random seed for variety in each trial's image
+            seed = random.randint(1, 100000)
+            prompt_text, target_text, image_url = _resolve_prompt(activity, i, used_prompts, seed=seed)
 
             trial = SessionTrial.objects.create(
                 session=session,
@@ -267,6 +277,7 @@ class SpeechSessionStartView(APIView):
                 "trial_number": i + 1,
                 "prompt": prompt_text,
                 "target_text": target_text or activity.expected_text,
+                "image_url": image_url,
                 "status": trial.status,
             })
 

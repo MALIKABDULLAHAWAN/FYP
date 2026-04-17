@@ -127,6 +127,10 @@ class AgeValidationErrorHandler {
    * Get age-appropriate alternative games
    */
   getAgeAppropriateAlternatives(childAge, originalGame) {
+    const originalGoals = Array.isArray(originalGame.therapeutic_goals)
+      ? originalGame.therapeutic_goals
+      : [];
+
     // This would typically call GameMetadataService.getAgeAppropriateAlternatives
     // For now, we'll return a mock structure
     const cacheKey = `${childAge}-${originalGame.game_id}`;
@@ -143,7 +147,7 @@ class AgeValidationErrorHandler {
         description: 'A fun memory game perfect for your age!',
         age_range: { min_age: Math.max(3, childAge - 1), max_age: Math.min(12, childAge + 1) },
         difficulty_level: this.recommendDifficulty(childAge),
-        therapeutic_goals: originalGame.therapeutic_goals.slice(0, 2), // Share some goals
+        therapeutic_goals: originalGoals.slice(0, 2), // Share some goals
         similarity_score: 0.8,
         reason_suggested: 'Similar therapeutic goals, age-appropriate'
       },
@@ -153,7 +157,7 @@ class AgeValidationErrorHandler {
         description: 'Just the right level of challenge for you!',
         age_range: { min_age: childAge, max_age: childAge + 2 },
         difficulty_level: this.recommendDifficulty(childAge),
-        therapeutic_goals: originalGame.therapeutic_goals,
+        therapeutic_goals: originalGoals,
         similarity_score: 0.9,
         reason_suggested: 'Exact age match, same therapeutic goals'
       }

@@ -445,16 +445,15 @@ class AggressiveCacheManager {
     ];
     
     for (const key of criticalKeys) {
-      try {
-        // Check if already cached
-        const cached = await this.get(key);
+      this.get(key).then(cached => {
         if (!cached) {
-          // Preload would happen here based on key type
-          console.log(`Preloading critical data: ${key}`);
+          console.log(`[CacheManager] Preloading missing critical data: ${key}`);
+          // In a real app, this might trigger a fetch. 
+          // For now, it just identifies what needs to be fetched.
         }
-      } catch (error) {
-        console.warn(`Failed to preload ${key}:`, error);
-      }
+      }).catch(error => {
+        console.warn(`[CacheManager] Failed to check status of ${key}:`, error);
+      });
     }
   }
 

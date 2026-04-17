@@ -107,3 +107,12 @@ class GameSummaryView(APIView):
             session_id=int(session_id),
         )
         return Response(out)
+
+
+class GameMetadataView(APIView):
+    """GET /api/v1/therapy/games/<game_code>/metadata/"""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, game_code: str):
+        out = engine.get_game_metadata(game_code=game_code)
+        return Response(out)

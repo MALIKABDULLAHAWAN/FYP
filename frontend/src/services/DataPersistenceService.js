@@ -13,7 +13,7 @@
 
 class DataPersistenceService {
   constructor() {
-    this.apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000/api';
+    this.apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
     this.isOnline = navigator.onLine;
     this.syncQueue = [];
     this.persistenceCache = new Map();
@@ -52,8 +52,18 @@ class DataPersistenceService {
    * Initialize IndexedDB for offline storage
    */
   async initializeOfflineStorage() {
+    if (typeof indexedDB === 'undefined' || typeof indexedDB.open !== 'function') {
+      this.db = null;
+      return;
+    }
+
     return new Promise((resolve, reject) => {
       const request = indexedDB.open('DhyanTherapyDB', 1);
+      if (!request) {
+        this.db = null;
+        resolve();
+        return;
+      }
       
       request.onerror = () => {
         console.error('Failed to initialize offline storage');
@@ -402,6 +412,7 @@ class DataPersistenceService {
    * @private
    */
   async storeOffline(storeName, data) {
+    if (!this.db) return null;
     return new Promise((resolve, reject) => {
       const transaction = this.db.transaction([storeName], 'readwrite');
       const store = transaction.objectStore(storeName);
@@ -418,6 +429,18 @@ class DataPersistenceService {
    * @private
    */
   async queueForSync(operation, data) {
+    if (!this.db) {
+      const queueItem = {
+        id: Date.now(),
+        operation,
+        data,
+        timestamp: new Date().toISOString(),
+        retry_count: 0
+      };
+      this.syncQueue.push(queueItem);
+      return queueItem.id;
+    }
+
     const queueItem = {
       operation,
       data,
@@ -444,6 +467,9 @@ class DataPersistenceService {
    * @private
    */
   async getQueuedOperations() {
+    if (!this.db) {
+      return this.syncQueue;
+    }
     return new Promise((resolve, reject) => {
       const transaction = this.db.transaction(['syncQueue'], 'readonly');
       const store = transaction.objectStore('syncQueue');
@@ -477,6 +503,10 @@ class DataPersistenceService {
    * @private
    */
   async removeFromQueue(operationId) {
+    if (!this.db) {
+      this.syncQueue = this.syncQueue.filter((item) => item.id !== operationId);
+      return;
+    }
     return new Promise((resolve, reject) => {
       const transaction = this.db.transaction(['syncQueue'], 'readwrite');
       const store = transaction.objectStore('syncQueue');

@@ -19,7 +19,13 @@ export default function AIAgentPanel({ initialAgent = "gameHelper", onClose }) {
   const currentAgent = getAIAgent(selectedAgent);
 
   useEffect(() => {
-    setAiConfigured(isAIConfigured());
+    // Check AI configuration asynchronously
+    const checkAI = async () => {
+      const configured = await isAIConfigured();
+      setAiConfigured(configured);
+    };
+    checkAI();
+    
     // Add welcome message
     setMessages([{
       role: "assistant",
@@ -52,11 +58,11 @@ export default function AIAgentPanel({ initialAgent = "gameHelper", onClose }) {
         content: m.content
       }));
 
-      const response = await callGroqAI(inputMessage, selectedAgent, history);
+      const responseText = await callGroqAI(inputMessage, selectedAgent, history);
 
       const aiMessage = {
         role: "assistant",
-        content: response,
+        content: responseText,
         timestamp: new Date()
       };
 
@@ -105,7 +111,7 @@ export default function AIAgentPanel({ initialAgent = "gameHelper", onClose }) {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          zIndex: 1000,
+          zIndex: 510,
           animation: "aiFloat 3s ease-in-out infinite"
         }}
       >
@@ -126,7 +132,7 @@ export default function AIAgentPanel({ initialAgent = "gameHelper", onClose }) {
       borderRadius: "24px",
       boxShadow: "0 20px 60px rgba(0, 0, 0, 0.15)",
       border: "2px solid rgba(255, 255, 255, 0.8)",
-      zIndex: 1000,
+      zIndex: 510,
       display: "flex",
       flexDirection: "column",
       overflow: "hidden"
@@ -247,19 +253,6 @@ export default function AIAgentPanel({ initialAgent = "gameHelper", onClose }) {
         flexDirection: "column",
         gap: "12px"
       }}>
-        {!aiConfigured && (
-          <div style={{
-            background: "#fff3cd",
-            border: "1px solid #ffeaa7",
-            borderRadius: "12px",
-            padding: "12px",
-            fontSize: "12px",
-            color: "#856404"
-          }}>
-            ⚠️ AI not fully configured. Add your Groq API key to .env file for full AI power!
-          </div>
-        )}
-        
         {messages.map((message, index) => (
           <div
             key={index}
@@ -390,7 +383,7 @@ export function AIAgentButton({ onClick, agentKey = "gameHelper" }) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        zIndex: 999,
+        zIndex: 500,
         animation: "aiFloat 3s ease-in-out infinite, aiGlow 2s ease-in-out infinite alternate"
       }}
       title={`Chat with ${agent.name}`}

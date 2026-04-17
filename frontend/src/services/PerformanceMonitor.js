@@ -16,7 +16,7 @@ class PerformanceMonitor {
       enableCoreWebVitals: options.enableCoreWebVitals !== false,
       enableCustomMetrics: options.enableCustomMetrics !== false,
       enableRUM: options.enableRUM !== false,
-      reportingEndpoint: options.reportingEndpoint || '/api/performance',
+      reportingEndpoint: options.reportingEndpoint ?? null,
       reportingInterval: options.reportingInterval || 30000, // 30 seconds
       performanceBudgets: options.performanceBudgets || {
         LCP: 2500, // 2.5 seconds
@@ -498,6 +498,11 @@ class PerformanceMonitor {
    */
   async reportMetrics(immediate = false) {
     if (this.reportingQueue.length === 0) return;
+    if (!this.options.reportingEndpoint) {
+      // No backend collector configured in this environment.
+      this.reportingQueue = [];
+      return;
+    }
 
     const metricsToReport = [...this.reportingQueue];
     this.reportingQueue = [];
@@ -524,7 +529,7 @@ class PerformanceMonitor {
       }
 
       // Only log in development mode
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         console.log(`Reported ${metricsToReport.length} performance metrics`);
       }
     } catch (error) {

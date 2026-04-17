@@ -19,6 +19,12 @@ export function GameMetadataDisplay({ game, imageUrl = null }) {
   }
 
   const difficultyColors = {
+    1: '#2ECC71',
+    2: '#7ED321',
+    3: '#F1C40F',
+    4: '#F39C12',
+    5: '#E74C3C',
+    // Fallbacks
     Easy: '#2ECC71',
     Medium: '#F1C40F',
     Hard: '#E74C3C',

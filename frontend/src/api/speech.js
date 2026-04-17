@@ -19,7 +19,7 @@ export function createSpeechActivity(data) {
 
 // ── Sessions ──
 
-export function startSpeechSession({ child_id, activity_id, trials_planned = 8, supervision_mode = "therapist", prompt_level = 0 }) {
+export function startSpeechSession({ child_id, activity_id, trials_planned = 20, supervision_mode = "therapist", prompt_level = 0 }) {
   return apiFetch(`${BASE}/sessions/start`, {
     method: "POST",
     body: { child_id, activity_id, trials_planned, supervision_mode, prompt_level },

@@ -33,6 +33,7 @@ export function startGameSession(gameCode, childId, trialCount = 10, opts = {}) 
       time_limit_ms: opts.time_limit_ms || 10000,
       supervision_mode: opts.supervision_mode || "therapist",
       session_title: opts.session_title || null,
+      difficulty_level: opts.difficulty_level || 1,
     },
   });
 }

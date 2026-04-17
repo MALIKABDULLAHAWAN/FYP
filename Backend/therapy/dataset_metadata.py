@@ -15,8 +15,8 @@ from pathlib import Path
 _DATA_PATH = Path(__file__).resolve().parent / "data" / "labeled_game_images.json"
 
 
-def stable_fallback_image_url(name: str, w: int = 320, h: int = 320, tags: list = None) -> str:
-    """Deterministic placeholder photo URL when no media file is seeded (Lorem Flickr with tags)."""
+def stable_fallback_image_url(name: str, w: int = 320, h: int = 320, tags: list = None, seed: int = 0) -> str:
+    """Deterministic placeholder photo URL with optional seed for variety."""
     slug = re.sub(r"[^a-zA-Z0-9]+", "-", (name or "item").lower()).strip("-")[:48] or "item"
     # Use provided tags for better accuracy, fallback to name
     if tags and len(tags) > 0:
@@ -25,7 +25,8 @@ def stable_fallback_image_url(name: str, w: int = 320, h: int = 320, tags: list 
     else:
         tag_str = slug
     # Use Lorem Flickr with multiple tags and a lock for consistency
-    lock = hash(name) % 10000
+    # Adding seed allows for variety while maintaining determinism for a specific round
+    lock = (hash(name) + seed) % 10000
     return f"https://loremflickr.com/{w}/{h}/{tag_str}?lock={lock}"
 
 
@@ -45,7 +46,7 @@ def load_dataset() -> dict:
         return json.load(f)
 
 
-def get_game_item_metadata(game_key: str, name: str) -> dict:
+def get_game_item_metadata(game_key: str, name: str, seed: int = 0) -> dict:
     """Return merged metadata for a GameImage row (match by `name` or `title`)."""
     data = load_dataset()
     for item in data.get(game_key, []):
@@ -64,23 +65,25 @@ def get_game_item_metadata(game_key: str, name: str) -> dict:
             elif item.get("loremflickr_tags"):
                 meta["fallback_image_url"] = stable_fallback_image_url(
                     item.get("label") or name,
-                    tags=item.get("loremflickr_tags")
+                    tags=item.get("loremflickr_tags"),
+                    seed=seed
                 )
             elif item.get("fallback_image_url"):
                 meta["fallback_image_url"] = item["fallback_image_url"]
             else:
                 meta.setdefault("fallback_image_url", stable_fallback_image_url(
                     item.get("label") or name,
-                    tags=item.get("loremflickr_tags")
+                    tags=item.get("loremflickr_tags"),
+                    seed=seed
                 ))
             return meta
     return {
-        "fallback_image_url": stable_fallback_image_url(name),
+        "fallback_image_url": stable_fallback_image_url(name, seed=seed),
         "label": re.sub(r"[^a-zA-Z0-9]+", "-", (name or "item").lower()).strip("-") or "item",
     }
 
 
-def get_scenario_metadata(title: str) -> dict:
+def get_scenario_metadata(title: str, seed: int = 0) -> dict:
     for item in load_dataset().get("scene_description", []):
         if item.get("title") == title:
             meta = dict(item.get("metadata") or {})
@@ -93,12 +96,12 @@ def get_scenario_metadata(title: str) -> dict:
             if item.get("fallback_image_url"):
                 meta["fallback_image_url"] = item["fallback_image_url"]
             else:
-                meta.setdefault("fallback_image_url", stable_fallback_image_url(item.get("label") or title))
+                meta.setdefault("fallback_image_url", stable_fallback_image_url(item.get("label") or title, seed=seed))
             return meta
-    return {"fallback_image_url": stable_fallback_image_url(title)}
+    return {"fallback_image_url": stable_fallback_image_url(title, seed=seed)}
 
 
-def get_problem_solving_metadata(title: str) -> dict:
+def get_problem_solving_metadata(title: str, seed: int = 0) -> dict:
     for item in load_dataset().get("problem_solving", []):
         if item.get("title") == title:
             meta = dict(item.get("metadata") or {})
@@ -111,6 +114,6 @@ def get_problem_solving_metadata(title: str) -> dict:
             if item.get("fallback_image_url"):
                 meta["fallback_image_url"] = item["fallback_image_url"]
             else:
-                meta.setdefault("fallback_image_url", stable_fallback_image_url(item.get("label") or title))
+                meta.setdefault("fallback_image_url", stable_fallback_image_url(item.get("label") or title, seed=seed))
             return meta
-    return {"fallback_image_url": stable_fallback_image_url(title)}
+    return {"fallback_image_url": stable_fallback_image_url(title, seed=seed)}

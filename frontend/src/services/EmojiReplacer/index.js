@@ -55,6 +55,11 @@ export {
   systemHealthMonitor 
 };
 
+// Backwards-compatible singleton exports used by older tests.
+const emojiReplacer = getSystemIntegration();
+const assetManager = emojiReplacer.assetManager;
+export { emojiReplacer, assetManager };
+
 /**
  * Initialize the complete emoji replacement system
  * @param {Object} options - Initialization options

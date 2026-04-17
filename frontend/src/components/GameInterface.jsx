@@ -28,6 +28,17 @@ import Confetti from './Confetti';
 import UiIcon from './ui/UiIcon';
 import PatternToken from './ui/PatternToken';
 import GameOptionMedia from './GameOptionMedia';
+import AchievementDisplay from './AchievementDisplay';
+import { 
+  AmbientParticles, 
+  BouncingStars, 
+  SuccessBurst, 
+  FloatingEmoji, 
+  MagicalSparkles,
+  FloatingOrbs
+} from './AmbientEffects';
+import { generateEncouragement, getPersonalizedHint } from '../services/aiServiceEnhanced';
+import achievementSystem from '../services/AchievementSystem';
 
 // Styles
 import '../styles/professional.css';
@@ -59,11 +70,20 @@ export default function GameInterface({
   const [streak, setStreak] = useState(0);
 
   // Enhanced features
+  const [burstTrigger, setBurstTrigger] = useState(false);
+  const [showEmoji, setShowEmoji] = useState(false);
+  const [achievements, setAchievements] = useState([]);
+  const [aiEncouragement, setAiEncouragement] = useState("");
+  const [wrongAttempts, setWrongAttempts] = useState(0);
+  const [aiHint, setAiHint] = useState("");
+  const [hintLoading, setHintLoading] = useState(false);
+
   const [gameMetadata, setGameMetadata] = useState(null);
+
   const [gameImage, setGameImage] = useState(null);
   const [imageLoading, setImageLoading] = useState(false);
   const [imageError, setImageError] = useState(false);
-  const [currentDifficulty, setCurrentDifficulty] = useState('Medium');
+  const [currentDifficulty, setCurrentDifficulty] = useState(1);
   const [difficultyAdjusted, setDifficultyAdjusted] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(false);
   const [showCompletionScreen, setShowCompletionScreen] = useState(false);
@@ -79,33 +99,29 @@ export default function GameInterface({
   // Load game metadata
   const loadGameMetadata = async () => {
     try {
-      // In a real implementation, this would fetch from the backend
-      // For now, we'll create sample metadata
-      const metadata = {
+      const service = new GameMetadataService();
+      const metadata = await service.getGameMetadata(gameCode);
+      
+      // Map properties to what UI components expect, ensuring fallbacks
+      const standardMetadata = {
         game_id: gameCode,
-        title: gameName,
-        description: `Engaging ${gameName.toLowerCase()} game designed for therapeutic learning`,
-        therapeutic_goals: ['cognitive-development', 'problem-solving', 'attention-building'],
-        difficulty_level: currentDifficulty,
-        age_range: { min_age: 3, max_age: 12 },
-        image_url: `/assets/games/${gameCode}/main-image.svg`,
-        image_attribution: {
+        title: metadata.name || gameName,
+        description: metadata.description || `Engaging ${gameName.toLowerCase()} game designed for therapeutic learning`,
+        therapeutic_goals: metadata.therapeuticGoals || ['cognitive-development', 'problem-solving', 'attention-building'],
+        difficulty_level: metadata.difficultyLevel || currentDifficulty,
+        age_range: metadata.ageRange || { min_age: 3, max_age: 12 },
+        image_url: metadata.imageUrl || `/assets/games/${gameCode}/main-image.svg`,
+        image_attribution: metadata.imageAttribution || {
           photographer: 'Therapeutic Games Studio',
           license: 'CC-BY-4.0',
           source: 'Therapeutic Learning Resources',
           usage_rights: 'Educational use permitted'
         },
-        evidence_base: [{
-          citation: 'Smith, J. et al. (2023). Effectiveness of digital therapeutic games.',
-          publication_year: 2023,
-          effectiveness_rating: 0.85,
-          sample_size: 150,
-          study_type: 'RCT'
-        }]
+        evidence_base: metadata.evidenceBase || []
       };
 
-      setGameMetadata(metadata);
-      loadGameImage(metadata);
+      setGameMetadata(standardMetadata);
+      loadGameImage(standardMetadata);
     } catch (error) {
       console.error('Failed to load game metadata:', error);
     }
@@ -291,8 +307,23 @@ export default function GameInterface({
           setShowConfetti(true);
           setTimeout(() => setShowConfetti(false), 2000);
         }
+        setBurstTrigger(true);
+        setShowEmoji(true);
+        setTimeout(() => {
+          setBurstTrigger(false);
+          setShowEmoji(false);
+        }, 1500);
       } else {
         setStreak(0);
+        const newWrong = wrongAttempts + 1;
+        setWrongAttempts(newWrong);
+        // Fetch AI hint after first wrong attempt
+        if (newWrong >= 1 && trial?.prompt) {
+          setHintLoading(true);
+          getPersonalizedHint(gameCode, trial.prompt, newWrong)
+            .then(hint => { setAiHint(hint); setHintLoading(false); })
+            .catch(() => setHintLoading(false));
+        }
       }
 
       // Check for real-time difficulty adjustment
@@ -310,11 +341,28 @@ export default function GameInterface({
           setShowCompletionScreen(true);
 
           const accuracy = Math.round((response.summary.correct_trials / response.summary.total_trials) * 100);
+          // Record session in AchievementSystem service (persists to localStorage)
+          achievementSystem.recordDailySession();
+          const newAchievements = achievementSystem.updateGameStats(gameCode, {
+            matches: response.summary.correct_trials,
+            boardsCompleted: 1,
+            correctResponses: response.summary.correct_trials,
+            totalResponses: response.summary.total_trials,
+            bestAccuracy: accuracy / 100,
+          });
           if (accuracy >= 80) {
             toast.achievement(`Great job! ${accuracy}% accuracy!`);
             setShowConfetti(true);
+            // Merge service achievements + inline earned
+            const inlineEarned = [];
+            if (accuracy === 100) inlineEarned.push({ name: "Perfect Score!", description: "You got every answer right! 🌟", icon: "star", color: "#F6C90E" });
+            if (accuracy >= 80) inlineEarned.push({ name: "Star Player", description: `Amazing! ${accuracy}% correct!`, icon: "trophy", color: "#4ECDC4" });
+            if (streak >= 5) inlineEarned.push({ name: "On Fire!", description: "5 correct answers in a row!", icon: "fire", color: "#FF6B6B" });
+            setAchievements([...inlineEarned, ...newAchievements]);
+            generateEncouragement(`${accuracy}% accuracy in ${gameName}`).then(msg => setAiEncouragement(msg)).catch(() => {});
           } else {
             toast.success("Session completed!");
+            if (newAchievements.length > 0) setAchievements(newAchievements);
           }
         } else if (sessionId) {
           try {
@@ -418,7 +466,16 @@ export default function GameInterface({
   const progressPercentage = (progress.current / progress.total) * 100;
 
   return (
-    <div className="game-interface">
+    <div className="game-interface" style={{ position: 'relative', minHeight: '100vh', zIndex: 1 }}>
+      <AmbientParticles />
+      <FloatingOrbs count={3} />
+      <BouncingStars />
+      <SuccessBurst trigger={burstTrigger} />
+      
+      {showEmoji && <FloatingEmoji emoji="🎉" x="50%" y="40%" delay={0} />}
+      {showEmoji && <FloatingEmoji emoji="🌟" x="30%" y="50%" delay={0.2} />}
+      {showEmoji && <FloatingEmoji emoji="✨" x="70%" y="30%" delay={0.1} />}
+
       {/* Header with game info and controls */}
       <div className="game-header">
         <div className="game-title-section">
@@ -469,6 +526,41 @@ export default function GameInterface({
 
       {/* Confetti animation */}
       {showConfetti && <Confetti />}
+
+      {/* Achievement popup */}
+      {achievements.length > 0 && (
+        <AchievementDisplay
+          achievements={achievements}
+          onClose={() => setAchievements([])}
+        />
+      )}
+
+      {/* AI Encouragement Banner */}
+      {aiEncouragement && !achievements.length && (
+        <div style={{
+          position: "fixed",
+          top: "80px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          background: "linear-gradient(135deg, #6c63ff, #a78bfa)",
+          color: "white",
+          padding: "14px 28px",
+          borderRadius: "16px",
+          fontFamily: "var(--font-fun)",
+          fontSize: "17px",
+          zIndex: 2000,
+          boxShadow: "0 8px 24px rgba(108,99,255,0.4)",
+          display: "flex",
+          alignItems: "center",
+          gap: "12px",
+          maxWidth: "90vw",
+          animation: "fadeInDown 0.5s ease-out"
+        }}>
+          <span style={{ fontSize: "24px" }}>🤖</span>
+          {aiEncouragement}
+          <button onClick={() => setAiEncouragement("")} style={{ background: "none", border: "none", color: "white", cursor: "pointer", fontSize: "20px", marginLeft: "8px" }}>×</button>
+        </div>
+      )}
 
       {/* Game image with attribution */}
       {gameImage && !showCompletionScreen && (
@@ -646,6 +738,33 @@ export default function GameInterface({
                 <span>Hint: {trial.ai_hint}</span>
               </div>
             )}
+
+            {/* AI-powered hint after wrong attempt */}
+            {aiHint && !showFeedback && (
+              <div style={{
+                marginTop: 12,
+                padding: '12px 16px',
+                background: 'linear-gradient(135deg, rgba(108,99,255,0.08), rgba(167,139,250,0.08))',
+                border: '1.5px solid rgba(108,99,255,0.25)',
+                borderRadius: 14,
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: 10,
+                animation: 'fadeInDown 0.4s ease-out'
+              }}>
+                <span style={{ fontSize: 22 }}>🤖</span>
+                <div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: '#6c63ff', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 3 }}>AI Hint</div>
+                  <div style={{ fontSize: 14, color: '#4a4a6a', lineHeight: 1.5 }}>{aiHint}</div>
+                </div>
+                <button onClick={() => setAiHint('')} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: '#aaa', fontSize: 18, flexShrink: 0 }}>×</button>
+              </div>
+            )}
+            {hintLoading && (
+              <div style={{ marginTop: 10, textAlign: 'center', color: '#6c63ff', fontSize: 13 }}>
+                <span>🤖 Getting a hint for you...</span>
+              </div>
+            )}
           </div>
 
           <div className="trial-options-grid">
@@ -693,70 +812,100 @@ export default function GameInterface({
         </div>
       )}
 
-      {/* Completion screen with positive reinforcement */}
-      {showCompletionScreen && summary && (
-        <div className="completion-screen">
-          <div className="completion-celebration">
-            <div className="completion-icon">
-              <UiIcon name="trophy" size={96} title="Congratulations!" />
-            </div>
-            
-            <div className="completion-title">
-              Fantastic Work!
-            </div>
-            
-            <div className="completion-subtitle">
-              You completed the {gameName} game!
-            </div>
-            
-            <div className="completion-stats">
-              <div className="stat-item">
-                <div className="stat-value">
-                  {Math.round((summary.correct_trials / summary.total_trials) * 100)}%
+      {/* Completion screen - enhanced with AI encouragement + achievement preview */}
+      {showCompletionScreen && summary && (() => {
+        const acc = Math.round((summary.correct_trials / summary.total_trials) * 100);
+        const progress = achievementSystem.getProgress();
+        return (
+          <div className="completion-screen" style={{ background: 'linear-gradient(135deg, rgba(108,99,255,0.06), rgba(250,209,240,0.15))' }}>
+            <div className="completion-celebration">
+
+              {/* Animated trophy + accuracy ring */}
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 32, marginBottom: 24, flexWrap: 'wrap' }}>
+                <div className="completion-icon" style={{ position: 'relative' }}>
+                  <UiIcon name="trophy" size={80} title="Congratulations!" />
+                  {acc === 100 && <MagicalSparkles />}
                 </div>
-                <div className="stat-label">Accuracy</div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: 56, fontWeight: 900, background: acc >= 80 ? 'linear-gradient(135deg, #6c63ff, #a78bfa)' : 'linear-gradient(135deg, #f6ad55, #ed8936)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{acc}%</div>
+                  <div style={{ fontSize: 14, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: 1 }}>Accuracy</div>
+                </div>
               </div>
-              
-              <div className="stat-item">
-                <div className="stat-value">{summary.correct_trials}</div>
-                <div className="stat-label">Correct</div>
+
+              <div className="completion-title" style={{ fontFamily: 'var(--font-fun)', fontSize: 32 }}>
+                {acc === 100 ? '🌟 Perfect Score!' : acc >= 80 ? '🎉 Fantastic Work!' : acc >= 60 ? '👍 Great Effort!' : '💪 Keep Practising!'}
               </div>
-              
-              <div className="stat-item">
-                <div className="stat-value">{summary.total_trials}</div>
-                <div className="stat-label">Total</div>
+
+              <div className="completion-subtitle">
+                You completed the {gameName} game!
               </div>
-            </div>
-            
-            <div className="completion-encouragement">
-              {summary.correct_trials / summary.total_trials >= 0.8 
-                ? "Outstanding performance! You're getting really good at this!"
-                : summary.correct_trials / summary.total_trials >= 0.6
-                ? "Great effort! You're making excellent progress!"
-                : "Good job trying your best! Every attempt helps you learn and grow!"
-              }
-            </div>
-            
-            <div className="completion-actions">
-              <button
-                className="btn btn-primary btn-lg"
-                onClick={handleStart}
-              >
-                <UiIcon name="play" size={20} />
-                Play Again!
-              </button>
-              
-              <button
-                className="btn btn-outline"
-                onClick={() => navigate("/games")}
-              >
-                <UiIcon name="arrow-left" size={18} />
-                Choose Another Game
-              </button>
+
+              {/* Stats row */}
+              <div className="completion-stats" style={{ gap: 32, marginBottom: 20 }}>
+                <div className="stat-item">
+                  <div className="stat-value" style={{ color: '#48bb78' }}>{summary.correct_trials}</div>
+                  <div className="stat-label">✅ Correct</div>
+                </div>
+                <div className="stat-item">
+                  <div className="stat-value" style={{ color: '#fc8181' }}>{summary.total_trials - summary.correct_trials}</div>
+                  <div className="stat-label">❌ Incorrect</div>
+                </div>
+                <div className="stat-item">
+                  <div className="stat-value" style={{ color: '#f6ad55' }}>{streak}</div>
+                  <div className="stat-label">🔥 Best Streak</div>
+                </div>
+              </div>
+
+              {/* AI encouragement message */}
+              {aiEncouragement && (
+                <div style={{
+                  background: 'linear-gradient(135deg, #6c63ff22, #a78bfa22)',
+                  border: '1.5px solid rgba(108,99,255,0.2)',
+                  borderRadius: 16,
+                  padding: '14px 20px',
+                  margin: '0 0 20px',
+                  fontSize: 16,
+                  color: '#4a4a6a',
+                  fontStyle: 'italic',
+                  display: 'flex',
+                  gap: 10,
+                  alignItems: 'center'
+                }}>
+                  <span style={{ fontSize: 24 }}>🤖</span>
+                  {aiEncouragement}
+                </div>
+              )}
+
+              {/* Persistent achievement progress from AchievementSystem */}
+              <div style={{ background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(8px)', borderRadius: 16, padding: '16px 20px', marginBottom: 20, textAlign: 'left' }}>
+                <div style={{ fontWeight: 700, fontSize: 14, color: '#6c63ff', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <UiIcon name="trophy" size={16} title="" />
+                  Your Badge Collection ({progress.earnedCount} / {progress.totalAchievements})
+                </div>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {progress.earnedAchievements.slice(0, 6).map(a => (
+                    <div key={a.id} title={a.description} style={{ background: a.color + '22', border: `1.5px solid ${a.color}`, borderRadius: 10, padding: '4px 12px', fontSize: 12, fontWeight: 600, color: a.color }}>
+                      {a.name}
+                    </div>
+                  ))}
+                  {progress.earnedCount === 0 && <span style={{ fontSize: 13, color: '#999' }}>Play more to earn badges!</span>}
+                </div>
+              </div>
+
+              <div className="completion-actions">
+                <button className="btn btn-primary btn-lg" onClick={() => { setWrongAttempts(0); setAiHint(''); setAiEncouragement(''); handleStart(); }}>
+                  <UiIcon name="play" size={20} />
+                  Play Again!
+                </button>
+                <button className="btn btn-outline" onClick={() => navigate("/games")}>
+                  <UiIcon name="arrow-left" size={18} />
+                  All Games
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Summary panel (existing component) */}
       {summary && !showCompletionScreen && (

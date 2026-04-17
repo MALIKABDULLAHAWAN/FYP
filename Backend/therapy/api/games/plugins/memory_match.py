@@ -17,13 +17,17 @@ from therapy.api.games.registry import register
 def _num_pairs(level: int) -> int:
     """Number of pairs on the board."""
     if level <= 1:
-        return 4   # 4 pairs = 8 cards (4x2 grid)
+        return 3   # 3 pairs = 6 cards (3x2 grid)
     elif level <= 2:
+        return 4   # 4 pairs = 8 cards (4x2 grid)
+    elif level == 3:
         return 6   # 6 pairs = 12 cards (4x3 grid)
-    return 8       # 8 pairs = 16 cards (4x4 grid)
+    elif level == 4:
+        return 8   # 8 pairs = 16 cards (4x4 grid)
+    return 10      # 10 pairs = 20 cards (4x5 grid)
 
 
-def _get_game_images(level: int, count: int) -> List[Dict[str, Any]]:
+def _get_game_images(level: int, count: int, seed: int = 0) -> List[Dict[str, Any]]:
     """Fetch random game images from database based on difficulty."""
     # Map level to difficulty
     difficulty = level
@@ -49,7 +53,7 @@ def _get_game_images(level: int, count: int) -> List[Dict[str, Any]]:
         selected = random.sample(images, count)
         out = []
         for img in selected:
-            meta = get_game_item_metadata("memory_match", img.name)
+            meta = get_game_item_metadata("memory_match", img.name, seed=seed)
             out.append(
                 {
                     "id": img.id,
@@ -57,7 +61,7 @@ def _get_game_images(level: int, count: int) -> List[Dict[str, Any]]:
                     "label": meta.get("label", img.name),
                     "image_url": img.image.url
                     if img.image
-                    else (meta.get("fallback_image_url") or stable_fallback_image_url(img.name)),
+                    else (meta.get("fallback_image_url") or stable_fallback_image_url(img.name, seed=seed)),
                     "category": img.category,
                     "metadata": meta,
                 }
@@ -71,19 +75,18 @@ def _get_game_images(level: int, count: int) -> List[Dict[str, Any]]:
     selected = random.sample(LABEL_POOL, min(count, len(LABEL_POOL)))
     out_fb = []
     for i, label in enumerate(selected):
-        m = get_game_item_metadata("memory_match", label)
+        m = get_game_item_metadata("memory_match", label, seed=seed)
         out_fb.append(
             {
                 "id": i,
                 "name": label,
                 "label": label,
-                "image_url": m.get("fallback_image_url") or stable_fallback_image_url(label),
+                "image_url": m.get("fallback_image_url") or stable_fallback_image_url(label, seed=seed),
                 "category": "word",
                 "metadata": m,
             }
         )
     return out_fb
-
 
 
 @register
@@ -103,17 +106,27 @@ class MemoryMatchGame:
         correct = completed.filter(success=True).count()
         accuracy = correct / total
 
-        if accuracy >= 0.85 and total >= 2:
+        if accuracy >= 0.90 and total >= 6:
+            return 5
+        elif accuracy >= 0.85 and total >= 4:
+            return 4
+        elif accuracy >= 0.80 and total >= 3:
             return 3
         elif accuracy >= 0.65:
             return 2
         return 1
 
     def build_trial(self, level: int, *, session_id: Optional[int] = None) -> Dict[str, Any]:
+        if session_id:
+            level = self.compute_level(session_id)
+            
         num = _num_pairs(level)
+        
+        # Generate a random seed for image variety in this trial
+        seed = random.randint(1, 10000)
 
         # Get game images from database
-        game_images = _get_game_images(level, num)
+        game_images = _get_game_images(level, num, seed=seed)
         
         # Create pairs (each image appears twice)
         cards = []
@@ -148,20 +161,25 @@ class MemoryMatchGame:
             cols = 4
         elif total_cards <= 12:
             cols = 4
-        else:
+        elif total_cards <= 16:
             cols = 4
+        else:
+            cols = 5
         rows = total_cards // cols
 
-        # Prompt fading
+        # Prompt hierarchy
         if level <= 1:
             prompt = f"Find {num} matching pairs! Flip two cards at a time."
-            ai_hint = "Start with corners — they're easier to remember!"
+            ai_hint = "Start with corners \u2014 they're easier to remember!"
         elif level == 2:
             prompt = f"Match all {num} pairs! Remember where each card is."
             ai_hint = "Try to remember each card position."
+        elif level == 3:
+            prompt = f"Can you find all {num} pairs with a 3x4 grid?"
+            ai_hint = "Focus on the patterns."
         else:
-            prompt = f"Match all {num} pairs! How few moves can you use?"
-            ai_hint = None
+            prompt = f"Master Level {level}! Match all {num} pairs!"
+            ai_hint = f"Large {rows}x{cols} grid \u2014 testing maximum memory span."
 
         # Target is the full card layout (for verification)
         pair_map = {c["id"]: c["pair_id"] for c in cards}
@@ -171,8 +189,8 @@ class MemoryMatchGame:
             "target": f"{num}_pairs",
             "target_id": f"{num}_pairs",
             "highlight": None,
-            "options": [],  # Not used — frontend handles card grid
-            "time_limit_ms": num * 15000,  # 15 seconds per pair
+            "options": [],  # Not used \u2014 frontend handles card grid
+            "time_limit_ms": max(30000, num * 12000),  # Scale time with count
             "ai_hint": ai_hint,
             "ai_reason": f"Level {level} memory match with {num} pairs",
             "extra": {
@@ -183,6 +201,7 @@ class MemoryMatchGame:
                 "grid_rows": rows,
                 "cards": cards,
                 "pair_map": pair_map,
+                "seed": seed,
             },
         }
 
@@ -274,4 +293,33 @@ class MemoryMatchGame:
                 "timed_out": timed_out,
                 "level": level,
             },
+        }
+
+    def get_metadata(self) -> Dict[str, Any]:
+        return {
+            "id": self.code,
+            "name": self.game_name,
+            "therapeuticGoals": ["visual-memory", "concentration", "working-memory", "pattern-recognition"],
+            "difficultyLevel": 2,
+            "evidenceBase": [
+                {
+                    "title": "Visual Memory and Working Memory in ASD",
+                    "authors": "Smith, A., et al.",
+                    "journal": "Research in Autism Spectrum Disorders",
+                    "year": 2022,
+                    "doi": "10.1016/j.rasd.2022.101987"
+                }
+            ],
+            "adaptations": [
+                {
+                    "name": "Reduced Distractors",
+                    "description": "Start with fewer pairs for children with high distractibility.",
+                    "targetNeeds": ["high-distractibility", "limited-attention"],
+                    "evidenceBased": True
+                }
+            ],
+            "dataCollection": {
+                "primaryMetrics": ["accuracy", "response_time_ms", "moves"],
+                "secondaryMetrics": ["efficiency"]
+            }
         }

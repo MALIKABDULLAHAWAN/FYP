@@ -86,19 +86,17 @@ export default function LandingPage() {
                 </button>
               </div>
             </div>
-            <div className="hero-visual">
-              <div className="hero-card">
-                <div className="hero-icon">
-                  <UiIcon name="brain" size={48} />
-                </div>
-                <div className="hero-stats">
-                  {STATS.map((stat, i) => (
-                    <div key={i} className="hero-stat">
-                      <div className="hero-stat-value">{stat.value}</div>
-                      <div className="hero-stat-label">{stat.label}</div>
-                    </div>
-                  ))}
-                </div>
+            <div className="hero-visual" style={{ perspective: "1000px" }}>
+              <div className="hero-image-container" style={{
+                transform: "rotateY(-15deg) rotateX(5deg)",
+                boxShadow: "0 25px 50px -12px rgba(99, 102, 241, 0.5)",
+                borderRadius: "32px",
+                overflow: "hidden",
+                border: "4px solid rgba(255, 255, 255, 0.4)",
+                background: "rgba(255, 255, 255, 0.1)",
+                backdropFilter: "blur(10px)"
+              }}>
+                <img src="/hero-bg.png" alt="DHYAN Therapy Platform" style={{ width: "100%", height: "auto", display: "block" }} />
               </div>
             </div>
           </div>

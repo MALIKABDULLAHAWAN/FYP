@@ -12,7 +12,7 @@ import GameMetadataService from '../services/GameMetadataService.js';
 import './DifficultyIndicator.css';
 
 const DifficultyIndicator = ({
-  difficulty = 'Medium',
+  difficulty = 1,
   showLabel = true,
   showDescription = false,
   size = 'medium',
@@ -55,12 +55,13 @@ const DifficultyIndicator = ({
 
       {interactive && (
         <div className="difficulty-selector">
-          {['Easy', 'Medium', 'Hard'].map((level) => (
+          {[1, 2, 3, 4, 5].map((level) => (
             <button
               key={level}
               className={`difficulty-option ${difficulty === level ? 'active' : ''}`}
               onClick={() => handleDifficultyClick(level)}
               aria-pressed={difficulty === level}
+              title={`Switch to Level ${level}`}
             >
               {level}
             </button>

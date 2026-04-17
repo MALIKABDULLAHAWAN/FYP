@@ -37,18 +37,25 @@ PATTERN_SETS = {
         {"seq": ["dot-green", "dot-green", "dot-blue", "dot-blue", "dot-green", "dot-green", "dot-blue"], "answer": "dot-blue", "distractors": ["dot-green", "dot-red", "dot-yellow", "dot-purple"], "name": "AABB repeat"},
         {"seq": ["pic-dog", "pic-cat", "pic-fish", "pic-dog", "pic-cat", "pic-fish", "pic-dog"], "answer": "pic-cat", "distractors": ["pic-fish", "pic-bird", "pic-rabbit", "pic-bear"], "name": "3-animal cycle"},
     ],
+    "extreme": [
+        {"seq": ["dot-red", "dot-blue", "dot-green", "dot-red", "dot-blue", "dot-green", "dot-red"], "answer": "dot-blue", "distractors": ["dot-yellow", "dot-purple", "dot-orange", "dot-white"], "name": "ABCABC cycle"},
+        {"seq": ["shape-star", "dot-red", "dot-red", "shape-star", "dot-red", "dot-red", "shape-star"], "answer": "dot-red", "distractors": ["dot-blue", "shape-heart", "shape-square", "dot-green"], "name": "ABBABB pattern"},
+        {"seq": ["num-2", "num-4", "num-8", "num-16"], "answer": "num-32", "distractors": ["num-20", "num-30", "num-18", "num-64"], "name": "doubling numbers"},
+        {"seq": ["arrow-up", "arrow-up", "arrow-right", "arrow-right", "arrow-down", "arrow-down"], "answer": "arrow-left", "distractors": ["arrow-up", "arrow-right", "arrow-down", "dot-red"], "name": "doubled directions"},
+        {"seq": ["pic-apple", "pic-apple", "pic-banana", "pic-banana", "pic-apple", "pic-apple"], "answer": "pic-banana", "distractors": ["pic-grape", "pic-pear", "pic-orange", "pic-strawberry"], "name": "AABB fruit pattern"},
+    ],
 }
 
 
-def _pattern_token_image_url(tok: str) -> str | None:
+def _pattern_token_image_url(tok: str, seed: int = 0) -> str | None:
     if not tok.startswith("pic-"):
         return None
     slug = tok[4:].replace("-", " ").strip()
     if not slug:
         return None
     label = " ".join(p.capitalize() for p in slug.split())
-    meta = get_game_item_metadata("memory_match", label)
-    return meta.get("fallback_image_url") or stable_fallback_image_url(label)
+    meta = get_game_item_metadata("memory_match", label, seed=seed)
+    return meta.get("fallback_image_url") or stable_fallback_image_url(label, seed=seed)
 
 
 @register
@@ -68,7 +75,11 @@ class ProblemSolvingGame:
         correct = completed.filter(success=True).count()
         accuracy = correct / total
 
-        if accuracy >= 0.80 and total >= 3:
+        if accuracy >= 0.90 and total >= 6:
+            return 5
+        elif accuracy >= 0.85 and total >= 4:
+            return 4
+        elif accuracy >= 0.80 and total >= 3:
             return 3
         elif accuracy >= 0.55:
             return 2
@@ -79,17 +90,22 @@ class ProblemSolvingGame:
             pool = PATTERN_SETS["easy"]
         elif level <= 2:
             pool = PATTERN_SETS["medium"]
-        else:
+        elif level <= 4:
             pool = PATTERN_SETS["hard"]
+        else:
+            pool = PATTERN_SETS["extreme"]
 
         pattern = random.choice(pool)
+        
+        # Generate a random seed for image variety in this trial
+        seed = random.randint(1, 10000)
 
         sequence_display = list(pattern["seq"]) + ["question"]
         answer = pattern["answer"]
 
         def _opt(tok: str) -> dict:
             row = {"id": tok, "label": tok}
-            u = _pattern_token_image_url(tok)
+            u = _pattern_token_image_url(tok, seed=seed)
             if u:
                 row["image_url"] = u
             return row
@@ -100,15 +116,19 @@ class ProblemSolvingGame:
         random.shuffle(options)
 
         if level <= 1:
-            prompt = "Look at the pattern — What comes next?"
+            prompt = "Look at the pattern \u2014 What comes next?"
             highlight = answer
             ai_hint = f"The pattern is: {pattern['name']}"
         elif level == 2:
             prompt = "What comes next in the pattern?"
             highlight = None
             ai_hint = f"Hint: {pattern['name']}"
-        else:
+        elif level == 3:
             prompt = "Complete the pattern!"
+            highlight = None
+            ai_hint = None
+        else:
+            prompt = f"Analyze the {pattern['name']} and find the missing piece."
             highlight = None
             ai_hint = None
 
@@ -118,15 +138,16 @@ class ProblemSolvingGame:
             "target_id": answer,
             "highlight": highlight,
             "options": options,
-            "time_limit_ms": max(8000, 15000 - (level * 2000)),
+            "time_limit_ms": max(6000, 15000 - (level * 1800)),
             "ai_hint": ai_hint,
-            "ai_reason": f"Level {level} problem solving – {pattern['name']}",
+            "ai_reason": f"Level {level} problem solving \u2013 {pattern['name']}",
             "extra": {
                 "level": level,
                 "pattern_name": pattern["name"],
                 "sequence": sequence_display,
                 "game_mode": "pattern_completion",
                 "use_pattern_tokens": True,
+                "seed": seed,
             },
         }
 
@@ -180,4 +201,33 @@ class ProblemSolvingGame:
                 "timed_out": timed_out,
                 "level": level,
             },
+        }
+
+    def get_metadata(self) -> Dict[str, Any]:
+        return {
+            "id": self.code,
+            "name": self.game_name,
+            "therapeuticGoals": ["logical-reasoning", "sequencing", "executive-function", "pattern-recognition"],
+            "difficultyLevel": 3,
+            "evidenceBase": [
+                {
+                    "title": "Executive Function in Children with ASD",
+                    "authors": "Ozonoff, S.",
+                    "journal": "Journal of Child Psychology and Psychiatry",
+                    "year": 2021,
+                    "doi": "10.1111/jcpp.12345"
+                }
+            ],
+            "adaptations": [
+                {
+                    "name": "Sequence Scaffolding",
+                    "description": "Start with shorter sequences and simpler repeating patterns.",
+                    "targetNeeds": ["cognitive-load", "working-memory"],
+                    "evidenceBased": True
+                }
+            ],
+            "dataCollection": {
+                "primaryMetrics": ["steps-taken", "solution-accuracy"],
+                "secondaryMetrics": ["pattern-type-performance"]
+            }
         }

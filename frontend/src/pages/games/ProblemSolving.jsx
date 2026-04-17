@@ -6,7 +6,7 @@ export default function ProblemSolving() {
       gameCode="problem_solving"
       gameName="Problem Solving"
       gameIconName="puzzle"
-      trialCount={8}
+      trialCount={20}
       multiSelect={false}
     />
   );
