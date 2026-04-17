@@ -16,6 +16,7 @@ import ProgressRing from "../../components/ProgressRing";
 import "../../styles/professional.css";
 import Confetti from "../../components/Confetti";
 import UiIcon from "../../components/ui/UiIcon";
+import SummaryPanel from "../../components/summarypanel";
 import AssetManager from "../../services/EmojiReplacer/AssetManager";
 import GameMetadataService from "../../services/EmojiReplacer/GameMetadataService";
 
@@ -62,13 +63,7 @@ const CATEGORY_ICONS = {
   category_naming: "Category",
 };
 
-const CATEGORY_IMAGES = {
-  repetition: "/images/speech-repetition-activity.jpg",
-  picture_naming: "/images/picture-naming-activity.jpg",
-  questions: "/images/question-answer-activity.jpg",
-  story_retell: "/images/story-retell-activity.jpg",
-  category_naming: "/images/category-naming-activity.jpg",
-};
+// Broken images removed
 
 // ─── TTS Hook ────────────────────────────────────────────────────────────────
 
@@ -445,11 +440,7 @@ export default function SpeechTherapy() {
       <div className="header">
         <div>
           <div className="h1" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <img 
-              src="/images/speech-therapy-professional.jpg" 
-              alt="Speech therapy professional with child in clinical setting"
-              style={{ width: 48, height: 48, borderRadius: 8, objectFit: 'cover' }}
-            />
+            <UiIcon name="speech" size={48} />
             Speech Therapy
           </div>
           <div className="sub">
@@ -463,11 +454,7 @@ export default function SpeechTherapy() {
             title={tts.enabled ? "Voice prompts ON" : "Voice prompts OFF"}
             style={{ display: 'flex', alignItems: 'center', gap: 6 }}
           >
-            <img 
-              src={tts.enabled ? "/images/speaker-on-icon.jpg" : "/images/speaker-off-icon.jpg"}
-              alt={tts.enabled ? "Voice prompts enabled" : "Voice prompts disabled"}
-              style={{ width: 20, height: 20, objectFit: 'cover' }}
-            />
+            <UiIcon name={tts.enabled ? "volume" : "volume-off"} size={20} />
             {tts.enabled ? "Voice On" : "Voice Off"}
           </button>
           {session && (
@@ -543,13 +530,9 @@ export default function SpeechTherapy() {
                     textAlign: "center", transition: "all 0.15s",
                   }}
                 >
-                  {CATEGORY_IMAGES[a.category] && (
-                    <img 
-                      src={CATEGORY_IMAGES[a.category]}
-                      alt={`${a.name} therapeutic activity`}
-                      style={{ width: '100%', height: 60, objectFit: 'cover', borderRadius: 6, marginBottom: 6 }}
-                    />
-                  )}
+                  <div style={{ width: '100%', height: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.05)', borderRadius: 6, marginBottom: 6 }}>
+                    <UiIcon name="microphone" size={24} />
+                  </div>
                   <div style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--muted)', marginBottom: 4 }}>{tag}</div>
                   <div style={{ fontSize: 12, fontWeight: 600, lineHeight: 1.3 }}>{a.name}</div>
                   <div style={{ fontSize: 10, opacity: 0.5, marginTop: 2 }}>L{a.difficulty_level}</div>
@@ -636,11 +619,7 @@ export default function SpeechTherapy() {
               </>
             ) : (
               <>
-                <img 
-                  src="/images/play-button-icon.jpg"
-                  alt="Start session"
-                  style={{ width: 18, height: 18, objectFit: 'cover' }}
-                />
+                <UiIcon name="play" size={18} />
                 Start Speech Session
               </>
             )}
@@ -692,11 +671,7 @@ export default function SpeechTherapy() {
               }}
               title="Speak prompt aloud"
             >
-              <img 
-                src={tts.speaking ? "/images/speaker-active-icon.jpg" : "/images/speaker-icon.jpg"}
-                alt={tts.speaking ? "Speaking prompt" : "Speak prompt"}
-                style={{ width: 16, height: 16, objectFit: 'cover' }}
-              />
+              <UiIcon name={tts.speaking ? "volume" : "volume-off"} size={16} />
             </button>
 
             <div style={{ fontSize: 22, fontWeight: 600, marginBottom: 8, lineHeight: 1.4 }}>
@@ -742,11 +717,7 @@ export default function SpeechTherapy() {
               }}
               onClick={handleStartRecording}
             >
-              <img 
-                src="/images/microphone-professional.jpg"
-                alt="Professional microphone for recording"
-                style={{ width: 24, height: 24, objectFit: 'cover' }}
-              />
+              <UiIcon name="microphone" size={24} />
               Start Recording
             </button>
           )}
@@ -759,11 +730,7 @@ export default function SpeechTherapy() {
                 display: "flex", alignItems: "center", justifyContent: "center",
                 animation: "pulse 1.5s ease-in-out infinite",
               }}>
-                <img 
-                  src="/images/microphone-recording.jpg"
-                  alt="Recording in progress"
-                  style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: '50%' }}
-                />
+                <UiIcon name="microphone" size={40} />
               </div>
               <div style={{ fontSize: 28, fontWeight: 700, marginBottom: 4 }}>
                 {recordingTime}s
@@ -778,11 +745,7 @@ export default function SpeechTherapy() {
                 }}
                 onClick={handleStopRecording}
               >
-                <img 
-                  src="/images/stop-button-icon.jpg"
-                  alt="Stop recording"
-                  style={{ width: 18, height: 18, objectFit: 'cover' }}
-                />
+                <UiIcon name="close" size={18} />
                 Stop Recording
               </button>
             </div>
@@ -794,11 +757,7 @@ export default function SpeechTherapy() {
       {phase === "processing" && (
         <div className="panel" style={{ maxWidth: 620, textAlign: "center" }}>
           <h3 style={{ marginBottom: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-            <img 
-              src="/images/headphones-icon.jpg"
-              alt="Review recording"
-              style={{ width: 24, height: 24, objectFit: 'cover' }}
-            />
+            <UiIcon name="volume" size={24} />
             Review Recording
           </h3>
 
@@ -812,11 +771,7 @@ export default function SpeechTherapy() {
               style={{ flex: 1, background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.3)", display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
               onClick={() => { setPhase("active"); setAudioBlob(null); setAudioUrl(null); }}
             >
-              <img 
-                src="/images/refresh-icon.jpg"
-                alt="Re-record"
-                style={{ width: 16, height: 16, objectFit: 'cover' }}
-              />
+              <UiIcon name="refresh" size={16} />
               Re-record
             </button>
             <button
@@ -827,11 +782,7 @@ export default function SpeechTherapy() {
             >
               {loading ? "Analyzing..." : (
                 <>
-                  <img 
-                    src="/images/upload-icon.jpg"
-                    alt="Upload and analyze"
-                    style={{ width: 16, height: 16, objectFit: 'cover' }}
-                  />
+                  <UiIcon name="upload" size={16} />
                   Upload & Analyze
                 </>
               )}
@@ -855,11 +806,7 @@ export default function SpeechTherapy() {
           </div>
 
           <h3 style={{ marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <img 
-              src="/images/analytics-chart-icon.jpg"
-              alt="Trial results"
-              style={{ width: 24, height: 24, objectFit: 'cover' }}
-            />
+            <UiIcon name="chart" size={24} />
             Trial {currentTrialIndex + 1} Results
           </h3>
 
@@ -886,11 +833,7 @@ export default function SpeechTherapy() {
                   style={{ marginTop: 6, padding: "4px 12px", fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}
                   onClick={() => tts.speak(analysis.analysis.transcript_text)}
                 >
-                  <img 
-                    src="/images/speaker-icon.jpg"
-                    alt="Play back transcript"
-                    style={{ width: 14, height: 14, objectFit: 'cover' }}
-                  />
+                  <UiIcon name="volume" size={14} />
                   Play Back Transcript
                 </button>
               )}
@@ -974,9 +917,9 @@ export default function SpeechTherapy() {
             <label className="form-label" style={{ marginBottom: 8 }}>Therapist Score</label>
             <div style={{ display: "flex", gap: 10 }}>
               {[
-                { score: "success", label: "Success", bg: "16,185,129", icon: "/images/success-checkmark.jpg" },
-                { score: "partial", label: "Partial", bg: "245,158,11", icon: "/images/partial-icon.jpg" },
-                { score: "fail", label: "Fail", bg: "239,68,68", icon: "/images/fail-icon.jpg" },
+                { score: "success", label: "Success", bg: "16,185,129", icon: "check" },
+                { score: "partial", label: "Partial", bg: "245,158,11", icon: "star" },
+                { score: "fail", label: "Fail", bg: "239,68,68", icon: "close" },
               ].map(({ score, label, bg, icon }) => (
                 <button
                   key={score}
@@ -989,11 +932,7 @@ export default function SpeechTherapy() {
                   onClick={() => handleScore(score)}
                   disabled={loading}
                 >
-                  <img 
-                    src={icon}
-                    alt={label}
-                    style={{ width: 18, height: 18, objectFit: 'cover' }}
-                  />
+                  <UiIcon name={icon} size={18} />
                   {label}
                 </button>
               ))}
@@ -1005,46 +944,23 @@ export default function SpeechTherapy() {
       {/* ══════════ SUMMARY PHASE ══════════ */}
       {phase === "summary" && summary && (() => {
         const accPct = Math.round((summary.accuracy || 0) * 100);
-        const isGood = accPct >= 70;
-        const heading = accPct >= 90 ? "Outstanding!" : accPct >= 70 ? "Great Job!" : accPct >= 50 ? "Good Effort!" : "Keep Practicing!";
-        const celebrationIcon = accPct >= 90 ? "/images/trophy-icon.jpg" : accPct >= 70 ? "/images/star-icon.jpg" : accPct >= 50 ? "/images/thumbs-up-icon.jpg" : "/images/strength-icon.jpg";
+        // Normalise into the format SummaryPanel expects
+        const panelData = {
+          accuracy: summary.accuracy || 0,
+          total_trials: summary.total_completed,
+          correct: summary.correct,
+          suggestion: accPct >= 70
+            ? "Awesome speech session! Keep it up!"
+            : "Good effort! Practice makes perfect.",
+        };
         return (
-        <div className="celebration-panel" style={{ maxWidth: 680, margin: "0 auto", animation: "feedbackIn .5s var(--ease-out)" }}>
-          {isGood && <Confetti duration={4000} />}
-
-          {/* Celebration Header */}
-          <div style={{ textAlign: "center", marginBottom: 20 }}>
-            <div style={{ marginBottom: 8 }}>
-              <img 
-                src={celebrationIcon}
-                alt={heading}
-                style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 8 }}
-              />
-            </div>
-            <div style={{ fontSize: 22, fontWeight: 800 }}>{heading}</div>
-            <div style={{ color: "var(--muted)", fontSize: 13, marginTop: 4 }}>Speech Therapy Session Complete</div>
-          </div>
-
-          {/* Accuracy Ring */}
-          <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
-            <ProgressRing
-              value={accPct}
-              size={100}
-              strokeWidth={9}
-              color={accPct >= 70 ? "#10b981" : accPct >= 40 ? "#f59e0b" : "#ef4444"}
-            />
-          </div>
-
-          {/* Stats */}
-          <div className="stats-grid" style={{ marginBottom: 16 }}>
-            <div className="stat-card"><div className="stat-value">{summary.total_completed}</div><div className="stat-label">Trials</div></div>
-            <div className="stat-card stat-card-success"><div className="stat-value">{summary.correct}</div><div className="stat-label">Correct</div></div>
-            <div className="stat-card stat-card-warning"><div className="stat-value">{summary.partial || 0}</div><div className="stat-label">Partial</div></div>
-          </div>
+        <div style={{ maxWidth: 680, margin: "0 auto" }}>
+          {/* Shared SummaryPanel — awards sticker if accuracy >= 70% */}
+          <SummaryPanel data={panelData} />
 
           {/* Trial Breakdown Table */}
           {summary.trials?.length > 0 && (
-            <div className="table-wrapper" style={{ marginBottom: 16 }}>
+            <div className="table-wrapper" style={{ margin: "16px 0" }}>
               <table className="data-table">
                 <thead>
                   <tr><th>#</th><th>Target</th><th>Response</th><th>Result</th></tr>
@@ -1072,14 +988,10 @@ export default function SpeechTherapy() {
 
           <button
             className="btn btn-primary btn-lg"
-            style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+            style={{ width: "100%", marginTop: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
             onClick={handleNewSession}
           >
-            <img 
-              src="/images/refresh-icon.jpg"
-              alt="Start new session"
-              style={{ width: 20, height: 20, objectFit: 'cover' }}
-            />
+            <UiIcon name="refresh" size={20} />
             Start New Session
           </button>
         </div>

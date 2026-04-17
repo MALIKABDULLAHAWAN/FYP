@@ -234,7 +234,7 @@ export default function GameInterface({
   }
 
   // Start game session
-  async function handleStart() {
+  async function handleStart(targetLevel = currentDifficulty) {
     if (!selectedChild) {
       setError("Please select a child from the Games page first");
       return;
@@ -250,7 +250,9 @@ export default function GameInterface({
     setStreak(0);
 
     try {
-      const response = await startGameSession(gameCode, parseInt(selectedChild), trialCount);
+      const response = await startGameSession(gameCode, parseInt(selectedChild), trialCount, {
+        difficulty_level: targetLevel
+      });
       setSessionId(response.session?.session_id);
       
       if (response.first_trial && !response.first_trial.detail) {
@@ -467,14 +469,6 @@ export default function GameInterface({
 
   return (
     <div className="game-interface" style={{ position: 'relative', minHeight: '100vh', zIndex: 1 }}>
-      <AmbientParticles />
-      <FloatingOrbs count={3} />
-      <BouncingStars />
-      <SuccessBurst trigger={burstTrigger} />
-      
-      {showEmoji && <FloatingEmoji emoji="🎉" x="50%" y="40%" delay={0} />}
-      {showEmoji && <FloatingEmoji emoji="🌟" x="30%" y="50%" delay={0.2} />}
-      {showEmoji && <FloatingEmoji emoji="✨" x="70%" y="30%" delay={0.1} />}
 
       {/* Header with game info and controls */}
       <div className="game-header">
@@ -711,6 +705,29 @@ export default function GameInterface({
               {trial.prompt}
             </div>
             
+            {/* Visual Sample specifically for matching games */}
+            {(gameCode === "matching" || gameCode === "memory_match") && trial.target && (
+              <div className="matching-sample" style={{ 
+                margin: "12px auto", 
+                padding: "16px", 
+                background: "var(--surface-color)", 
+                borderRadius: "var(--radius-lg)", 
+                display: "inline-flex",
+                flexDirection: "column",
+                alignItems: "center",
+                border: "2px dashed var(--primary-light)",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.05)"
+              }}>
+                <div style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 8, fontWeight: 600, textTransform: "uppercase" }}>Match this:</div>
+                <GameOptionMedia 
+                  opt={trial.options?.find(o => o.id === trial.target || o.id === trial.target_id)} 
+                  usePatternTokens={usePatternTokens} 
+                  imageSize={120} 
+                />
+              </div>
+            )}
+
+            
             {trial.extra?.category_label && (
               <div className="trial-category">
                 {trial.extra.category_label}
@@ -789,7 +806,7 @@ export default function GameInterface({
                     <GameOptionMedia 
                       opt={option} 
                       usePatternTokens={usePatternTokens} 
-                      imageSize={96} 
+                      imageSize={160} 
                     />
                   </div>
                 </div>
@@ -892,24 +909,45 @@ export default function GameInterface({
                 </div>
               </div>
 
-              <div className="completion-actions">
-                <button className="btn btn-primary btn-lg" onClick={() => { setWrongAttempts(0); setAiHint(''); setAiEncouragement(''); handleStart(); }}>
-                  <UiIcon name="play" size={20} />
-                  Play Again!
-                </button>
-                <button className="btn btn-outline" onClick={() => navigate("/games")}>
-                  <UiIcon name="arrow-left" size={18} />
-                  All Games
-                </button>
+              <div className="completion-actions" style={{ display: 'none' }}>
+                {/* Replaced by SummaryPanel buttons, hiding the old ones to avoid duplication */}
               </div>
+            </div>
+            
+            <div style={{ padding: '0 24px 24px' }}>
+              <SummaryPanel 
+                data={{...summary, current_level: currentDifficulty}} 
+                lastTrialText=""
+                onHome={() => navigate("/games")}
+                onRetryLevel={() => { setWrongAttempts(0); setAiHint(''); setAiEncouragement(''); handleStart(currentDifficulty); }}
+                onNextLevel={() => {
+                  const nextLevel = Math.min(5, currentDifficulty + 1);
+                  setCurrentDifficulty(nextLevel);
+                  setDifficultyAdjusted(true);
+                  setWrongAttempts(0); setAiHint(''); setAiEncouragement('');
+                  handleStart(nextLevel);
+                }}
+              />
             </div>
           </div>
         );
       })()}
 
-      {/* Summary panel (existing component) */}
+      {/* Summary panel for immediate abandonment (fallback if completion screen isn't shown) */}
       {summary && !showCompletionScreen && (
-        <SummaryPanel data={summary} lastResult={lastResult} />
+        <SummaryPanel 
+          data={{...summary, current_level: currentDifficulty}} 
+          lastTrialText={""}
+          onHome={() => navigate("/games")}
+          onRetryLevel={() => { setWrongAttempts(0); setAiHint(''); setAiEncouragement(''); handleStart(currentDifficulty); }}
+          onNextLevel={() => {
+            const nextLevel = Math.min(5, currentDifficulty + 1);
+            setCurrentDifficulty(nextLevel);
+            setDifficultyAdjusted(true);
+            setWrongAttempts(0); setAiHint(''); setAiEncouragement('');
+            handleStart(nextLevel);
+          }}
+        />
       )}
     </div>
   );

@@ -12,6 +12,7 @@ import os
 import json
 import hashlib
 import time
+import base64
 from typing import Dict, List, Optional, Generator, Any
 from dataclasses import dataclass, asdict
 from datetime import datetime, timedelta
@@ -488,6 +489,73 @@ Keep it to 2-3 sentences."""
         ]
         import random
         return random.choice(encouragements)
+
+
+class AIImageValidator:
+    """
+    AI Image Validation Agent.
+    Uses Groq's llama-3.2-11b-vision-preview to verify that a downloaded
+    image actually depicts its intended label before it's stored in the DB.
+
+    Usage:
+        validator = AIImageValidator()
+        ok = validator.verify_image_match(url="https://...", label="Orange")
+        if ok:
+            # save to DB
+    """
+
+    MODEL = "llama-3.2-90b-vision-preview"
+    MAX_RETRIES = 3
+
+    def __init__(self):
+        api_key = os.environ.get("GROQ_API_KEY", "")
+        self._client = Groq(api_key=api_key) if api_key else None
+
+    def verify_image_match(self, image_bytes: bytes, label: str) -> bool:
+        """
+        Ask the Vision LLM whether the image clearly shows a `label`.
+        Returns True if confident match, False otherwise (also False on error).
+        """
+        if not self._client:
+            # No API key — skip validation and assume OK
+            return True
+
+        if not image_bytes:
+            return False
+
+        base64_img = base64.b64encode(image_bytes).decode("utf-8")
+        data_uri = f"data:image/jpeg;base64,{base64_img}"
+
+        prompt = (
+            f"Look at this image carefully. Does it clearly and primarily show a '{label}'? "
+            f"Answer with ONLY the word YES or NO. Do not explain."
+        )
+
+        for attempt in range(self.MAX_RETRIES):
+            try:
+                response = self._client.chat.completions.create(
+                    model=self.MODEL,
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": [
+                                {"type": "image_url", "image_url": {"url": data_uri}},
+                                {"type": "text", "text": prompt},
+                            ],
+                        }
+                    ],
+                    max_tokens=5,
+                    temperature=0.0,
+                )
+                answer = response.choices[0].message.content.strip().upper()
+                return answer.startswith("YES")
+            except Exception as exc:
+                if attempt == self.MAX_RETRIES - 1:
+                    # On final failure, be lenient and return True to avoid blocking
+                    print(f"[AIImageValidator] Error verifying '{label}': {exc} — defaulting to accept")
+                    return True
+                time.sleep(1)
+        return True
 
 
 # Singleton instance

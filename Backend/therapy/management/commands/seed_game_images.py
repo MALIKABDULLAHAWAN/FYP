@@ -27,6 +27,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 from therapy.commons_urls import wikimedia_thumb_url
 from therapy.models import GameImage, ScenarioImage
+from therapy.ai_services.unified_ai_service import AIImageValidator
 
 
 DATA_PATH = Path(__file__).resolve().parents[2] / "data" / "labeled_game_images.json"
@@ -60,6 +61,12 @@ class Command(BaseCommand):
             type=float,
             default=1.0,
             help="Seconds to wait between network downloads (default 1.0)",
+        )
+        parser.add_argument(
+            "--ai-validate",
+            action="store_true",
+            default=True,
+            help="Use Groq Vision AI to verify each image matches its label before saving (default: enabled)",
         )
 
     def create_placeholder_image(
@@ -131,19 +138,29 @@ class Command(BaseCommand):
         *,
         prefer_wikimedia: bool,
         delay: float,
+        ai_validate: bool = True,
+        validator: Optional["AIImageValidator"] = None,
     ) -> Tuple[Optional[ContentFile], str]:
         """
         Returns (ContentFile or None, source_note for logging).
+        When ai_validate=True the Groq Vision agent rejects images that don't
+        match the item label, trying up to 5 different LoremFlickr seeds.
         """
         base_name = (item.get("name") or item.get("title") or "image").lower().replace(" ", "_")
+        label = item.get("label") or item.get("name") or base_name
         tags: List[str] = list(item.get("loremflickr_tags") or [])
         commons_file = item.get("commons_file")
 
+        # Build candidate URLs — for LoremFlickr we try multiple random seeds
         urls: List[Tuple[str, str]] = []
         if prefer_wikimedia and commons_file:
             urls.append((wikimedia_thumb_url(commons_file, width=min(512, max(size))), "wikimedia_thumb"))
         if tags:
-            urls.append((self.loremflickr_url(tags, size), "loremflickr"))
+            # Try 5 different LoremFlickr seeds so the AI has multiple photos to choose from
+            for seed in range(1, 6):
+                w, h = size
+                tag_part = ",".join(quote(t.strip(), safe="") for t in tags if t.strip())
+                urls.append((f"https://loremflickr.com/{w}/{h}/{tag_part}?lock={seed}", f"loremflickr_seed{seed}"))
 
         for url, src in urls:
             self.stdout.write(f"  Fetching ({src}) …")
@@ -154,8 +171,19 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.WARNING(f"    failed: {src}"))
                 continue
             cf = self.bytes_to_content_file(data, base_name)
-            if cf:
-                return cf, src
+            if not cf:
+                continue
+
+            # AI Validation gate
+            if ai_validate and validator:
+                self.stdout.write(f"  [AI] Verifying '{label}' against {src} …")
+                is_valid = validator.verify_image_match(image_bytes=data, label=label)
+                if not is_valid:
+                    self.stdout.write(self.style.WARNING(f"  [AI] REJECTED — image doesn't match '{label}', trying next …"))
+                    continue
+                self.stdout.write(self.style.SUCCESS(f"  [AI] APPROVED '{label}'"))
+
+            return cf, src
         return None, "none"
 
     def seed_memory_match(self, data: Dict[str, Any], **kwargs) -> int:
@@ -170,6 +198,8 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.WARNING(f"  PLACEHOLDER {item['name']}"))
                 image_content = self.create_placeholder_image(item["name"], tuple(item["color"]), (300, 300))
                 src = "placeholder"
+                # Clear existing bad images for this name so we get a fresh one next run
+                GameImage.objects.filter(name=item["name"], game_type="memory_match").delete()
             tag_list = [
                 item["category"],
                 "memory_match",
@@ -293,6 +323,21 @@ class Command(BaseCommand):
         self.stdout.write(f"Dataset version: {data.get('version', '?')}")
 
         fetch_kw = {"prefer_wikimedia": prefer, "delay": delay}
+
+        ai_validate = options.get("ai_validate", True)
+        validator = None
+        if ai_validate:
+            import os
+            from django.conf import settings
+            groq_key = os.environ.get("GROQ_API_KEY") or getattr(settings, "GROQ_API_KEY", "")
+            if groq_key and groq_key != "your_groq_api_key_here":
+                validator = AIImageValidator()
+                fetch_kw["ai_validate"] = True
+                fetch_kw["validator"] = validator
+                self.stdout.write(self.style.SUCCESS("[AI] Vision validation ENABLED — bad images will be auto-rejected"))
+            else:
+                self.stdout.write(self.style.WARNING("[AI] GROQ_API_KEY not set — skipping vision validation"))
+                fetch_kw["ai_validate"] = False
 
         if clear:
             n = GameImage.objects.count() + ScenarioImage.objects.count()
