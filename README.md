@@ -148,7 +148,7 @@ docker-compose up --build
 
 ## 👨‍💻 Authors
 
-- **Qasim Ali** — [GitHub](https://github.com/Qasimali20)
+- **Malik Abdullah Awan** — [GitHub](https://github.com/MalikAbdullahAwan)
 
 ---
 

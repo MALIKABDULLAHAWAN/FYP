@@ -648,7 +648,7 @@ export default function GameInterface({
           
           <button
             className="btn btn-primary btn-lg"
-            onClick={handleStart}
+            onClick={() => handleStart()}
             disabled={loading || !selectedChild}
           >
             {loading ? (

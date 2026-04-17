@@ -6,6 +6,20 @@ import "../styles/professional.css";
 
 const GAMES = [
   {
+    code: "emotion_gesture_quest",
+    path: "/games/emotion-gesture-quest",
+    name: "Emotion & Gesture Quest",
+    iconName: "smile",
+    description: "Show emotions (happy, sad, angry) and gestures (thumbs up, down, finger)! Interactive therapy for autistic students.",
+    color: "rgba(59, 130, 246, 0.25)",
+    border: "rgba(59, 130, 246, 0.4)",
+    skills: ["Emotion Recognition", "Gesture Commands", "Engagement"],
+    difficulty: "All Levels",
+    difficultyColor: "#7c3aed",
+    recommended: true,
+    playTime: "5-10 min",
+  },
+  {
     code: "ja",
     path: "/games/ja",
     name: "Joint Attention",
@@ -205,6 +219,11 @@ function GameCard({ game, navigate }) {
     return "";
   };
 
+  // Prevent accidental serialization of DOM/react objects
+  // Only pass primitive values to navigation/state
+  const handleCardClick = () => {
+    navigate(game.path);
+  };
   return (
     <div
       className={`game-card-cute ${getCuteCardClass()}`}
@@ -213,7 +232,7 @@ function GameCard({ game, navigate }) {
         overflow: "hidden",
         cursor: "pointer"
       }}
-      onClick={() => navigate(game.path)}
+      onClick={handleCardClick}
     >
       {game.recommended && (
         <div className="badge-cute badge-cute-primary" style={{
@@ -286,7 +305,7 @@ function GameCard({ game, navigate }) {
         }}
         onClick={(e) => {
           e.stopPropagation();
-          navigate(game.path);
+          handleCardClick();
         }}
       >
         <UiIcon name="play" size={18} title="" />
