@@ -90,26 +90,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "core.wsgi.application"
 
-# -----------------------------------------------------------------------------
-# Database (Postgres — supports local and Supabase cloud)
-# -----------------------------------------------------------------------------
-import socket as _socket
+# Use SQLite for local development if specified
+USE_SQLITE = os.getenv("USE_SQLITE", "0") == "1"
 
-DB_HOST = os.getenv("DB_HOST", "db")
-DB_PORT = os.getenv("DB_PORT", "5432")
-DB_NAME = os.getenv("DB_NAME", "dhyan")
-DB_USER = os.getenv("DB_USER", "dhyan")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "dhyan")
-
-# Resolve hostname to IPv4 to work around IPv6-only DNS servers
-_resolved_host = DB_HOST
-try:
-    _resolved_host = _socket.getaddrinfo(DB_HOST, int(DB_PORT), _socket.AF_INET)[0][4][0]
-except Exception:
-    _resolved_host = DB_HOST
-
-# Use SQLite for local development if PostgreSQL is not available
-if os.getenv("USE_SQLITE", "0") == "1" or DB_HOST == "db":
+if USE_SQLITE:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -117,6 +101,20 @@ if os.getenv("USE_SQLITE", "0") == "1" or DB_HOST == "db":
         }
     }
 else:
+    DB_HOST = os.getenv("DB_HOST", "localhost")
+    DB_PORT = os.getenv("DB_PORT", "5432")
+    DB_NAME = os.getenv("DB_NAME", "dhyan")
+    DB_USER = os.getenv("DB_USER", "dhyan")
+    DB_PASSWORD = os.getenv("DB_PASSWORD", "dhyan")
+
+    # Resolve hostname
+    import socket
+    _resolved_host = DB_HOST
+    try:
+        _resolved_host = socket.getaddrinfo(DB_HOST, int(DB_PORT), socket.AF_INET)[0][4][0]
+    except Exception:
+        pass
+
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",

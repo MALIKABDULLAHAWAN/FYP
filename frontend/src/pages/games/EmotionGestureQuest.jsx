@@ -26,9 +26,9 @@ const GESTURE_TASKS = [
 const ALL_TASKS = [...EMOTION_TASKS, ...GESTURE_TASKS];
 
 const LEVELS = [
-  { name: "Easy",   time: 45, emotionThreshold: 0.45, label: "🌟 Easy" },
-  { name: "Medium", time: 35, emotionThreshold: 0.55, label: "⚡ Medium" },
-  { name: "Hard",   time: 25, emotionThreshold: 0.65, label: "🔥 Hard" },
+  { name: "Easy",   time: 45, emotionThreshold: 0.3, label: "🌟 Easy" },
+  { name: "Medium", time: 35, emotionThreshold: 0.45, label: "⚡ Medium" },
+  { name: "Hard",   time: 25, emotionThreshold: 0.6, label: "🔥 Hard" },
 ];
 
 const DETECT_INTERVAL_MS = 200; // run face-api every 200ms max (5 fps), not on every rAF
@@ -54,8 +54,8 @@ async function initMediaPipeHands(videoEl) {
         handsInstance.setOptions({
           maxNumHands: 1,
           modelComplexity: 0,
-          minDetectionConfidence: 0.6,
-          minTrackingConfidence: 0.5,
+          minDetectionConfidence: 0.4,
+          minTrackingConfidence: 0.4,
         });
         handsInstance.onResults((results) => {
           latestHandLandmarks =

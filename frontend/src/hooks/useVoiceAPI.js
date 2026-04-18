@@ -1,194 +1,188 @@
 /**
- * DHYAN Voice Assistant API Hook
- * Connects to the Python backend voice service
+ * DHYAN Voice Assistant API Hook (WebSocket Enhanced)
+ * Connects to the FastAPI real-time voice service
  */
 
-import { useState, useCallback, useRef } from 'react';
-import axios from 'axios';
+import { useState, useCallback, useRef, useEffect } from 'react';
 
-const API_BASE_URL = 'http://localhost:8000/api/v1/therapy/voice';
+const WS_URL = 'ws://localhost:8001/ws/voice';
 
 export function useVoiceAPI() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState(null);
-  const [response, setResponse] = useState(null);
-  const abortControllerRef = useRef(null);
+  const [status, setStatus] = useState("");
+  const [isListening, setIsListening] = useState(false);
+  const [navCommand, setNavCommand] = useState(null);
+  const [lastResponse, setLastResponse] = useState(null);
+  
+  const wsRef = useRef(null);
+  const audioContextRef = useRef(null);
+  const audioQueueRef = useRef([]);
+  const isPlayingRef = useRef(false);
 
-  /**
-   * Send text command to voice assistant
-   */
-  const sendTextCommand = useCallback(async (command, generateAudio = true) => {
-    setIsProcessing(true);
-    setError(null);
+  // Initialize Audio Context for streaming playback
+  const initAudio = () => {
+    if (!audioContextRef.current) {
+      audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+    }
+  };
+
+  const connectWS = useCallback(() => {
+    if (wsRef.current?.readyState === WebSocket.OPEN) return;
+
+    const ws = new WebSocket(WS_URL);
+    wsRef.current = ws;
+
+    ws.onopen = () => {
+      console.log('Voice WebSocket connected');
+      setStatus("Connected! ✨");
+    };
+
+    ws.onmessage = async (event) => {
+      console.log('Voice WS Message Received:', event.data);
+      const data = json_safe_parse(event.data);
+      if (!data) return;
+
+      switch (data.type) {
+        case 'status':
+          setStatus(data.message);
+          break;
+        case 'transcription':
+          // Transcription received from server (ASR)
+          break;
+        case 'response_start':
+          setIsProcessing(true);
+          if (data.text) {
+            setLastResponse({
+              text: data.text,
+              agent: data.agent,
+              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            });
+          }
+          if (data.nav_command) {
+            setNavCommand(data.nav_command);
+          }
+          break;
+        case 'audio_chunk':
+          // Buffer binary audio chunk
+          handleAudioChunk(data.data);
+          break;
+        case 'response_end':
+          setIsProcessing(false);
+          break;
+        case 'music_chunk':
+          handleAudioChunk(data.data);
+          break;
+        case 'error':
+          setError(data.message);
+          setIsProcessing(false);
+          break;
+        default:
+          break;
+      }
+    };
+
+    // Keep-alive Heartbeat
+    const heartbeat = setInterval(() => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: "ping" }));
+      }
+    }, 20000);
+
+    ws.onclose = () => {
+      console.log('Voice WebSocket disconnected');
+      clearInterval(heartbeat);
+      setStatus("Reconnecting...");
+      setTimeout(connectWS, 3000);
+    };
+  }, []);
+
+  useEffect(() => {
+    connectWS();
+    return () => wsRef.current?.close();
+  }, [connectWS]);
+
+  const json_safe_parse = (str) => {
+    try { return JSON.parse(str); }
+    catch (e) { return null; }
+  };
+
+  const handleAudioChunk = async (base64Data) => {
+    initAudio();
+    const binaryString = window.atob(base64Data);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
     
     try {
-      abortControllerRef.current = new AbortController();
-      
-      const response = await axios.post(
-        `${API_BASE_URL}/command`,
-        {
-          command,
-          generate_audio: generateAudio
-        },
-        {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-            'Content-Type': 'application/json'
-          },
-          signal: abortControllerRef.current.signal
-        }
-      );
-      
-      const data = response.data;
-      setResponse(data);
-      
-      // Play audio if available
-      if (data.audio_url) {
-        playAudio(data.audio_url);
-      }
-      
-      return data;
-    } catch (err) {
-      setError(err.response?.data?.error || err.message);
-      throw err;
-    } finally {
-      setIsProcessing(false);
+      const audioBuffer = await audioContextRef.current.decodeAudioData(bytes.buffer);
+      audioQueueRef.current.push(audioBuffer);
+      playNextInQueue();
+    } catch (e) {
+      console.error("Error decoding audio chunk", e);
     }
-  }, []);
+  };
 
-  /**
-   * Send audio file to voice assistant
-   */
-  const sendAudioCommand = useCallback(async (audioBlob, childId = null) => {
-    setIsProcessing(true);
-    setError(null);
+  const playNextInQueue = () => {
+    if (isPlayingRef.current || audioQueueRef.current.length === 0) return;
     
-    try {
-      const formData = new FormData();
-      formData.append('audio', audioBlob, 'command.wav');
-      if (childId) {
-        formData.append('child_id', childId);
-      }
-      
-      const response = await axios.post(
-        `${API_BASE_URL}/audio`,
-        formData,
-        {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-            'Content-Type': 'multipart/form-data'
-          }
-        }
-      );
-      
-      const data = response.data;
-      setResponse(data);
-      
-      // Play audio if available
-      if (data.audio_url) {
-        playAudio(data.audio_url);
-      }
-      
-      return data;
-    } catch (err) {
-      setError(err.response?.data?.error || err.message);
-      throw err;
-    } finally {
-      setIsProcessing(false);
+    isPlayingRef.current = true;
+    const buffer = audioQueueRef.current.shift();
+    const source = audioContextRef.current.createBufferSource();
+    source.buffer = buffer;
+    source.connect(audioContextRef.current.destination);
+    
+    source.onended = () => {
+      isPlayingRef.current = false;
+      playNextInQueue();
+    };
+    
+    source.start(0);
+  };
+
+  const sendTextCommand = useCallback((text, childId = null) => {
+    if (wsRef.current?.readyState !== WebSocket.OPEN) {
+      console.error("Voice server not connected. ReadyState:", wsRef.current?.readyState);
+      setError("Voice server not connected");
+      return;
     }
+    console.log("Sending text command:", text);
+    setIsProcessing(true);
+    wsRef.current.send(JSON.stringify({
+      type: "text_command",
+      text: text,
+      child_id: childId
+    }));
   }, []);
 
-  /**
-   * Stop current playback
-   */
-  const stopPlayback = useCallback(async () => {
-    try {
-      // Abort any pending requests
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-      
-      // Stop any playing audio
-      window.speechSynthesis?.cancel();
-      
-      // Tell backend to stop
-      await axios.post(
-        `${API_BASE_URL}/stop`,
-        {},
-        {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-          }
-        }
-      );
-    } catch (err) {
-      console.log('Stop playback error:', err);
+  const sendAudioBlob = useCallback((blob) => {
+    if (wsRef.current?.readyState !== WebSocket.OPEN) return;
+    // Send raw binary
+    wsRef.current.send(blob);
+  }, []);
+
+  const stopPlayback = useCallback(() => {
+    audioQueueRef.current = [];
+    if (audioContextRef.current) {
+      audioContextRef.current.close();
+      audioContextRef.current = null;
     }
+    isPlayingRef.current = false;
   }, []);
 
-  /**
-   * Clear conversation history
-   */
-  const clearHistory = useCallback(async () => {
-    try {
-      await axios.post(
-        `${API_BASE_URL}/clear-history`,
-        {},
-        {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-          }
-        }
-      );
-      setResponse(null);
-    } catch (err) {
-      console.log('Clear history error:', err);
-    }
-  }, []);
-
-  /**
-   * Get voice assistant status
-   */
-  const getStatus = useCallback(async () => {
-    try {
-      const response = await axios.get(
-        `${API_BASE_URL}/status`,
-        {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-          }
-        }
-      );
-      return response.data;
-    } catch (err) {
-      return { available: false, error: err.message };
-    }
-  }, []);
-
-  /**
-   * Play audio from URL
-   */
-  const playAudio = useCallback((audioUrl) => {
-    const audio = new Audio(audioUrl);
-    audio.play().catch(err => {
-      console.log('Audio playback error:', err);
-    });
-    return audio;
-  }, []);
-
-  return {
-    // State
+    return {
     isProcessing,
+    isListening,
+    status,
     error,
-    response,
-    
-    // Actions
+    navCommand,
+    lastResponse,
+    setNavCommand,
     sendTextCommand,
-    sendAudioCommand,
+    sendAudioBlob,
     stopPlayback,
-    clearHistory,
-    getStatus,
-    playAudio
+    setIsListening
   };
 }
 
