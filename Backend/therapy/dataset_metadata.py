@@ -13,6 +13,7 @@ from functools import lru_cache
 from pathlib import Path
 
 _DATA_PATH = Path(__file__).resolve().parent / "data" / "labeled_game_images.json"
+_ENHANCED_DATA_PATH = Path(__file__).resolve().parent / "data" / "labeled_game_images_enhanced.json"
 
 
 def stable_fallback_image_url(name: str, w: int = 320, h: int = 320, tags: list = None, seed: int = 0) -> str:
@@ -40,6 +41,14 @@ def wikimedia_commons_url(filename: str, width: int = 320) -> str:
 
 @lru_cache(maxsize=1)
 def load_dataset() -> dict:
+    # Try to load enhanced dataset first, fallback to original
+    if _ENHANCED_DATA_PATH.exists():
+        try:
+            with open(_ENHANCED_DATA_PATH, encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            pass
+    
     if not _DATA_PATH.exists():
         return {}
     with open(_DATA_PATH, encoding="utf-8") as f:
@@ -59,8 +68,11 @@ def get_game_item_metadata(game_key: str, name: str, seed: int = 0) -> dict:
                 meta.setdefault("source_image_url", item["image_url"])
             if item.get("loremflickr_tags"):
                 meta.setdefault("loremflickr_tags", item["loremflickr_tags"])
-            # Priority: 1) Wikimedia Commons, 2) Lorem Flickr with tags, 3) JSON fallback_url
-            if item.get("commons_file"):
+            
+            # Priority: 1) Enhanced AI image, 2) Wikimedia Commons, 3) Lorem Flickr with tags, 4) JSON fallback_url
+            if item.get("enhanced_image_url"):
+                meta["fallback_image_url"] = item["enhanced_image_url"]
+            elif item.get("commons_file"):
                 meta["fallback_image_url"] = wikimedia_commons_url(item["commons_file"])
             elif item.get("loremflickr_tags"):
                 meta["fallback_image_url"] = stable_fallback_image_url(

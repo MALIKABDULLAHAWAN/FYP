@@ -4,6 +4,7 @@ import { useAuth } from "../hooks/useAuth";
 import { useNotifications, NotificationBell, NotificationsPanel } from "./NotificationsCenter";
 import { StickerLayer } from "./StickerLayer";
 import { MusicPlayer, MusicPlayerButton } from "./MusicPlayer";
+import FloatingVoiceAssistant from "./FloatingVoiceAssistant";
 import UiIcon from "./ui/UiIcon";
 import "./Layout.css";
 import "../styles/professional.css";
@@ -157,6 +158,9 @@ export default function Layout({ children }) {
       <main className="main-content">
         {children}
       </main>
+
+      {/* Floating Voice Assistant - available on every page */}
+      <FloatingVoiceAssistant />
 
       {/* Background Music Player - available on every page */}
       {musicOpen ? (

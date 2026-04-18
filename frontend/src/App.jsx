@@ -29,12 +29,14 @@ import ProblemSolving from "./pages/games/ProblemSolving";
 import SpeechTherapy from "./pages/games/SpeechTherapy";
 import SceneDescriptionGame from "./pages/games/SceneDescriptionGame";
 import EmotionGestureQuest from "./pages/games/EmotionGestureQuest";
+import GazeEmotionGame from "./pages/games/GazeEmotionGame";
 import StoryAdventure from "./pages/games/StoryAdventure";
 import LandingPage from "./pages/LandingPage";
 import ProfilePage from "./pages/ProfilePage";
 import Settings from "./pages/Settings";
 import Help from "./pages/Help";
 import VoiceAssistant from "./pages/VoiceAssistant";
+import VoiceAssistantSimple from "./pages/VoiceAssistantSimple";
 import StickerPack from "./pages/StickerPack";
 
 function ProtectedLayout({ children }) {
@@ -120,6 +122,7 @@ export default function App() {
             <Route path="/games/problem-solving" element={<ProtectedLayout><ProblemSolving /></ProtectedLayout>} />
             <Route path="/games/scene-description" element={<ProtectedLayout><SceneDescriptionGame /></ProtectedLayout>} />
             <Route path="/games/emotion-gesture-quest" element={<ProtectedLayout><EmotionGestureQuest /></ProtectedLayout>} />
+            <Route path="/games/gaze-emotion" element={<ProtectedLayout><GazeEmotionGame /></ProtectedLayout>} />
             <Route path="/games/story-adventure" element={<ProtectedLayout><StoryAdventure /></ProtectedLayout>} />
             <Route path="/speech-therapy" element={<ProtectedLayout><SpeechTherapy /></ProtectedLayout>} />
             <Route path="/sticker-pack" element={<ProtectedLayout><StickerPack /></ProtectedLayout>} />
