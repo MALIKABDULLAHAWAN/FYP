@@ -191,21 +191,72 @@ export default function EmotionGestureQuest() {
         <span>Score: {score}</span>
         <span>Time: {gameTime}s</span>
       </div>
-      <div className="game-video-cute">
+      <div className="game-video-cute" style={{ position: 'relative', width: 640, height: 480 }}>
         <video
           ref={videoRef}
           width={640}
           height={480}
           autoPlay
           muted
-          style={{ borderRadius: 16, border: "2px solid #7c3aed" }}
+          style={{ borderRadius: 16, border: "2px solid #7c3aed", position: 'absolute', left: 0, top: 0, zIndex: 1 }}
         />
         <canvas
           ref={canvasRef}
           width={640}
           height={480}
-          style={{ position: "absolute", left: 0, top: 0 }}
+          style={{ position: "absolute", left: 0, top: 0, zIndex: 2, pointerEvents: 'none' }}
         />
+        {/* Always-visible prompt overlay at top center */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 24,
+            left: 0,
+            width: '100%',
+            textAlign: 'center',
+            zIndex: 10,
+            pointerEvents: 'none',
+          }}
+        >
+          {currentTask && !loading ? (
+            <span
+              style={{
+                display: 'inline-block',
+                background: 'rgba(255,255,255,0.92)',
+                color: '#7c3aed',
+                fontSize: 36,
+                fontWeight: 700,
+                borderRadius: 12,
+                padding: '12px 32px',
+                boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+                border: '2px solid #7c3aed',
+                letterSpacing: 1,
+                textShadow: '0 1px 0 #fff',
+              }}
+            >
+              {currentTask.type === 'emotion'
+                ? `Show: ${currentTask.value.toUpperCase()} face!`
+                : `Gesture: ${currentTask.value.name} ${currentTask.value.emoji}`}
+            </span>
+          ) : !loading ? (
+            <span
+              style={{
+                display: 'inline-block',
+                background: 'rgba(255,255,255,0.92)',
+                color: '#7c3aed',
+                fontSize: 36,
+                fontWeight: 700,
+                borderRadius: 12,
+                padding: '12px 32px',
+                border: '2px solid #7c3aed',
+                letterSpacing: 1,
+                textShadow: '0 1px 0 #fff',
+              }}
+            >
+              Get ready! Loading next prompt...
+            </span>
+          ) : null}
+        </div>
       </div>
       <div className="game-feedback-cute">
         {feedback && <div className="feedback-message-cute">{feedback}</div>}
