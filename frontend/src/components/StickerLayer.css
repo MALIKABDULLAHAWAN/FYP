@@ -1,0 +1,96 @@
+/**
+ * StickerLayer Styles
+ */
+
+.sticker-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  z-index: var(--z-index-sticker);
+  overflow: hidden;
+}
+
+.sticker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.sticker-emoji {
+  display: inline-block;
+  line-height: 1;
+  text-align: center;
+}
+
+.sticker-image {
+  object-fit: contain;
+  object-position: center;
+}
+
+/* Floating Animation */
+@keyframes sticker-float {
+  0% {
+    transform: translate(-50%, -50%) rotate(var(--rotation)) translateY(0px);
+  }
+  50% {
+    transform: translate(-50%, -50%) rotate(var(--rotation)) translateY(-10px);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(var(--rotation)) translateY(0px);
+  }
+}
+
+/* Pulse Animation */
+@keyframes sticker-pulse {
+  0% {
+    opacity: var(--opacity);
+    transform: translate(-50%, -50%) rotate(var(--rotation)) scale(1);
+  }
+  50% {
+    opacity: calc(var(--opacity) * 0.8);
+    transform: translate(-50%, -50%) rotate(var(--rotation)) scale(1.05);
+  }
+  100% {
+    opacity: var(--opacity);
+    transform: translate(-50%, -50%) rotate(var(--rotation)) scale(1);
+  }
+}
+
+/* Reduced Motion */
+.sticker-layer.reduced-motion .sticker {
+  animation: none !important;
+}
+
+/* High Contrast Mode */
+.high-contrast-mode .sticker {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3)) contrast(1.2);
+}
+
+/* Mobile Responsive */
+@media (max-width: 640px) {
+  .sticker-layer {
+    opacity: 0.6;
+  }
+}
+
+/* Tablet Responsive */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .sticker-layer {
+    opacity: 0.75;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1025px) {
+  .sticker-layer {
+    opacity: 0.85;
+  }
+}

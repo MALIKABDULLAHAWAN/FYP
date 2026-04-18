@@ -1,0 +1,201 @@
+.game-card {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 200ms ease-in-out;
+  cursor: pointer;
+  min-height: 400px;
+  position: relative;
+}
+
+.game-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.game-card:focus {
+  outline: 3px solid #4A90E2;
+  outline-offset: 2px;
+}
+
+.game-card.selected {
+  border: 3px solid #4A90E2;
+  box-shadow: 0 4px 16px rgba(74, 144, 226, 0.3);
+}
+
+/* Image Container */
+.game-card-image-container {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  background: #f0f0f0;
+  overflow: hidden;
+}
+
+.game-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 200ms ease-in-out;
+}
+
+.game-card:hover .game-card-image {
+  transform: scale(1.05);
+}
+
+.game-card-image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+  color: #999;
+  font-size: 14px;
+}
+
+/* Selected Badge */
+.game-card-selected-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  background: #4A90E2;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.selected-checkmark {
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Content */
+.game-card-content {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.game-card-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+  line-height: 1.3;
+}
+
+.game-card-description {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+  flex: 1;
+}
+
+/* Metadata */
+.game-card-metadata {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.metadata-item {
+  display: flex;
+  align-items: center;
+}
+
+.age-range-label {
+  font-size: 13px;
+  color: #666;
+  background: #f0f0f0;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+/* Therapeutic Goals */
+.game-card-goals {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.goal-tag {
+  display: inline-block;
+  font-size: 12px;
+  background: #E8F4F8;
+  color: #4A90E2;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.goal-tag.more-goals {
+  background: #f0f0f0;
+  color: #666;
+}
+
+/* Attribution */
+.game-card-attribution {
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.attribution-text {
+  font-size: 12px;
+  color: #999;
+}
+
+/* Actions */
+.game-card-actions {
+  padding: 12px 16px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  gap: 8px;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .game-card {
+    min-height: 350px;
+  }
+
+  .game-card-image-container {
+    height: 150px;
+  }
+
+  .game-card-content {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .game-card-title {
+    font-size: 16px;
+  }
+
+  .game-card-description {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .game-card {
+    min-height: 380px;
+  }
+
+  .game-card-image-container {
+    height: 180px;
+  }
+}

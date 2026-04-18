@@ -1,0 +1,207 @@
+import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+
+const COLORS = [
+  { fill: "rgba(255,107,107,0.65)", stroke: "#FF6B6B", glow: "#FF6B6B55" },
+  { fill: "rgba(255,217,61,0.65)",  stroke: "#FFD93D", glow: "#FFD93D55" },
+  { fill: "rgba(107,203,119,0.65)", stroke: "#6BCB77", glow: "#6BCB7755" },
+  { fill: "rgba(77,150,255,0.65)",  stroke: "#4D96FF", glow: "#4D96FF55" },
+  { fill: "rgba(255,159,243,0.65)", stroke: "#FF9FF3", glow: "#FF9FF355" },
+  { fill: "rgba(255,140,66,0.65)",  stroke: "#FF8C42", glow: "#FF8C4255" },
+  { fill: "rgba(168,218,220,0.65)", stroke: "#A8DADC", glow: "#A8DADC55" },
+  { fill: "rgba(196,161,255,0.65)", stroke: "#C4A1FF", glow: "#C4A1FF55" },
+];
+
+const BUBBLE_ICONS = ["⭐","🌟","🎀","🎈","🌸","💫","🦋","🌈","🎵","🍭","🌺","✨"];
+
+function playPop() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(700, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.12);
+    gain.gain.setValueAtTime(0.35, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.15);
+  } catch (e) {}
+}
+
+function playWin() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [523, 659, 784, 1047].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = freq;
+      const t = ctx.currentTime + i * 0.13;
+      gain.gain.setValueAtTime(0.25, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+      osc.start(t);
+      osc.stop(t + 0.3);
+    });
+  } catch (e) {}
+}
+
+let _uid = 0;
+
+export default function BubblePopGame() {
+  const navigate = useNavigate();
+  const [bubbles, setBubbles] = useState([]);
+  const [score, setScore] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [phase, setPhase] = useState("idle"); // idle | playing | over
+  const [poppedSet, setPoppedSet] = useState(new Set());
+  const areaRef = useRef(null);
+  const spawnRef = useRef(null);
+  const countRef = useRef(null);
+
+  const spawnBubble = () => {
+    if (!areaRef.current) return;
+    const w = areaRef.current.clientWidth || 360;
+    const size = 62 + Math.random() * 68;
+    const left = 10 + Math.random() * Math.max(10, w - size - 20);
+    const dur = 4.5 + Math.random() * 4.5;
+    const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+    const icon = BUBBLE_ICONS[Math.floor(Math.random() * BUBBLE_ICONS.length)];
+    const id = _uid++;
+    setBubbles(prev => [...prev.slice(-28), { id, size, left, dur, color, icon }]);
+  };
+
+  const startGame = () => {
+    _uid = 0;
+    setScore(0);
+    setBubbles([]);
+    setPoppedSet(new Set());
+    setTimeLeft(60);
+    setPhase("playing");
+  };
+
+  useEffect(() => {
+    if (phase !== "playing") return;
+    spawnBubble();
+    spawnRef.current = setInterval(spawnBubble, 850);
+    return () => clearInterval(spawnRef.current);
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase !== "playing") return;
+    countRef.current = setInterval(() => {
+      setTimeLeft(t => {
+        if (t <= 1) {
+          setPhase("over");
+          clearInterval(countRef.current);
+          clearInterval(spawnRef.current);
+          playWin();
+          return 0;
+        }
+        return t - 1;
+      });
+    }, 1000);
+    return () => clearInterval(countRef.current);
+  }, [phase]);
+
+  const popBubble = (id) => {
+    if (poppedSet.has(id)) return;
+    playPop();
+    setScore(s => s + 1);
+    setPoppedSet(prev => new Set([...prev, id]));
+    setTimeout(() => {
+      setBubbles(prev => prev.filter(b => b.id !== id));
+      setPoppedSet(prev => { const n = new Set(prev); n.delete(id); return n; });
+    }, 280);
+  };
+
+  const onBubbleGone = (id) => {
+    if (!poppedSet.has(id)) setBubbles(prev => prev.filter(b => b.id !== id));
+  };
+
+  const stars = score >= 30 ? 3 : score >= 15 ? 2 : 1;
+
+  return (
+    <div style={{ minHeight: "calc(100vh - 70px)", background: "linear-gradient(170deg,#87CEEB 0%,#98E4FF 45%,#B8F4FF 100%)", position: "relative", overflow: "hidden", fontFamily: "'Nunito','Inter',sans-serif" }}>
+      <style>{`
+        @keyframes bbl-rise { from { transform: translateY(0) scale(1); } to { transform: translateY(-115vh) scale(0.75); } }
+        @keyframes bbl-pop  { 0%{transform:scale(1);opacity:1} 55%{transform:scale(1.9);opacity:0.6} 100%{transform:scale(0);opacity:0} }
+        .bbl { position:absolute; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; user-select:none; will-change:transform; touch-action:manipulation; }
+        .bbl-alive { animation: bbl-rise linear forwards; }
+        .bbl-dead  { animation: bbl-pop 0.28s ease-out forwards !important; pointer-events:none; }
+        @keyframes cloud-drift { 0%{transform:translateX(0)} 50%{transform:translateX(18px)} 100%{transform:translateX(0)} }
+        .cloud { position:absolute; background:rgba(255,255,255,0.75); border-radius:50px; pointer-events:none; animation:cloud-drift linear infinite; }
+        @keyframes score-pop { 0%{transform:scale(1)} 40%{transform:scale(1.3)} 100%{transform:scale(1)} }
+        .score-num { animation: score-pop 0.25s ease; }
+      `}</style>
+
+      {/* Decorative clouds */}
+      <div className="cloud" style={{ top:55, left:"7%",  width:130, height:38, animationDuration:"8s"  }} />
+      <div className="cloud" style={{ top:95, right:"18%",width:95,  height:28, animationDuration:"11s" }} />
+      <div className="cloud" style={{ top:38, left:"52%", width:110, height:32, animationDuration:"14s" }} />
+
+      {/* Header */}
+      <div style={{ position:"sticky", top:0, zIndex:200, display:"flex", justifyContent:"space-between", alignItems:"center", padding:"11px 18px", background:"rgba(255,255,255,0.88)", backdropFilter:"blur(12px)", borderBottom:"2px solid rgba(77,150,255,0.18)" }}>
+        <button onClick={() => navigate("/games")} style={{ background:"#FF6B6B", color:"white", border:"none", borderRadius:"50%", width:44, height:44, fontSize:22, cursor:"pointer", boxShadow:"0 4px 12px #FF6B6B44", lineHeight:1 }}>←</button>
+        <div style={{ display:"flex", alignItems:"center", gap:18 }}>
+          <div key={score} className="score-num" style={{ fontSize:26, fontWeight:900, color:"#4D96FF" }}>🫧 {score}</div>
+          <div style={{ background:timeLeft < 10 ? "#FF6B6B" : "#6BCB77", color:"white", borderRadius:20, padding:"6px 16px", fontWeight:800, fontSize:20, minWidth:72, textAlign:"center", transition:"background 0.3s" }}>⏱ {timeLeft}</div>
+        </div>
+      </div>
+
+      {/* Game area */}
+      <div ref={areaRef} style={{ position:"relative", width:"100%", height:"calc(100vh - 135px)", overflow:"hidden" }}>
+        {bubbles.map(b => (
+          <div
+            key={b.id}
+            className={`bbl ${poppedSet.has(b.id) ? "bbl-dead" : "bbl-alive"}`}
+            onClick={() => !poppedSet.has(b.id) && popBubble(b.id)}
+            onAnimationEnd={() => onBubbleGone(b.id)}
+            style={{
+              left: b.left,
+              bottom: -(b.size + 20),
+              width: b.size,
+              height: b.size,
+              background: `radial-gradient(circle at 33% 28%, rgba(255,255,255,0.88), ${b.color.fill})`,
+              border: `3px solid ${b.color.stroke}`,
+              boxShadow: `0 0 22px ${b.color.glow}, inset 0 0 14px rgba(255,255,255,0.4)`,
+              fontSize: b.size * 0.38,
+              animationDuration: `${b.dur}s`,
+            }}
+          >
+            {b.icon}
+          </div>
+        ))}
+
+        {/* Idle screen */}
+        {phase === "idle" && (
+          <div style={{ position:"absolute", inset:0, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:22, padding:24 }}>
+            <div style={{ fontSize:100, filter:"drop-shadow(0 10px 24px rgba(77,150,255,0.35))" }}>🫧</div>
+            <div style={{ fontSize:38, fontWeight:900, color:"#4D96FF", textShadow:"0 4px 14px rgba(77,150,255,0.28)" }}>Bubble Pop!</div>
+            <div style={{ fontSize:18, color:"#555", textAlign:"center", maxWidth:280, lineHeight:1.5 }}>Tap the bubbles before they fly away!</div>
+            <button onClick={startGame} style={{ background:"linear-gradient(135deg,#4D96FF,#6BCB77)", color:"white", border:"none", borderRadius:50, padding:"18px 56px", fontSize:28, fontWeight:900, cursor:"pointer", boxShadow:"0 8px 28px rgba(77,150,255,0.4)", marginTop:8 }}>
+              ▶ Play!
+            </button>
+          </div>
+        )}
+
+        {/* Game over screen */}
+        {phase === "over" && (
+          <div style={{ position:"absolute", inset:0, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:18, background:"rgba(255,255,255,0.96)", backdropFilter:"blur(10px)" }}>
+            <div style={{ fontSize:80 }}>🎉</div>
+            <div style={{ fontSize:32, fontWeight:900, color:"#4D96FF" }}>Great Job!</div>
+            <div style={{ fontSize:52, letterSpacing:4 }}>{"⭐".repeat(stars)}</div>
+            <div style={{ fontSize:22, fontWeight:700, color:"#555" }}>You popped <b style={{ color:"#FF6B6B" }}>{score}</b> bubbles!</div>
+            <div style={{ display:"flex", gap:14, flexWrap:"wrap", justifyContent:"center", marginTop:8 }}>
+              <button onClick={startGame} style={{ background:"linear-gradient(135deg,#FF6B6B,#FFD93D)", color:"white", border:"none", borderRadius:50, padding:"15px 38px", fontSize:22, fontWeight:900, cursor:"pointer", boxShadow:"0 6px 20px #FF6B6B44" }}>🔄 Again!</button>
+              <button onClick={() => navigate("/games")} style={{ background:"linear-gradient(135deg,#4D96FF,#6BCB77)", color:"white", border:"none", borderRadius:50, padding:"15px 38px", fontSize:22, fontWeight:900, cursor:"pointer", boxShadow:"0 6px 20px #4D96FF44" }}>🏠 Games</button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

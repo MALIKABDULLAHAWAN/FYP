@@ -1,0 +1,1066 @@
+{
+  "version": 3,
+  "description": "Curated labels and metadata for DHYAN games. No emoji in UI; images from Lorem Flickr with object tags for accurate photos.",
+  "memory_match": [
+    {
+      "name": "Apple",
+      "label": "apple",
+      "category": "food",
+      "color": [
+        255,
+        100,
+        100
+      ],
+      "loremflickr_tags": [
+        "apple",
+        "fruit"
+      ],
+      "commons_file": "Red_Apple.jpg",
+      "metadata": {
+        "description": "Fruit: apple"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/apple?lock=1"
+    },
+    {
+      "name": "Banana",
+      "label": "banana",
+      "category": "food",
+      "color": [
+        255,
+        255,
+        100
+      ],
+      "loremflickr_tags": [
+        "banana",
+        "fruit"
+      ],
+      "commons_file": "Banana-Single.jpg",
+      "metadata": {
+        "description": "Fruit: banana"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/banana?lock=2"
+    },
+    {
+      "name": "Cat",
+      "label": "cat",
+      "category": "animal",
+      "color": [
+        255,
+        180,
+        100
+      ],
+      "loremflickr_tags": [
+        "cat",
+        "kitten"
+      ],
+      "commons_file": "Cat03.jpg",
+      "metadata": {
+        "description": "Animal: domestic cat"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/cat?lock=3"
+    },
+    {
+      "name": "Dog",
+      "label": "dog",
+      "category": "animal",
+      "color": [
+        200,
+        150,
+        100
+      ],
+      "loremflickr_tags": [
+        "dog",
+        "puppy"
+      ],
+      "commons_file": "YellowLabradorLooking_new.jpg",
+      "metadata": {
+        "description": "Animal: dog"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/dog?lock=4"
+    },
+    {
+      "name": "Car",
+      "label": "car",
+      "category": "vehicle",
+      "color": [
+        100,
+        150,
+        255
+      ],
+      "loremflickr_tags": [
+        "car",
+        "automobile"
+      ],
+      "metadata": {
+        "description": "Vehicle: passenger car"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/car?lock=5"
+    },
+    {
+      "name": "Ball",
+      "label": "soccer_ball",
+      "category": "toy",
+      "color": [
+        100,
+        255,
+        100
+      ],
+      "loremflickr_tags": [
+        "soccer",
+        "ball"
+      ],
+      "metadata": {
+        "description": "Toy: ball"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/soccer_ball?lock=6"
+    },
+    {
+      "name": "Flower",
+      "label": "flower",
+      "category": "nature",
+      "color": [
+        255,
+        150,
+        200
+      ],
+      "loremflickr_tags": [
+        "flower",
+        "bloom"
+      ],
+      "metadata": {
+        "description": "Nature: flower"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/flower?lock=11"
+    },
+    {
+      "name": "Tree",
+      "label": "tree",
+      "category": "nature",
+      "color": [
+        100,
+        200,
+        100
+      ],
+      "loremflickr_tags": [
+        "tree",
+        "forest"
+      ],
+      "metadata": {
+        "description": "Nature: tree"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/tree?lock=10"
+    },
+    {
+      "name": "House",
+      "label": "house",
+      "category": "building",
+      "color": [
+        200,
+        150,
+        150
+      ],
+      "loremflickr_tags": [
+        "house",
+        "house"
+      ],
+      "commons_file": "House.jpg",
+      "metadata": {
+        "description": "Building: house"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/house?lock=13"
+    },
+    {
+      "name": "Sun",
+      "label": "sun",
+      "category": "nature",
+      "color": [
+        255,
+        220,
+        100
+      ],
+      "loremflickr_tags": [
+        "sun",
+        "sky"
+      ],
+      "metadata": {
+        "description": "Nature: sun"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/sun?lock=12"
+    },
+    {
+      "name": "Moon",
+      "label": "moon",
+      "category": "nature",
+      "color": [
+        150,
+        150,
+        200
+      ],
+      "loremflickr_tags": [
+        "moon",
+        "night"
+      ],
+      "metadata": {
+        "description": "Nature: moon"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/moon?lock=14"
+    },
+    {
+      "name": "Heart",
+      "label": "heart",
+      "category": "shape",
+      "color": [
+        255,
+        100,
+        150
+      ],
+      "loremflickr_tags": [
+        "heart-shape",
+        "valentine"
+      ],
+      "metadata": {
+        "description": "Shape: heart"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/heart?lock=23"
+    },
+    {
+      "name": "Star",
+      "label": "star",
+      "category": "shape",
+      "color": [
+        255,
+        220,
+        150
+      ],
+      "loremflickr_tags": [
+        "star-shape",
+        "geometric"
+      ],
+      "metadata": {
+        "description": "Nature: star"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/star?lock=15"
+    },
+    {
+      "name": "Fish",
+      "label": "fish",
+      "category": "animal",
+      "color": [
+        100,
+        200,
+        255
+      ],
+      "loremflickr_tags": [
+        "tropical-fish",
+        "aquarium"
+      ],
+      "metadata": {
+        "description": "Animal: fish"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/fish?lock=16"
+    },
+    {
+      "name": "Bird",
+      "label": "bird",
+      "category": "animal",
+      "color": [
+        255,
+        200,
+        100
+      ],
+      "loremflickr_tags": [
+        "bird",
+        "wildlife"
+      ],
+      "metadata": {
+        "description": "Animal: bird"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/bird?lock=17"
+    },
+    {
+      "name": "Book",
+      "label": "book",
+      "category": "object",
+      "color": [
+        150,
+        100,
+        50
+      ],
+      "loremflickr_tags": [
+        "book",
+        "reading"
+      ],
+      "metadata": {
+        "description": "Object: book"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/book?lock=7"
+    },
+    {
+      "name": "Clock",
+      "label": "clock",
+      "category": "object",
+      "color": [
+        200,
+        200,
+        200
+      ],
+      "loremflickr_tags": [
+        "clock",
+        "time"
+      ],
+      "metadata": {
+        "description": "Object: clock"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/clock?lock=18"
+    }
+  ],
+  "object_discovery": [
+    {
+      "name": "Chair",
+      "label": "chair",
+      "category": "furniture",
+      "color": [
+        139,
+        90,
+        43
+      ],
+      "loremflickr_tags": [
+        "chair",
+        "furniture"
+      ],
+      "commons_file": "Wooden_chair.jpg",
+      "metadata": {
+        "description": "Furniture: chair"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/chair?lock=8"
+    },
+    {
+      "name": "Table",
+      "label": "table",
+      "category": "furniture",
+      "color": [
+        160,
+        120,
+        80
+      ],
+      "loremflickr_tags": [
+        "table",
+        "furniture"
+      ],
+      "commons_file": "Dining_table.jpg",
+      "metadata": {
+        "description": "Furniture: table"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/table?lock=9"
+    },
+    {
+      "name": "Bed",
+      "label": "bed",
+      "category": "furniture",
+      "color": [
+        100,
+        150,
+        200
+      ],
+      "loremflickr_tags": [
+        "bed",
+        "bedroom"
+      ],
+      "commons_file": "Bed.jpg",
+      "metadata": {
+        "description": "Furniture: bed"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/bed?lock=19"
+    },
+    {
+      "name": "Phone",
+      "label": "phone",
+      "category": "electronics",
+      "color": [
+        50,
+        50,
+        50
+      ],
+      "loremflickr_tags": [
+        "phone",
+        "smartphone"
+      ],
+      "commons_file": "Smartphone.jpg",
+      "metadata": {
+        "description": "Electronics: phone"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/phone?lock=20"
+    },
+    {
+      "name": "Computer",
+      "label": "computer",
+      "category": "electronics",
+      "color": [
+        80,
+        80,
+        80
+      ],
+      "loremflickr_tags": [
+        "laptop",
+        "computer"
+      ],
+      "commons_file": "Laptop.jpg",
+      "metadata": {
+        "description": "Electronics: computer"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/computer?lock=21"
+    },
+    {
+      "name": "Shoe",
+      "label": "shoe",
+      "category": "clothing",
+      "color": [
+        200,
+        100,
+        100
+      ],
+      "loremflickr_tags": [
+        "shoe",
+        "sneakers"
+      ],
+      "commons_file": "Sneakers.jpg",
+      "metadata": {
+        "description": "Clothing: shoe"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/shoe?lock=22"
+    },
+    {
+      "name": "Shirt",
+      "label": "shirt",
+      "category": "clothing",
+      "color": [
+        100,
+        150,
+        255
+      ],
+      "loremflickr_tags": [
+        "shirt",
+        "clothing"
+      ],
+      "metadata": {
+        "description": "Clothing: shirt"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/shirt?lock=23"
+    },
+    {
+      "name": "Hat",
+      "label": "hat",
+      "category": "clothing",
+      "color": [
+        50,
+        50,
+        50
+      ],
+      "loremflickr_tags": [
+        "hat",
+        "cap"
+      ],
+      "commons_file": "Baseball_cap.jpg",
+      "metadata": {
+        "description": "Clothing: hat"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/hat?lock=24"
+    },
+    {
+      "name": "Cup",
+      "label": "cup",
+      "category": "kitchen",
+      "color": [
+        255,
+        255,
+        240
+      ],
+      "loremflickr_tags": [
+        "cup",
+        "mug"
+      ],
+      "commons_file": "Coffee_cup.jpg",
+      "metadata": {
+        "description": "Kitchen: cup"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/cup?lock=25"
+    },
+    {
+      "name": "Plate",
+      "label": "plate",
+      "category": "kitchen",
+      "color": [
+        255,
+        255,
+        255
+      ],
+      "loremflickr_tags": [
+        "plate",
+        "dish"
+      ],
+      "commons_file": "Dinner_plate.jpg",
+      "metadata": {
+        "description": "Kitchen: plate"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/plate?lock=26"
+    },
+    {
+      "name": "Spoon",
+      "label": "spoon",
+      "category": "kitchen",
+      "color": [
+        200,
+        200,
+        200
+      ],
+      "loremflickr_tags": [
+        "spoon",
+        "silverware"
+      ],
+      "commons_file": "Spoon.jpg",
+      "metadata": {
+        "description": "Kitchen: spoon"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/spoon?lock=27"
+    },
+    {
+      "name": "Bottle",
+      "label": "bottle",
+      "category": "kitchen",
+      "color": [
+        150,
+        220,
+        255
+      ],
+      "loremflickr_tags": [
+        "bottle",
+        "water"
+      ],
+      "commons_file": "Water_bottle.jpg",
+      "metadata": {
+        "description": "Kitchen: bottle"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/bottle?lock=28"
+    },
+    {
+      "name": "Bag",
+      "label": "bag",
+      "category": "accessory",
+      "color": [
+        255,
+        100,
+        100
+      ],
+      "loremflickr_tags": [
+        "backpack",
+        "bag"
+      ],
+      "commons_file": "Backpack.jpg",
+      "metadata": {
+        "description": "Accessory: bag"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/bag?lock=29"
+    },
+    {
+      "name": "Key",
+      "label": "key",
+      "category": "object",
+      "color": [
+        255,
+        215,
+        0
+      ],
+      "loremflickr_tags": [
+        "key",
+        "keys"
+      ],
+      "commons_file": "Key.jpg",
+      "metadata": {
+        "description": "Object: key"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/key?lock=30"
+    },
+    {
+      "name": "Umbrella",
+      "label": "umbrella",
+      "category": "object",
+      "color": [
+        255,
+        100,
+        150
+      ],
+      "loremflickr_tags": [
+        "umbrella",
+        "rain"
+      ],
+      "metadata": {
+        "description": "Object: umbrella"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/umbrella?lock=31"
+    }
+  ],
+  "scene_description": [
+    {
+      "title": "Birthday Party",
+      "label": "birthday_party",
+      "level": 1,
+      "color": [
+        255,
+        200,
+        220
+      ],
+      "expected": "A birthday party with children, balloons, a cake with candles, decorations, and presents",
+      "elements": [
+        "birthday",
+        "party",
+        "children",
+        "balloons",
+        "cake",
+        "candles",
+        "presents",
+        "decorations"
+      ],
+      "loremflickr_tags": [
+        "birthday",
+        "party",
+        "cake"
+      ],
+      "metadata": {
+        "tags": [
+          "celebration",
+          "social",
+          "party"
+        ],
+        "description": "Scene: birthday celebration"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/birthday_party?lock=40"
+    },
+    {
+      "title": "Zoo Visit",
+      "label": "zoo",
+      "level": 1,
+      "color": [
+        150,
+        200,
+        150
+      ],
+      "expected": "A zoo with various animals like elephants, lions, monkeys in enclosures, and visitors watching",
+      "elements": [
+        "zoo",
+        "animals",
+        "elephants",
+        "lions",
+        "monkeys",
+        "visitors",
+        "enclosures"
+      ],
+      "loremflickr_tags": [
+        "zoo",
+        "animals"
+      ],
+      "metadata": {
+        "tags": [
+          "animals",
+          "outdoor",
+          "educational"
+        ],
+        "description": "Scene: zoo"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/zoo?lock=41"
+    },
+    {
+      "title": "Supermarket",
+      "label": "supermarket",
+      "level": 2,
+      "color": [
+        255,
+        220,
+        180
+      ],
+      "expected": "A supermarket with aisles of products, shopping carts, checkout counters, and people buying groceries",
+      "elements": [
+        "supermarket",
+        "aisles",
+        "products",
+        "shopping",
+        "carts",
+        "checkout",
+        "people"
+      ],
+      "loremflickr_tags": [
+        "supermarket",
+        "grocery"
+      ],
+      "metadata": {
+        "tags": [
+          "shopping",
+          "daily_life",
+          "food"
+        ],
+        "description": "Scene: supermarket"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/supermarket?lock=42"
+    },
+    {
+      "title": "Doctor Office",
+      "label": "doctor_office",
+      "level": 2,
+      "color": [
+        200,
+        220,
+        255
+      ],
+      "expected": "A doctor's office with a patient on a bed, doctor with stethoscope, medical equipment, and waiting area",
+      "elements": [
+        "doctor",
+        "patient",
+        "medical",
+        "stethoscope",
+        "equipment",
+        "office",
+        "health"
+      ],
+      "loremflickr_tags": [
+        "doctor",
+        "hospital"
+      ],
+      "metadata": {
+        "tags": [
+          "health",
+          "profession",
+          "indoor"
+        ],
+        "description": "Scene: medical office"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/doctor_office?lock=43"
+    },
+    {
+      "title": "Farm Life",
+      "label": "farm",
+      "level": 2,
+      "color": [
+        180,
+        220,
+        150
+      ],
+      "expected": "A farm with barn, tractor, farm animals like cows, chickens, horses, and farmers working",
+      "elements": [
+        "farm",
+        "barn",
+        "tractor",
+        "animals",
+        "cows",
+        "chickens",
+        "horses",
+        "farmers"
+      ],
+      "loremflickr_tags": [
+        "farm",
+        "barn"
+      ],
+      "metadata": {
+        "tags": [
+          "rural",
+          "animals",
+          "work"
+        ],
+        "description": "Scene: farm"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/farm?lock=44"
+    },
+    {
+      "title": "City Traffic",
+      "label": "city_traffic",
+      "level": 3,
+      "color": [
+        180,
+        180,
+        200
+      ],
+      "expected": "A busy city street with cars, buses, traffic lights, pedestrians crossing, buildings, and shops",
+      "elements": [
+        "city",
+        "traffic",
+        "cars",
+        "buses",
+        "pedestrians",
+        "buildings",
+        "shops",
+        "street"
+      ],
+      "loremflickr_tags": [
+        "city",
+        "traffic"
+      ],
+      "metadata": {
+        "tags": [
+          "urban",
+          "transport",
+          "busy"
+        ],
+        "description": "Scene: urban traffic"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/city_traffic?lock=45"
+    },
+    {
+      "title": "Sports Day",
+      "label": "sports_day",
+      "level": 3,
+      "color": [
+        255,
+        200,
+        150
+      ],
+      "expected": "A sports day event with children running races, jumping, throwing balls, trophies, and cheering crowd",
+      "elements": [
+        "sports",
+        "running",
+        "races",
+        "jumping",
+        "trophies",
+        "competition",
+        "children"
+      ],
+      "loremflickr_tags": [
+        "sports",
+        "running"
+      ],
+      "metadata": {
+        "tags": [
+          "sports",
+          "competition",
+          "outdoor"
+        ],
+        "description": "Scene: sports event"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/sports_day?lock=46"
+    },
+    {
+      "title": "Construction Site",
+      "label": "construction",
+      "level": 3,
+      "color": [
+        220,
+        180,
+        150
+      ],
+      "expected": "A construction site with workers, cranes, cement mixers, hard hats, building materials, and safety equipment",
+      "elements": [
+        "construction",
+        "workers",
+        "cranes",
+        "building",
+        "machinery",
+        "safety",
+        "work"
+      ],
+      "loremflickr_tags": [
+        "construction",
+        "crane"
+      ],
+      "metadata": {
+        "tags": [
+          "work",
+          "building",
+          "machinery"
+        ],
+        "description": "Scene: construction"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/construction"
+    }
+  ],
+  "problem_solving": [
+    {
+      "title": "Rainy Day",
+      "label": "rainy_day",
+      "level": 1,
+      "color": [
+        150,
+        180,
+        220
+      ],
+      "question": "It's raining and you need to go outside. What do you take?",
+      "answer": "umbrella",
+      "options": [
+        "umbrella",
+        "sunscreen",
+        "sunglasses",
+        "fan"
+      ],
+      "hint": "It keeps you dry when water falls from the sky",
+      "tags": [
+        "weather",
+        "daily_life",
+        "choice"
+      ],
+      "loremflickr_tags": [
+        "rain",
+        "umbrella"
+      ],
+      "metadata": {
+        "description": "Scenario: rain / umbrella"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/rainy_day"
+    },
+    {
+      "title": "Hungry Puppy",
+      "label": "hungry_puppy",
+      "level": 1,
+      "color": [
+        255,
+        220,
+        180
+      ],
+      "question": "The puppy is hungry. What should you give it?",
+      "answer": "dog food",
+      "options": [
+        "dog food",
+        "chocolate",
+        "candy",
+        "soap"
+      ],
+      "hint": "Animals need special food made for them",
+      "tags": [
+        "animals",
+        "care",
+        "safety"
+      ],
+      "loremflickr_tags": [
+        "puppy",
+        "dog"
+      ],
+      "metadata": {
+        "description": "Scenario: feeding a dog"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/hungry_puppy"
+    },
+    {
+      "title": "Cold Weather",
+      "label": "cold_weather",
+      "level": 2,
+      "color": [
+        200,
+        220,
+        255
+      ],
+      "question": "It's very cold outside. What should you wear?",
+      "answer": "warm jacket",
+      "options": [
+        "warm jacket",
+        "swimsuit",
+        "shorts",
+        "t-shirt"
+      ],
+      "hint": "You need thick clothes to stay warm",
+      "tags": [
+        "weather",
+        "clothing",
+        "safety"
+      ],
+      "loremflickr_tags": [
+        "winter",
+        "snow"
+      ],
+      "metadata": {
+        "description": "Scenario: cold weather"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/cold_weather"
+    },
+    {
+      "title": "Broken Toy",
+      "label": "broken_toy",
+      "level": 2,
+      "color": [
+        255,
+        200,
+        200
+      ],
+      "question": "Your toy is broken. What should you do?",
+      "answer": "ask adult for help",
+      "options": [
+        "ask adult for help",
+        "throw it away",
+        "hide it",
+        "buy new one"
+      ],
+      "hint": "Grown-ups can help fix things",
+      "tags": [
+        "problem_solving",
+        "help",
+        "responsibility"
+      ],
+      "loremflickr_tags": [
+        "toy",
+        "child"
+      ],
+      "metadata": {
+        "description": "Scenario: broken toy"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/broken_toy"
+    },
+    {
+      "title": "Lost in Store",
+      "label": "lost_in_store",
+      "level": 3,
+      "color": [
+        255,
+        220,
+        200
+      ],
+      "question": "You can't find your parents in a store. What should you do?",
+      "answer": "tell store worker",
+      "options": [
+        "tell store worker",
+        "leave the store",
+        "cry quietly",
+        "ask stranger"
+      ],
+      "hint": "Store employees wear uniforms and can help",
+      "tags": [
+        "safety",
+        "emergency",
+        "social"
+      ],
+      "loremflickr_tags": [
+        "supermarket",
+        "shopping"
+      ],
+      "metadata": {
+        "description": "Scenario: lost in store"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/lost_in_store"
+    },
+    {
+      "title": "Fire Safety",
+      "label": "fire_safety",
+      "level": 3,
+      "color": [
+        255,
+        180,
+        150
+      ],
+      "question": "You see a small fire in the kitchen. What should you do first?",
+      "answer": "tell adult immediately",
+      "options": [
+        "tell adult immediately",
+        "pour water",
+        "blow on it",
+        "ignore it"
+      ],
+      "hint": "Fires are dangerous - always get a grown-up",
+      "tags": [
+        "safety",
+        "emergency",
+        "fire"
+      ],
+      "loremflickr_tags": [
+        "kitchen",
+        "fire"
+      ],
+      "metadata": {
+        "description": "Scenario: fire safety"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/fire_safety"
+    }
+  ]
+}

@@ -1,0 +1,462 @@
+/**
+ * COLORFUL THEME - Enhanced Vibrant UI
+ * More colors, gradients, and visual excitement
+ */
+
+/* ============================================
+   EXPANDED COLOR PALETTE
+   ============================================ */
+
+:root {
+  /* Rainbow Primary Colors */
+  --rainbow-red: #ff6b6b;
+  --rainbow-red-soft: #ffe0e0;
+  --rainbow-orange: #ff9f43;
+  --rainbow-orange-soft: #ffe8d1;
+  --rainbow-yellow: #feca57;
+  --rainbow-yellow-soft: #fff5d6;
+  --rainbow-green: #48dbfb;
+  --rainbow-green-soft: #d4f5e0;
+  --rainbow-blue: #54a0ff;
+  --rainbow-blue-soft: #d6ebff;
+  --rainbow-purple: #5f27cd;
+  --rainbow-purple-soft: #e8e0f7;
+  --rainbow-pink: #ff9ff3;
+  --rainbow-pink-soft: #ffe0fa;
+  
+  /* Gradient Sets */
+  --gradient-sunset: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  --gradient-ocean: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+  --gradient-forest: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  --gradient-candy: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+  --gradient-neon: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --gradient-sky: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  --gradient-gold: linear-gradient(135deg, #f5af19 0%, #f12711 100%);
+  --gradient-mint: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  --gradient-berry: linear-gradient(135deg, #c471ed 0%, #f64f59 100%);
+  --gradient-sunny: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+  
+  /* Game Category Colors */
+  --game-memory: #ff6b9d;
+  --game-spelling: #c44569;
+  --game-math: #f8b500;
+  --game-colors: #20bf6b;
+  --game-shapes: #4b7bec;
+  --game-riddles: #a55eea;
+  --game-trivia: #26de81;
+  --game-animals: #fd9644;
+  --game-patterns: #778ca3;
+  
+  /* Achievement Colors */
+  --achievement-bronze: #cd7f32;
+  --achievement-silver: #c0c0c0;
+  --achievement-gold: #ffd700;
+  --achievement-platinum: #e5e4e2;
+  --achievement-diamond: #b9f2ff;
+}
+
+/* ============================================
+   COLORFUL CARDS & COMPONENTS
+   ============================================ */
+
+/* Vibrant Game Cards */
+.game-card-vibrant {
+  background: white;
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.game-card-vibrant::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: var(--card-accent, var(--gradient-sunset));
+}
+
+.game-card-vibrant.memory { --card-accent: var(--gradient-candy); }
+.game-card-vibrant.spelling { --card-accent: var(--gradient-berry); }
+.game-card-vibrant.math { --card-accent: var(--gradient-gold); }
+.game-card-vibrant.colors { --card-accent: var(--gradient-forest); }
+.game-card-vibrant.shapes { --card-accent: var(--gradient-sky); }
+.game-card-vibrant.riddles { --card-accent: var(--gradient-neon); }
+.game-card-vibrant.trivia { --card-accent: var(--gradient-mint); }
+.game-card-vibrant.animals { --card-accent: var(--gradient-sunny); }
+
+.game-card-vibrant:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* Rainbow Buttons */
+.btn-rainbow {
+  background: var(--gradient-sunset);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 1rem 2rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(250, 112, 154, 0.4);
+}
+
+.btn-rainbow::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 70%
+  );
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) rotate(45deg); }
+}
+
+.btn-rainbow:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(250, 112, 154, 0.5);
+}
+
+/* Colorful Badges */
+.badge-colorful {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.badge-colorful.new {
+  background: var(--gradient-neon);
+  color: white;
+}
+
+.badge-colorful.hot {
+  background: var(--gradient-gold);
+  color: white;
+}
+
+.badge-colorful.popular {
+  background: var(--gradient-ocean);
+  color: white;
+}
+
+.badge-colorful.achieved {
+  background: var(--gradient-forest);
+  color: white;
+}
+
+/* Animated Backgrounds */
+.bg-animated-rainbow {
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 400% 400%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Floating Color Orbs */
+.color-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.4;
+  animation: float-orb 20s infinite ease-in-out;
+}
+
+.color-orb.orb-1 {
+  width: 300px;
+  height: 300px;
+  background: var(--rainbow-pink);
+  top: 10%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.color-orb.orb-2 {
+  width: 250px;
+  height: 250px;
+  background: var(--rainbow-blue);
+  top: 60%;
+  right: 10%;
+  animation-delay: -5s;
+}
+
+.color-orb.orb-3 {
+  width: 200px;
+  height: 200px;
+  background: var(--rainbow-yellow);
+  bottom: 20%;
+  left: 30%;
+  animation-delay: -10s;
+}
+
+@keyframes float-orb {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -30px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+/* Glowing Text Effects */
+.text-glow {
+  text-shadow: 
+    0 0 10px currentColor,
+    0 0 20px currentColor,
+  0 0 30px currentColor;
+}
+
+.text-gradient {
+  background: var(--gradient-sunset);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  -moz-background-clip: text;
+}
+
+/* Colorful Progress Bars */
+.progress-rainbow {
+  height: 12px;
+  background: #e2e8f0;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-rainbow .progress-fill {
+  height: 100%;
+  background: var(--gradient-sunset);
+  border-radius: 6px;
+  transition: width 0.5s ease;
+  position: relative;
+}
+
+.progress-rainbow .progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  animation: progress-shine 2s infinite;
+}
+
+@keyframes progress-shine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Particle Effects */
+.particle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: particle-float 10s infinite;
+}
+
+@keyframes particle-float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Confetti Animation */
+.confetti-piece {
+  position: absolute;
+  width: 10px;
+  height: 20px;
+  animation: confetti-fall 3s ease-out forwards;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* Colorful Icons */
+.icon-glow {
+  filter: drop-shadow(0 0 8px currentColor);
+}
+
+/* Rainbow Borders */
+.border-rainbow {
+  border: 3px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+              var(--gradient-sunset) border-box;
+  border-radius: 16px;
+}
+
+/* Neon Glow Effects */
+.neon-glow {
+  box-shadow: 
+    0 0 5px var(--rainbow-pink),
+    0 0 10px var(--rainbow-pink),
+    0 0 20px var(--rainbow-pink),
+    0 0 40px var(--rainbow-pink);
+}
+
+/* Colorful Stats Cards */
+.stat-card-colorful {
+  padding: 1.5rem;
+  border-radius: 20px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card-colorful::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.stat-card-colorful.purple {
+  background: var(--gradient-ocean);
+}
+
+.stat-card-colorful.green {
+  background: var(--gradient-forest);
+}
+
+.stat-card-colorful.orange {
+  background: var(--gradient-sunny);
+}
+
+.stat-card-colorful.pink {
+  background: var(--gradient-candy);
+}
+
+/* Achievement Tiers */
+.achievement-bronze {
+  background: linear-gradient(135deg, #cd7f32, #e6a85c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  -moz-background-clip: text;
+}
+
+.achievement-silver {
+  background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  -moz-background-clip: text;
+}
+
+.achievement-gold {
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  -moz-background-clip: text;
+}
+
+/* Colorful Tags/Chips */
+.chip-colorful {
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chip-colorful.red {
+  background: var(--rainbow-red-soft);
+  color: var(--rainbow-red);
+}
+
+.chip-colorful.orange {
+  background: var(--rainbow-orange-soft);
+  color: var(--rainbow-orange);
+}
+
+.chip-colorful.yellow {
+  background: var(--rainbow-yellow-soft);
+  color: #d4a017;
+}
+
+.chip-colorful.green {
+  background: var(--rainbow-green-soft);
+  color: #16a34a;
+}
+
+.chip-colorful.blue {
+  background: var(--rainbow-blue-soft);
+  color: var(--rainbow-blue);
+}
+
+.chip-colorful.purple {
+  background: var(--rainbow-purple-soft);
+  color: var(--rainbow-purple);
+}
+
+.chip-colorful.pink {
+  background: var(--rainbow-pink-soft);
+  color: var(--rainbow-pink);
+}
+
+/* Hover Color Transitions */
+.hover-lift-color {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift-color:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
