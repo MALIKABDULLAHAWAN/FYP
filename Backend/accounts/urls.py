@@ -1,5 +1,11 @@
 from django.urls import path
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenRefreshView
+from accounts.email_token_serializer import EmailTokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenViewBase
+
+class EmailTokenObtainPairView(TokenViewBase):
+    serializer_class = EmailTokenObtainPairSerializer
 from accounts.views import (
     MeView,
     LogoutView,
@@ -14,7 +20,7 @@ from accounts.views import (
 )
 
 urlpatterns = [
-    path("login", TokenObtainPairView.as_view(), name="auth-login"),
+    path("login", EmailTokenObtainPairView.as_view(), name="auth-login"),
     path("refresh", TokenRefreshView.as_view(), name="auth-refresh"),
     path("me", MeView.as_view(), name="auth-me"),
     path("logout", LogoutView.as_view(), name="auth-logout"),
