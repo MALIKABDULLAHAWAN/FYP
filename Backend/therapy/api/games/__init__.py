@@ -6,3 +6,4 @@ from therapy.api.games.plugins.problem_solving import ProblemSolvingGame  # noqa
 from therapy.api.games.plugins.memory_match import MemoryMatchGame  # noqa: F401
 from therapy.api.games.plugins.scene_description import SceneDescriptionGame  # noqa: F401
 from therapy.api.games.plugins.story_adventure import StoryAdventureGame  # noqa: F401
+from therapy.api.games.plugins.emotion_gesture_quest import EmotionGestureQuestGame  # noqa: F401
