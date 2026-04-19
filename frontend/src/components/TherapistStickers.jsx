@@ -184,6 +184,14 @@ export const TherapistStickers = {
       <line x1="50" y1="35" x2="50" y2="60" stroke="#333" strokeWidth="5" strokeLinecap="round"/>
       <circle cx="50" cy="72" r="5" fill="#333"/>
     </svg>
+  ),
+  
+  refresh: (
+    <svg viewBox="0 0 100 100" className="therapist-sticker-action">
+      <circle cx="50" cy="50" r="40" fill="#8FD3F4" stroke="#4ECDC4" strokeWidth="3"/>
+      <path d="M50 25 A 25 25 0 1 1 25 50" fill="none" stroke="white" strokeWidth="6" strokeLinecap="round"/>
+      <polygon points="25,50 15,35 35,35" fill="white"/>
+    </svg>
   )
 };
 

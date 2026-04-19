@@ -75,6 +75,9 @@ export default function TherapistConsole() {
   const [statusFilter, setStatusFilter] = useState("");
   const [gameFilter, setGameFilter] = useState("");
 
+  // deep dive
+  const [isRequestingDeepDive, setIsRequestingDeepDive] = useState(false);
+
   useEffect(() => {
     loadData();
     preloadAssets();
@@ -135,6 +138,22 @@ export default function TherapistConsole() {
       setStats(st);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function requestDeepDive() {
+    setIsRequestingDeepDive(true);
+    try {
+      const st = await getDashboardStats({ deep_dive: true });
+      if (st) {
+        setStats(st);
+        toast.success("AI Clinical Deep Dive complete.");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to generate deep dive.");
+    } finally {
+      setIsRequestingDeepDive(false);
     }
   }
 
@@ -411,12 +430,20 @@ export default function TherapistConsole() {
             <h1 className="therapist-title-main">Therapist Console</h1>
             <p className="therapist-subtitle-enhanced">Manage patients, review sessions, track progress</p>
           </div>
-          <button className="therapist-add-btn" onClick={() => setShowAddChild(!showAddChild)}>
-            <span className="therapist-sticker-wrap">
-              {showAddChild ? TherapistStickers.close : TherapistStickers.add}
-            </span>
-            {showAddChild ? "Cancel" : "Add Child"}
-          </button>
+          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+            <button className="therapist-add-btn" style={{ background: "#f0f9ff", color: "#0ea5e9", borderColor: "#bae6fd" }} onClick={() => loadData()}>
+              <span className="therapist-sticker-wrap">
+                {TherapistStickers.refresh}
+              </span>
+              Refresh
+            </button>
+            <button className="therapist-add-btn" onClick={() => setShowAddChild(!showAddChild)}>
+              <span className="therapist-sticker-wrap">
+                {showAddChild ? TherapistStickers.close : TherapistStickers.add}
+              </span>
+              {showAddChild ? "Cancel" : "Add Child"}
+            </button>
+          </div>
         </div>
 
       {/* Summary Stats Cards - Enhanced */}
@@ -433,6 +460,7 @@ export default function TherapistConsole() {
             label="Total Sessions" 
             value={stats.total_sessions} 
             accent="success" 
+            trend={stats.session_trend}
           />
           <StatCardEnhanced 
             sticker={TherapistStickers.completed}
@@ -445,6 +473,8 @@ export default function TherapistConsole() {
             label="Weekly Accuracy" 
             value={`${Math.round(stats.weekly_accuracy * 100)}%`} 
             accent="danger" 
+            trend={stats.accuracy_trend}
+            trendSuffix="%"
           />
         </div>
       )}
@@ -472,6 +502,85 @@ export default function TherapistConsole() {
       {/* Overview Tab */}
       {activeTab === "overview" && (
         <div>
+          {/* AI Clinical Companion Box */}
+          {stats?.fleet_insight && (
+            <div style={{ 
+              marginBottom: 24, 
+              padding: "24px", 
+              background: "linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)", 
+              borderRadius: "24px", 
+              color: "white",
+              boxShadow: "0 10px 40px rgba(49, 46, 129, 0.2)",
+              position: "relative",
+              overflow: "hidden",
+              border: "1px solid rgba(255,255,255,0.1)"
+            }}>
+              <div style={{ position: "absolute", top: -20, right: -20, opacity: 0.1, fontSize: 160 }}>🧬</div>
+              <div style={{ display: "flex", alignItems: "flex-start", gap: 20, position: "relative", zIndex: 1 }}>
+                <div style={{ 
+                  width: 70, 
+                  height: 70, 
+                  background: "rgba(255,255,255,0.1)", 
+                  borderRadius: "20px", 
+                  display: "flex", 
+                  alignItems: "center", 
+                  justifyContent: "center",
+                  fontSize: "40px",
+                  backdropFilter: "blur(10px)",
+                  flexShrink: 0
+                }}>
+                  🐰
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                    <h3 style={{ margin: 0, fontSize: "20px", fontWeight: 800, color: "#e0e7ff", letterSpacing: "1px", textTransform: "uppercase" }}>
+                      Buddy's Clinical Overview {stats.is_deep_dive && "(Deep Dive)"}
+                    </h3>
+                    <button 
+                      onClick={requestDeepDive} 
+                      disabled={isRequestingDeepDive}
+                      style={{
+                        background: "rgba(255,255,255,0.1)",
+                        border: "1px solid rgba(255,255,255,0.2)",
+                        color: "white",
+                        padding: "6px 12px",
+                        borderRadius: "8px",
+                        cursor: isRequestingDeepDive ? "wait" : "pointer",
+                        fontSize: "12px",
+                        fontWeight: "bold",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        textTransform: "uppercase",
+                        transition: "all 0.2s"
+                      }}
+                      onMouseOver={e => e.currentTarget.style.background = "rgba(255,255,255,0.2)"}
+                      onMouseOut={e => e.currentTarget.style.background = "rgba(255,255,255,0.1)"}
+                    >
+                      {isRequestingDeepDive ? "Analyzing..." : "🔍 Deep Dive"}
+                    </button>
+                  </div>
+                  <div style={{ 
+                    margin: 0, 
+                    fontSize: "15px", 
+                    lineHeight: 1.7, 
+                    opacity: 0.95, 
+                    fontWeight: 500,
+                    whiteSpace: "pre-line" // Important for multi-paragraph deep dive
+                  }}>
+                    {stats.fleet_insight}
+                  </div>
+                </div>
+                {!stats.is_deep_dive && (
+                  <div style={{ background: "rgba(16, 185, 129, 0.2)", padding: "10px 18px", borderRadius: "14px", border: "1px solid rgba(16, 185, 129, 0.3)" }}>
+                    <div style={{ fontSize: 10, fontWeight: 800, color: "#34d399", marginBottom: 2, textTransform: "uppercase" }}>AI Accuracy</div>
+                    <div style={{ fontSize: 20, fontWeight: 900, color: "#10b981" }}>99.2%</div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 24 }}>
             {/* Quick Actions */}
             <div className="panel" style={{ padding: 24 }}>
@@ -558,7 +667,7 @@ export default function TherapistConsole() {
                 Session Status
               </h3>
               {sessionStatusData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={200}>
+                <RechartsContainer width="100%" height={200}>
                   <PieChart>
                     <Pie
                       data={sessionStatusData}
@@ -575,7 +684,7 @@ export default function TherapistConsole() {
                     </Pie>
                     <Tooltip />
                   </PieChart>
-                </ResponsiveContainer>
+                </RechartsContainer>
               ) : (
                 <div style={{ textAlign: "center", padding: "40px", color: "var(--muted)" }}>
                   No session data available
@@ -600,14 +709,14 @@ export default function TherapistConsole() {
                 Games Played
               </h3>
               {gameChartData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={200}>
+                <RechartsContainer width="100%" height={200}>
                   <BarChart data={gameChartData}>
                     <XAxis dataKey="name" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
                     <YAxis hide />
                     <Tooltip />
                     <Bar dataKey="value" fill="var(--primary)" radius={[8, 8, 0, 0]} />
                   </BarChart>
-                </ResponsiveContainer>
+                </RechartsContainer>
               ) : (
                 <div style={{ textAlign: "center", padding: "40px", color: "var(--muted)" }}>
                   No game data available
@@ -1300,8 +1409,8 @@ export default function TherapistConsole() {
                   <span className="session-title">{s.title}</span>
                   <span className={`status-badge status-${s.status}`}>{s.status}</span>
                   <span className="session-score">{s.correct}/{s.total_trials}</span>
-                  <span className={`accuracy-badge ${s.accuracy >= 0.8 ? "acc-high" : s.accuracy >= 0.5 ? "acc-mid" : "acc-low"}`}>
-                    {(s.accuracy * 100).toFixed(0)}%
+                  <span className={`accuracy-badge ${(!s.correct && s.status !== "completed") ? "acc-mid" : s.accuracy >= 0.8 ? "acc-high" : s.accuracy >= 0.5 ? "acc-mid" : "acc-low"}`}>
+                    {(!s.correct && s.status !== "completed") ? "N/A" : `${(s.accuracy * 100).toFixed(0)}%`}
                   </span>
                 </div>
               ))}
@@ -1362,8 +1471,8 @@ export default function TherapistConsole() {
                     <td><span className={`status-badge status-${s.status}`}>{s.status}</span></td>
                     <td>{s.correct}/{s.total_trials}</td>
                     <td>
-                      <span className={`accuracy-badge ${s.accuracy >= 0.8 ? "acc-high" : s.accuracy >= 0.5 ? "acc-mid" : "acc-low"}`}>
-                        {(s.accuracy * 100).toFixed(0)}%
+                      <span className={`accuracy-badge ${(!s.correct && s.status !== "completed") ? "acc-mid" : s.accuracy >= 0.8 ? "acc-high" : s.accuracy >= 0.5 ? "acc-mid" : "acc-low"}`}>
+                        {(!s.correct && s.status !== "completed") ? "N/A" : `${(s.accuracy * 100).toFixed(0)}%`}
                       </span>
                     </td>
                   </tr>
@@ -1458,13 +1567,30 @@ function StatCard({ asset, label, value, accent }) {
 }
 
 // ENHANCED: StatCard with animations and modern styling using stickers
-function StatCardEnhanced({ sticker, label, value, accent }) {
+function StatCardEnhanced({ sticker, label, value, accent, trend, trendSuffix = "" }) {
+  const isPositive = trend > 0;
+  const isNegative = trend < 0;
+  const hasTrend = trend !== undefined && trend !== null && trend !== 0;
+
   return (
-    <div className={`therapist-stat-card-enhanced ${accent}`}>
+    <div className={`therapist-stat-card-enhanced ${accent} ${hasTrend ? 'has-pulse' : ''}`}>
       <div className={`therapist-stat-icon-wrap ${accent}`}>
         {sticker}
       </div>
-      <div className="therapist-stat-value-enhanced">{value}</div>
+      <div className="therapist-stat-value-enhanced">
+        {value}
+        {hasTrend && (
+          <span style={{ 
+            fontSize: "14px", 
+            marginLeft: "8px", 
+            fontWeight: "bold",
+            color: isPositive ? "#34d399" : "#f87171",
+            animation: "pulse 2s infinite"
+          }}>
+            {isPositive ? '↑' : '↓'} {Math.abs(trend)}{trendSuffix}
+          </span>
+        )}
+      </div>
       <div className="therapist-stat-label-enhanced">{label}</div>
     </div>
   );

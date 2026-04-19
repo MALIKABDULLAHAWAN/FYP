@@ -3,8 +3,11 @@ import { apiFetch } from "./client";
 const BASE = "/api/v1/therapy";
 
 // ── Dashboard Stats ──
-export function getDashboardStats() {
-  return apiFetch(`${BASE}/dashboard/stats`);
+export function getDashboardStats(options = {}) {
+  const params = new URLSearchParams();
+  if (options.deep_dive) params.set("deep_dive", "true");
+  const qs = params.toString();
+  return apiFetch(`${BASE}/dashboard/stats${qs ? "?" + qs : ""}`);
 }
 
 // ── Session History ──
@@ -49,10 +52,10 @@ export function nextGameTrial(gameCode, sessionId) {
   });
 }
 
-export function submitGameTrial(gameCode, trialId, clicked, responseTimeMs, timedOut = false) {
+export function submitGameTrial(gameCode, trialId, clicked, responseTimeMs, timedOut = false, extraArgs = {}) {
   return apiFetch(`${BASE}/games/${gameCode}/trial/${trialId}/submit/`, {
     method: "POST",
-    body: { clicked, response_time_ms: responseTimeMs, timed_out: timedOut },
+    body: { clicked, response_time_ms: responseTimeMs, timed_out: timedOut, ...extraArgs },
   });
 }
 

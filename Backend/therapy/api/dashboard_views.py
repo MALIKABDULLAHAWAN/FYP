@@ -34,65 +34,182 @@ class DashboardStatsView(APIView):
         is_therapist = user_has_role(user, "therapist")
         is_parent = user_has_role(user, "parent")
 
+        from therapy.models import GameSession
         if is_admin:
             total_children = ChildProfile.objects.filter(deleted_at__isnull=True).count()
             total_therapists = UserRole.objects.filter(role__slug="therapist").values("user").distinct().count()
-            total_sessions = TherapySession.objects.count()
-            completed_sessions = TherapySession.objects.filter(status="completed").count()
-            active_sessions = TherapySession.objects.filter(status="in_progress").count()
+            
+            total_sessions = TherapySession.objects.count() + GameSession.objects.count()
+            completed_sessions = TherapySession.objects.filter(status="completed").count() + GameSession.objects.exclude(completed_at__isnull=True).count()
+            active_sessions = TherapySession.objects.filter(status="in_progress").count() + GameSession.objects.filter(completed_at__isnull=True).count()
         elif is_therapist:
-            assigned_child_ids = TherapistChildAssignment.objects.filter(
+            assigned_child_users = TherapistChildAssignment.objects.filter(
                 therapist=user
             ).values_list("child_user_id", flat=True)
+            
+            fleet_children = ChildProfile.objects.filter(
+                user_id__in=assigned_child_users, deleted_at__isnull=True
+            )
 
-            total_children = ChildProfile.objects.filter(
-                user_id__in=assigned_child_ids, deleted_at__isnull=True
-            ).count()
+            total_children = fleet_children.count()
             total_therapists = 1
-            total_sessions = TherapySession.objects.filter(therapist=user).count()
-            completed_sessions = TherapySession.objects.filter(therapist=user, status="completed").count()
-            active_sessions = TherapySession.objects.filter(therapist=user, status="in_progress").count()
+            
+            # Combine sessions for the entire fleet, regardless of owner
+            total_sessions = (
+                TherapySession.objects.filter(child__in=fleet_children).count() + 
+                GameSession.objects.filter(child__in=fleet_children).count()
+            )
+            completed_sessions = (
+                TherapySession.objects.filter(child__in=fleet_children, status="completed").count() + 
+                GameSession.objects.filter(child__in=fleet_children).exclude(completed_at__isnull=True).count()
+            )
+            active_sessions = (
+                TherapySession.objects.filter(child__in=fleet_children, status="in_progress").count() + 
+                GameSession.objects.filter(child__in=fleet_children, completed_at__isnull=True).count()
+            )
         elif is_parent:
             from patients.models import Guardian
             child_profiles = ChildProfile.objects.filter(guardian__email=user.email, deleted_at__isnull=True)
             total_children = child_profiles.count()
-            total_therapists = 0 # Could aggregate uniquely if needed
-            total_sessions = TherapySession.objects.filter(child__in=child_profiles).count()
-            completed_sessions = TherapySession.objects.filter(child__in=child_profiles, status="completed").count()
-            active_sessions = TherapySession.objects.filter(child__in=child_profiles, status="in_progress").count()
+            total_therapists = 0 
+            
+            total_sessions = TherapySession.objects.filter(child__in=child_profiles).count() + GameSession.objects.filter(child__in=child_profiles).count()
+            completed_sessions = TherapySession.objects.filter(child__in=child_profiles, status="completed").count() + GameSession.objects.filter(child__in=child_profiles).exclude(completed_at__isnull=True).count()
+            active_sessions = TherapySession.objects.filter(child__in=child_profiles, status="in_progress").count() + GameSession.objects.filter(child__in=child_profiles, completed_at__isnull=True).count()
         else:
             # Child role: see only their own stats
             try:
                 child = user.child_profile
                 total_children = 1
                 total_therapists = TherapistChildAssignment.objects.filter(child_user=user).count()
-                total_sessions = TherapySession.objects.filter(child=child).count()
-                completed_sessions = TherapySession.objects.filter(child=child, status="completed").count()
-                active_sessions = TherapySession.objects.filter(child=child, status="in_progress").count()
+                
+                total_sessions = TherapySession.objects.filter(child=child).count() + GameSession.objects.filter(child=child).count()
+                completed_sessions = TherapySession.objects.filter(child=child, status="completed").count() + GameSession.objects.filter(child=child).exclude(completed_at__isnull=True).count()
+                active_sessions = TherapySession.objects.filter(child=child, status="in_progress").count() + GameSession.objects.filter(child=child, completed_at__isnull=True).count()
             except:
-                total_children = 0
-                total_therapists = 0
-                total_sessions = 0
-                completed_sessions = 0
-                active_sessions = 0
+                total_children = total_therapists = total_sessions = completed_sessions = active_sessions = 0
 
-        # Recent 7 days activity
-        week_ago = timezone.now() - timedelta(days=7)
+        # Recent 7 days activity vs Previous 7 days
+        now = timezone.now()
+        week_ago = now - timedelta(days=7)
+        two_weeks_ago = now - timedelta(days=14)
+
+        recent_sessions = 0
+        recent_trials = 0
+        recent_correct = 0
+
+        prev_sessions = 0
+        prev_trials = 0
+        prev_correct = 0
+
+        # Stats filtering based on role
+        ts_filter = Q(created_at__gte=week_ago)
+        trial_filter = Q(session__created_at__gte=week_ago, status="completed")
+        gs_filter = Q(created_at__gte=week_ago)
+        
+        prev_ts_filter = Q(created_at__gte=two_weeks_ago, created_at__lt=week_ago)
+        prev_trial_filter = Q(session__created_at__gte=two_weeks_ago, session__created_at__lt=week_ago, status="completed")
+        prev_gs_filter = Q(created_at__gte=two_weeks_ago, created_at__lt=week_ago)
+
         if is_admin:
-            recent_sessions = TherapySession.objects.filter(created_at__gte=week_ago).count()
-            recent_trials = SessionTrial.objects.filter(session__created_at__gte=week_ago, status="completed").count()
-            recent_correct = SessionTrial.objects.filter(session__created_at__gte=week_ago, status="completed", success=True).count()
+            pass # No extra filters for admin
         elif is_therapist:
-            recent_sessions = TherapySession.objects.filter(therapist=user, created_at__gte=week_ago).count()
-            recent_trials = SessionTrial.objects.filter(session__therapist=user, session__created_at__gte=week_ago, status="completed").count()
-            recent_correct = SessionTrial.objects.filter(session__therapist=user, session__created_at__gte=week_ago, status="completed", success=True).count()
+            ts_filter &= Q(child__in=fleet_children)
+            trial_filter &= Q(session__child__in=fleet_children)
+            gs_filter &= Q(child__in=fleet_children)
+            
+            prev_ts_filter &= Q(child__in=fleet_children)
+            prev_trial_filter &= Q(session__child__in=fleet_children)
+            prev_gs_filter &= Q(child__in=fleet_children)
+        elif is_parent:
+            ts_filter &= Q(child__in=child_profiles)
+            trial_filter &= Q(session__child__in=child_profiles)
+            gs_filter &= Q(child__in=child_profiles)
+            
+            prev_ts_filter &= Q(child__in=child_profiles)
+            prev_trial_filter &= Q(session__child__in=child_profiles)
+            prev_gs_filter &= Q(child__in=child_profiles)
         else:
-            # Fallback: user's own sessions
-            recent_sessions = TherapySession.objects.filter(therapist=user, created_at__gte=week_ago).count()
-            recent_trials = SessionTrial.objects.filter(session__therapist=user, session__created_at__gte=week_ago, status="completed").count()
-            recent_correct = SessionTrial.objects.filter(session__therapist=user, session__created_at__gte=week_ago, status="completed", success=True).count()
+            # Child role
+            try:
+                ts_filter &= Q(child=user.child_profile)
+                trial_filter &= Q(session__child=user.child_profile)
+                gs_filter &= Q(child=user.child_profile)
+                
+                prev_ts_filter &= Q(child=user.child_profile)
+                prev_trial_filter &= Q(session__child=user.child_profile)
+                prev_gs_filter &= Q(child=user.child_profile)
+            except:
+                pass
+
+        # 1. Stats from TherapySession/SessionTrial (This Week)
+        recent_sessions += TherapySession.objects.filter(ts_filter).count()
+        recent_trials += SessionTrial.objects.filter(trial_filter).count()
+        recent_correct += SessionTrial.objects.filter(trial_filter, success=True).count()
+
+        # 1b. Stats from TherapySession/SessionTrial (Last Week)
+        prev_sessions += TherapySession.objects.filter(prev_ts_filter).count()
+        prev_trials += SessionTrial.objects.filter(prev_trial_filter).count()
+        prev_correct += SessionTrial.objects.filter(prev_trial_filter, success=True).count()
+
+        # 2. Stats from GameSession performance_metrics (This Week)
+        recent_gs = GameSession.objects.filter(gs_filter)
+        recent_sessions += recent_gs.count()
+        for gs in recent_gs:
+            m = gs.performance_metrics or {}
+            gs_t = m.get("total_trials", 0)
+            gs_a = m.get("accuracy", 0)
+            recent_trials += gs_t
+            recent_correct += round(gs_t * gs_a)
+            
+        # 2b. Stats from GameSession performance_metrics (Last Week)
+        prev_gs = GameSession.objects.filter(prev_gs_filter)
+        prev_sessions += prev_gs.count()
+        for gs in prev_gs:
+            m = gs.performance_metrics or {}
+            gs_t = m.get("total_trials", 0)
+            gs_a = m.get("accuracy", 0)
+            prev_trials += gs_t
+            prev_correct += round(gs_t * gs_a)
 
         weekly_accuracy = (recent_correct / recent_trials) if recent_trials else 0.0
+        prev_weekly_accuracy = (prev_correct / prev_trials) if prev_trials else 0.0
+        
+        accuracy_trend = round((weekly_accuracy - prev_weekly_accuracy) * 100, 1)
+        session_trend = recent_sessions - prev_sessions
+
+        # 3. Fleet Insight (Therapist Only)
+        fleet_insight = None
+        is_deep_dive = request.query_params.get('deep_dive') == 'true'
+        
+        if is_therapist:
+            try:
+                from therapy.ai_services.unified_ai_service import get_ai_service
+                ai_service = get_ai_service()
+                
+                deep_dive_instruction = "Provide a comprehensive, multi-paragraph deep dive clinical audit. Identify potential risks, highlight strong performers, and suggest 3 specific therapeutic interventions based on this data."
+                brief_instruction = "Provide a one-sentence clinical high-level summary and one recommendation."
+                
+                prompt = f"""
+                Analyze the following weekly performance for a therapist's fleet of children:
+                - Active Children: {total_children}
+                
+                THIS WEEK:
+                - Sessions: {recent_sessions}
+                - Trials: {recent_trials}
+                - Accuracy: {round(weekly_accuracy * 100, 1)}%
+                
+                TRENDS (vs Last Week):
+                - Accuracy Trend: {'+' if accuracy_trend > 0 else ''}{accuracy_trend}%
+                - Session Vol Trend: {'+' if session_trend > 0 else ''}{session_trend} sessions
+                
+                {deep_dive_instruction if is_deep_dive else brief_instruction}
+                Tone: professional, data-driven, companion-like.
+                """
+                ai_response = ai_service.generate_response(prompt, agent_key="clinical_analyst")
+                fleet_insight = ai_response.text
+            except:
+                fleet_insight = "Clinical patterns show stable progression across the fleet. Accuracy is holding steady at " + str(round(weekly_accuracy * 100)) + "%. ✨"
 
         return Response({
             "total_children": total_children,
@@ -103,6 +220,10 @@ class DashboardStatsView(APIView):
             "recent_sessions_7d": recent_sessions,
             "recent_trials_7d": recent_trials,
             "weekly_accuracy": round(weekly_accuracy, 3),
+            "accuracy_trend": accuracy_trend,
+            "session_trend": session_trend,
+            "fleet_insight": fleet_insight,
+            "is_deep_dive": is_deep_dive
         })
 
 
@@ -203,9 +324,11 @@ class ChildProgressView(APIView):
         recent_therapy = sessions.order_by("-created_at")[:10]
         recent_list = []
         for s in recent_therapy:
-            s_trials = SessionTrial.objects.filter(session=s, status="completed")
-            s_total = s_trials.count()
-            s_correct = s_trials.filter(success=True).count()
+            s_trials_all = SessionTrial.objects.filter(session=s)
+            s_trials_completed = SessionTrial.objects.filter(session=s, status="completed")
+            s_total = s_trials_all.count()
+            s_completed_count = s_trials_completed.count()
+            s_correct = s_trials_completed.filter(success=True).count()
             recent_list.append({
                 "session_id": s.id,
                 "date": str(s.session_date),
@@ -213,7 +336,7 @@ class ChildProgressView(APIView):
                 "title": s.title or f"Adventure with {s.therapist.full_name or 'Buddy'}",
                 "total_trials": s_total,
                 "correct": s_correct,
-                "accuracy": round((s_correct / s_total), 3) if s_total else 0.0,
+                "accuracy": round((s_correct / s_completed_count), 3) if s_completed_count else 0.0,
                 "type": "managed"
             })
         
@@ -258,80 +381,78 @@ class SessionHistoryView(APIView):
         user = request.user
         is_admin = user.is_staff or user_has_role(user, "admin")
         is_therapist = user_has_role(user, "therapist")
-        is_parent = user_has_role(user, "parent")
+        is_parent = user_has_role(request.user, "parent")
 
-        if is_admin:
-            sessions = TherapySession.objects.select_related("child__user", "therapist").order_by("-created_at")
-        elif is_therapist:
-            sessions = TherapySession.objects.select_related("child__user", "therapist").filter(
-                therapist=user
-            ).order_by("-created_at")
-        else:
-            # Child or Parent: Show sessions for themselves or their assigned children
-            if is_parent:
+        # 0. Resolve the fleet of children this user can monitor
+        fleet_child_users = None
+        if not is_admin:
+            if is_therapist:
+                from patients.models import TherapistChildAssignment
+                fleet_child_users = TherapistChildAssignment.objects.filter(
+                    therapist=user
+                ).values_list("child_user_id", flat=True)
+            elif is_parent:
                 from patients.models import Guardian
-                assigned_child_users = Guardian.objects.filter(email=user.email).values_list("child_profile__user", flat=True)
-                sessions = TherapySession.objects.select_related("child__user", "therapist").filter(
-                    child__user__in=assigned_child_users
-                ).order_by("-created_at")
+                fleet_child_users = Guardian.objects.filter(
+                    email=user.email
+                ).values_list("child_profile__user_id", flat=True)
             else:
-                # Default to showing sessions where the user is the child
-                sessions = TherapySession.objects.select_related("child__user", "therapist").filter(
-                    child__user=user
-                ).order_by("-created_at")
+                # Default to self (Child account)
+                fleet_child_users = [user.id]
+
+        # 1. Base Querysets
+        if is_admin:
+            sessions = TherapySession.objects.all()
+            from therapy.models import GameSession
+            game_sessions = GameSession.objects.all()
+        else:
+            sessions = TherapySession.objects.filter(child__user_id__in=fleet_child_users)
+            from therapy.models import GameSession
+            game_sessions = GameSession.objects.filter(child__user_id__in=fleet_child_users)
+
+        sessions = sessions.select_related("child__user", "therapist").order_by("-created_at")
+        game_sessions = game_sessions.select_related("game", "child__user").order_by("-created_at")
 
         # Hide orphaned sessions (in_progress with zero completed trials)
         # unless explicitly requesting in_progress status
         hide_orphans = request.query_params.get("include_orphans") != "true"
+        # Don't hide orphans for therapists in fleet overview
+        if is_therapist and not request.query_params.get("child_id"):
+            hide_orphans = False
 
         # Optional filters
         child_id = request.query_params.get("child_id")
         status_filter = request.query_params.get("status")
         game_type = request.query_params.get("game_type")
+        limit = min(int(request.query_params.get("limit", 50)), 200)
 
         if child_id:
             sessions = sessions.filter(child_id=child_id)
+            game_sessions = game_sessions.filter(child_id=child_id)
+
         if status_filter:
             sessions = sessions.filter(status=status_filter)
+            game_sessions = game_sessions.filter(completed_at__isnull=(status_filter != "completed"))
+        
         if game_type:
             sessions = sessions.filter(trials__trial_type=game_type).distinct()
-
-        # Limit
-        limit = min(int(request.query_params.get("limit", 50)), 200)
-
-        # 1. Fetch Therapy Sessions
-        if hide_orphans:
-            # For managed sessions, exclude those with 0 completed trials
-            sessions = sessions.annotate(
-                completed_trial_count=Count("trials", filter=Q(trials__status="completed")),
-            )
-            # Only exclude if NOT explicitly requested or if it's the dashboard view
-            if not child_id:
-                sessions = sessions.exclude(completed_trial_count=0)
-
-        # 2. Fetch Standalone Game Sessions
-        from therapy.models import GameSession
-        if child_id:
-            game_sessions = GameSession.objects.filter(child_id=child_id).select_related("game", "child__user")
-        elif is_admin:
-            game_sessions = GameSession.objects.all().select_related("game", "child__user")
-        elif is_therapist:
-            game_sessions = GameSession.objects.filter(therapist=user).select_related("game", "child__user")
-        else:
-            game_sessions = GameSession.objects.filter(child__user=user).select_related("game", "child__user")
-
-        if status_filter:
-            game_sessions = game_sessions.filter(completed_at__isnull=(status_filter != "completed"))
-        if game_type:
             game_sessions = game_sessions.filter(game__game_type=game_type)
 
+        # 1. Process Therapy Sessions (Managed)
+        if hide_orphans:
+            sessions = sessions.annotate(
+                completed_trial_count=Count("trials", filter=Q(trials__status="completed")),
+            ).exclude(completed_trial_count=0)
+
         result = []
-        # Process Therapy Sessions
         for s in sessions[:limit]:
-            s_trials = SessionTrial.objects.filter(session=s, status="completed")
-            s_total = s_trials.count()
-            s_correct = s_trials.filter(success=True).count()
-            trial_types = list(s_trials.values_list("trial_type", flat=True).distinct())
+            s_trials_all = SessionTrial.objects.filter(session=s)
+            s_trials_completed = s_trials_all.filter(status="completed")
+            
+            s_total = s_trials_all.count()
+            s_completed_count = s_trials_completed.count()
+            s_correct = s_trials_completed.filter(success=True).count()
+            trial_types = list(s_trials_all.values_list("trial_type", flat=True).distinct())
 
             result.append({
                 "id": f"managed-{s.id}",
@@ -343,7 +464,7 @@ class SessionHistoryView(APIView):
                 "therapist_name": s.therapist.full_name or s.therapist.email,
                 "total_trials": s_total,
                 "correct": s_correct,
-                "accuracy": round((s_correct / s_total), 3) if s_total else 0.0,
+                "accuracy": round((s_correct / s_completed_count), 3) if s_completed_count else 0.0,
                 "game_types": trial_types,
                 "type": "managed",
                 "created_at": s.created_at.isoformat(),

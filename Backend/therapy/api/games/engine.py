@@ -228,6 +228,7 @@ def submit_trial(
         submit=submit_data,
         level=level,
         session_id=trial.session_id,
+        trial=trial,
     )
 
     success = bool(result["success"])
