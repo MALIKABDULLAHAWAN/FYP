@@ -161,12 +161,22 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!selectedChild) {
+      // If no child selected (e.g. general dashboard), 
+      // we already fetched general sessions in the mount useEffect.
       setChildProgress(null);
       return;
     }
-    getChildProgress(selectedChild)
-      .then(setChildProgress)
-      .catch(() => setChildProgress(null));
+    
+    // Fetch progress and history for the specific child
+    setLoading(true);
+    Promise.all([
+      getChildProgress(selectedChild).catch(() => null),
+      getSessionHistory({ child_id: selectedChild, limit: 10 }).catch(() => [])
+    ]).then(([progress, history]) => {
+      setChildProgress(progress);
+      setSessions(history);
+      setLoading(false);
+    });
   }, [selectedChild]);
 
   if (loading) {

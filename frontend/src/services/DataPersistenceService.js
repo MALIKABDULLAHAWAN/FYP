@@ -11,9 +11,10 @@
  * Requirements: 16.1, 16.2, 16.3, 16.4
  */
 
+import { apiFetch, getToken } from '../api/client';
+
 class DataPersistenceService {
   constructor() {
-    this.apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
     this.isOnline = navigator.onLine;
     this.syncQueue = [];
     this.persistenceCache = new Map();
@@ -390,21 +391,10 @@ class DataPersistenceService {
    */
   async persistToServer(dataType, data) {
     const endpoint = this.getEndpointForDataType(dataType);
-    
-    const response = await fetch(`${this.apiBaseUrl}${endpoint}`, {
+    return await apiFetch(endpoint, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.getAuthToken()}`
-      },
-      body: JSON.stringify(data)
+      body: data
     });
-    
-    if (!response.ok) {
-      throw new Error(`Server persistence failed: ${response.statusText}`);
-    }
-    
-    return await response.json();
   }
 
   /**
@@ -524,20 +514,12 @@ class DataPersistenceService {
    */
   getEndpointForDataType(dataType) {
     const endpoints = {
-      gameMetadata: '/games/',
-      gameSessions: '/game-sessions/',
-      childProfiles: '/child-profiles/'
+      gameMetadata: '/api/v1/therapy/images',
+      gameSessions: '/api/v1/therapy/game-sessions/record',
+      childProfiles: '/api/v1/patients/children/',
     };
     
-    return endpoints[dataType] || '/data/';
-  }
-
-  /**
-   * Get authentication token
-   * @private
-   */
-  getAuthToken() {
-    return localStorage.getItem('auth_token') || '';
+    return endpoints[dataType] || '/api/v1/therapy/data/';
   }
 
   /**

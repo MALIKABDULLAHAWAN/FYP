@@ -11,6 +11,7 @@ from therapy.views import (
     GameSessionListCreateView,
     GameSessionDetailView,
     ChildProgressMetricsView,
+    GameStandaloneResultView,
 )
 from therapy.api.insight_views import SessionInsightView
 from therapy.api.dashboard_views import (
@@ -68,6 +69,7 @@ urlpatterns = [
 
     # --- Game Sessions (Child-Friendly UI) ---
     path("children/<int:child_id>/game-sessions", GameSessionListCreateView.as_view(), name="game-sessions-list-create"),
+    path("game-sessions/record", GameStandaloneResultView.as_view(), name="game-sessions-standalone-record"),
     path("game-sessions/<int:session_id>", GameSessionDetailView.as_view(), name="game-sessions-detail"),
     path("children/<int:child_id>/progress-metrics", ChildProgressMetricsView.as_view(), name="child-progress-metrics"),
 

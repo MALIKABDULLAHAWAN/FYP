@@ -369,5 +369,64 @@ class ChildProgressMetricsView(APIView):
             "therapeutic_goals_progress": child.progress_metrics.get("therapeutic_goals_progress", {}),
         }
         
-        ser = ChildProgressMetricsSerializer(metrics_data)
-        return Response(ser.data)
+
+class GameStandaloneResultView(APIView):
+    """
+    POST /api/v1/therapy/game-sessions/record
+    Consolidated endpoint for standalone games to record results in one step.
+    Data: { child_id, game_name, score, total_trials, accuracy, duration_seconds }
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        data = request.data
+        child_id = data.get("child_id")
+        game_name = data.get("game_name", "Unknown Game")
+        
+        try:
+            child = ChildProfile.objects.select_related("user").get(id=child_id)
+        except ChildProfile.DoesNotExist:
+            return Response({"detail": "Child not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Find a matching game image/config
+        from therapy.models import GameImage, GameSession
+        game = GameImage.objects.filter(name__icontains=game_name).first()
+        if not game:
+            # Fallback to any generic game or create placeholder if necessary
+            game = GameImage.objects.filter(game_type="matching").first()
+            if not game:
+                # Last resort placeholder
+                game = GameImage.objects.create(
+                    name=game_name,
+                    game_type="matching",
+                    is_active=True
+                )
+
+        # Create and finalize the session
+        metrics = {
+            "score": data.get("score", 0),
+            "total_trials": data.get("total_trials", 0),
+            "accuracy": data.get("accuracy", 0),
+        }
+        
+        session = GameSession.objects.create(
+            child=child,
+            game=game,
+            therapist=child.assigned_therapist or request.user, # Fallback to requester
+            started_at=timezone.now(),
+            duration_seconds=data.get("duration_seconds", 0),
+            performance_metrics=metrics,
+            therapeutic_goals_targeted=data.get("skills_tested", []),
+            status="completed" # UI branding
+        )
+        session.completed_at = timezone.now()
+        session.save()
+        
+        # Trigger metrics recalculation
+        child.calculate_progress_metrics()
+        
+        return Response({
+            "status": "success",
+            "session_id": session.id,
+            "metrics": metrics
+        }, status=status.HTTP_201_CREATED)
