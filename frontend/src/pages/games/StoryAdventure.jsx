@@ -3,21 +3,22 @@ import { useNavigate } from "react-router-dom";
 import { useChild } from "../../hooks/useChild";
 import UiIcon from "../../components/ui/UiIcon";
 import DifficultyIndicator from "../../components/DifficultyIndicator";
-import SummaryPanel from "../../components/summarypanel";
+import GameConclusionFlow from "../../components/GameConclusionFlow";
 import { generateContent, continueStory } from "../../services/aiServiceEnhanced";
 import { AmbientParticles, FloatingOrbs, Sticker3D, SpringContainer, MagicalSparkles } from "../../components/AmbientEffects";
 
-export default function StoryAdventure() {
-  const navigate = useNavigate();
-  const { childProfile } = useChild();
+export default function StoryAdventure({ isSession = false, level = "easy", onComplete }) {
 
   const [storyNodes, setStoryNodes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [started, setStarted] = useState(false);
-  const [difficulty, setDifficulty] = useState(1);
+  const [difficulty, setDifficulty] = useState(isSession ? (level === "easy" ? 1 : level === "medium" ? 2 : 3) : 1);
   const [turns, setTurns] = useState(0);
-  const [summaryData, setSummaryData] = useState(null);
+  const [currentChoices, setCurrentChoices] = useState([]);
+  const [phase, setPhase] = useState(isSession ? "playing" : "idle");
+  const [startTime] = useState(Date.now());
+  const [endTime, setEndTime] = useState(null);
 
   // Auto-scroll
   const storyEndRef = useRef(null);
@@ -26,20 +27,34 @@ export default function StoryAdventure() {
     storyEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [storyNodes]);
 
+  // Auto-start for sessions
+  const initialized = useRef(false);
+  useEffect(() => {
+    if (isSession && !initialized.current) {
+      initialized.current = true;
+      const randomTheme = THEMES[Math.floor(Math.random() * THEMES.length)].id;
+      handleStart(randomTheme);
+    }
+  }, [isSession]);
+
   const handleStart = async (selectedTheme) => {
     setLoading(true);
     setStarted(true);
     setError("");
     setStoryNodes([]);
     setTurns(0);
-    setSummaryData(null);
+    setPhase("playing");
 
     try {
       const age = childProfile?.age || 6;
-      // Start the story using AI backend with difficulty
       let initialResponse = await generateContent("story", selectedTheme, age, "short", difficulty);
       
       let content = typeof initialResponse === "string" ? initialResponse : initialResponse.content || initialResponse.title;
+      let choices = initialResponse.choices || [
+        { label: "Look around", icon: "👀" },
+        { label: "Keep going", icon: "🚶" },
+        { label: "Find a friend", icon: "🤝" }
+      ];
 
       if (initialResponse.error) {
          content = `Once upon a time, there was a magical ${selectedTheme}. You are about to embark on an adventure!`;
@@ -49,6 +64,7 @@ export default function StoryAdventure() {
         text: content,
         type: "narrative"
       }]);
+      setCurrentChoices(choices);
       setTurns(1);
       speak(content);
     } catch (_) {
@@ -59,36 +75,37 @@ export default function StoryAdventure() {
     }
   };
 
-  const handleChoice = async (choiceText) => {
-    if (turns >= 20) return;
+  const handleChoice = async (choiceText, icon) => {
+    const maxTurns = isSession ? 4 : 6;
+    if (turns >= maxTurns) {
+       finishGame();
+       return;
+    }
     setLoading(true);
     
-    // Add child's choice to the log
-    setStoryNodes(prev => [...prev, { text: choiceText, type: "choice" }]);
+    setStoryNodes(prev => [...prev, { text: choiceText, icon, type: "choice" }]);
 
     try {
-      // Get all previous narrative content as current story context
       const currentStoryContext = storyNodes
          .filter(n => n.type === "narrative")
          .map(n => n.text)
          .join("\n\n");
 
-      let nextPart = await continueStory(currentStoryContext, choiceText, "story_weaver", difficulty);
+      const turnsLeft = maxTurns - turns;
+      let result = await continueStory(currentStoryContext, choiceText, "story_weaver", turnsLeft);
       
-      setStoryNodes(prev => [...prev, { text: nextPart, type: "narrative" }]);
+      const narrative = result.narrative || result;
+      const nextChoices = result.choices || [];
+
+      setStoryNodes(prev => [...prev, { text: narrative, type: "narrative" }]);
+      setCurrentChoices(nextChoices);
+      
       const nextTurn = turns + 1;
       setTurns(nextTurn);
-      speak(nextPart);
+      speak(narrative);
 
-      // Check for completion
-      if (nextTurn >= 20) {
-        setSummaryData({
-          total_trials: 20,
-          correct: 20, // Infinite creativity is always 'correct'
-          accuracy: 1.0,
-          current_level: difficulty,
-          suggestion: "Excellent creativity! Try a harder level next time for more complex storytelling."
-        });
+      if (nextTurn >= maxTurns || (nextChoices.length === 0 && nextTurn > 2)) {
+        finishGame();
       }
 
     } catch (_) {
@@ -98,12 +115,17 @@ export default function StoryAdventure() {
     }
   };
 
+  const finishGame = () => {
+    setEndTime(Date.now());
+    setPhase("over");
+  };
+
   const speak = (text) => {
     if (!text) return;
     try {
       const synth = window.speechSynthesis;
       const utterance = new SpeechSynthesisUtterance(text.replace(/[^\w\s!?.,']/g, ""));
-      utterance.rate = 0.9;
+      utterance.rate = 1.0;
       utterance.pitch = 1.1;
       synth.cancel();
       synth.speak(utterance);
@@ -120,109 +142,65 @@ export default function StoryAdventure() {
   ];
 
   return (
-    <div className="game-interface" style={{ position: "relative", minHeight: "100vh" }}>
+    <div className="game-interface" style={{ position: "relative", minHeight: "100vh", padding: isSession ? "0" : "20px" }}>
       <AmbientParticles />
       <FloatingOrbs count={4} />
 
-      <div className="game-header" style={{ position: "relative", zIndex: 10 }}>
-        <div className="game-title-section">
-          <div className="game-title">
-            <UiIcon name="book" size={36} title="AI Story Adventures" />
-            <span>AI Story Adventures</span>
+      {!isSession && phase !== "over" && (
+        <div className="game-header" style={{ position: "relative", zIndex: 10 }}>
+          <div className="game-title-section">
+            <div className="game-title">
+              <UiIcon name="book" size={36} title="AI Story Adventures" />
+              <span>AI Story Adventures</span>
+            </div>
           </div>
-          <div className="game-subtitle">
-            {started && turns < 20 ? `Chapter ${turns} of 20` : "Create an infinite story powered by AI!"}
+          <div className="game-header-actions">
+            <button className="btn btn-sm btn-outline" onClick={() => { window.speechSynthesis.cancel(); navigate("/games"); }}>
+              <UiIcon name="arrow-left" size={16} /> Back
+            </button>
           </div>
         </div>
-        
-        <div className="game-header-actions">
-          <button className="btn btn-sm btn-outline" onClick={() => { window.speechSynthesis.cancel(); setStarted(false); }}>
-            <UiIcon name="refresh" size={16} /> Start Over
-          </button>
-          <button className="btn btn-sm btn-outline" onClick={() => { window.speechSynthesis.cancel(); navigate("/games"); }}>
-            <UiIcon name="arrow-left" size={16} /> Back
-          </button>
-        </div>
-      </div>
+      )}
 
-      <div className="container" style={{ position: "relative", zIndex: 10, maxWidth: "800px", padding: "24px" }}>
+      <div className="container" style={{ position: "relative", zIndex: 10, maxWidth: "800px", padding: "24px", margin: "0 auto" }}>
         
-        {!started && (
+        {phase === "idle" && !isSession && (
           <div className="card-cute card-cute-lavender" style={{ textAlign: "center", padding: "40px 20px" }}>
             <h2 style={{ fontFamily: "var(--font-fun)", color: "var(--cute-purple)", fontSize: "32px", marginBottom: "16px" }}>
               Choose Your Adventure!
             </h2>
-            
-            <div style={{ display: "flex", justifyContent: "center", marginBottom: 32 }}>
-              <DifficultyIndicator 
-                difficulty={difficulty} 
-                interactive={true} 
-                onDifficultyChange={setDifficulty} 
-              />
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", justifyContent: "center", marginTop: 32 }}>
+              {THEMES.map(t => (
+                <button key={t.id} onClick={() => handleStart(t.id)} className="btn btn-outline" style={{ display: "flex", flexDirection: "column", gap: 8, padding: 24, borderRadius: 24 }}>
+                  <span style={{ fontSize: 40 }}>{t.icon === 'rocket' ? '🚀' : t.icon === 'tree' ? '🌳' : t.icon === 'water' ? '🌊' : '🏰'}</span>
+                  <span>{t.label}</span>
+                </button>
+              ))}
             </div>
-
-            <p style={{ fontSize: "18px", color: "var(--color-text-secondary)", marginBottom: 32 }}>
-              Our AI Story Weaver will create a magical tale just for you. How should it start?
-            </p>
-            
-            {loading ? (
-              <div className="spinner" style={{ margin: "0 auto", width: "40px", height: "40px", borderWidth: "4px" }} />
-            ) : (
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", justifyContent: "center" }}>
-                {THEMES.map(t => (
-                  <SpringContainer key={t.id} delay={0.1}>
-                    <Sticker3D animate={true}>
-                      <button
-                        onClick={() => handleStart(t.id)}
-                        style={{
-                          background: "white",
-                          border: `3px solid ${t.color}`,
-                          borderRadius: "20px",
-                          padding: "24px 32px",
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          gap: "12px",
-                          cursor: "pointer",
-                          minWidth: "160px"
-                        }}
-                      >
-                        <UiIcon name={t.icon} size={48} title="" />
-                        <span style={{ fontSize: "18px", fontWeight: "bold", color: t.color }}>{t.label}</span>
-                      </button>
-                    </Sticker3D>
-                  </SpringContainer>
-                ))}
-              </div>
-            )}
           </div>
         )}
 
-        {started && (
-          <div className="story-container" style={{ display: "flex", flexDirection: "column", gap: "24px", marginBottom: "40px" }}>
+        {phase === "playing" && started && (
+          <div className="story-container" style={{ display: "flex", flexDirection: "column", gap: "24px", marginBottom: "120px" }}>
             {storyNodes.map((node, i) => (
               <div 
                 key={i} 
                 className={`card-cute ${node.type === 'narrative' ? 'card-cute-cream' : 'card-cute-purple'}`}
                 style={{ 
                   padding: "24px", 
-                  background: node.type === 'narrative' ? "white" : "var(--cute-purple)",
+                  background: node.type === 'narrative' ? "white" : "linear-gradient(135deg, #6366F1, #8B5CF6)",
                   color: node.type === 'narrative' ? "#333" : "white",
-                  fontSize: "20px",
+                  fontSize: "22px",
                   lineHeight: "1.6",
                   alignSelf: node.type === 'narrative' ? 'flex-start' : 'flex-end',
+                  borderRadius: "24px",
                   borderBottomRightRadius: node.type === 'narrative' ? '24px' : '4px',
                   borderBottomLeftRadius: node.type === 'narrative' ? '4px' : '24px',
                   maxWidth: "90%",
-                  boxShadow: "0 8px 16px rgba(0,0,0,0.05)"
+                  boxShadow: "0 10px 30px rgba(0,0,0,0.05)"
                 }}
               >
-                {node.type === 'narrative' && (
-                  <div style={{ marginBottom: "12px", color: "var(--cute-primary)", display: "flex", alignItems: "center", gap: "8px" }}>
-                    <UiIcon name="book" size={20} title="" />
-                    <span style={{ fontFamily: "var(--font-fun)", fontSize: "16px", fontWeight: "bold" }}>Story Weaver</span>
-                  </div>
-                )}
+                {node.icon && <span style={{ fontSize: 30, marginRight: 12 }}>{node.icon}</span>}
                 {node.text}
               </div>
             ))}
@@ -230,56 +208,68 @@ export default function StoryAdventure() {
           </div>
         )}
 
-        {summaryData && (
-          <div style={{ marginTop: 24, animation: "bounceIn .8s" }}>
-            <SummaryPanel 
-               data={summaryData} 
-               onExit={() => navigate("/games")} 
-               lastTrialText={storyNodes[storyNodes.length - 1]?.text?.substring(0, 50) + "..."}
-            />
+        {phase === "over" && (
+          <GameConclusionFlow 
+            results={{
+              gameName: "Story Adventure",
+              score: turns,
+              total_trials: isSession ? 4 : 6,
+              accuracy: 1.0,
+              duration: endTime ? (endTime - startTime) / 1000 : 0,
+              skills: ["Creativity", "Language", "Making Choices"]
+            }}
+            onReplay={() => {
+              setPhase("idle");
+              setStarted(false);
+            }}
+            onHome={() => navigate("/dashboard")}
+          />
+        )}
+
+        {phase === "playing" && !loading && !error && currentChoices.length > 0 && (
+          <div style={{ position: "fixed", bottom: "40px", left: "50%", transform: "translateX(-50%)", width: "100%", maxWidth: "800px", padding: "0 20px", zIndex: 100 }}>
+            <div style={{ background: "rgba(255,255,255,0.95)", backdropFilter: "blur(20px)", padding: "24px", borderRadius: "32px", boxShadow: "0 20px 60px rgba(0,0,0,0.15)", textAlign: "center" }}>
+               <h4 style={{ marginBottom: 20, color: "#4F46E5", fontWeight: 800 }}>What happens next?</h4>
+               <div style={{ display: "flex", gap: "16px", justifyContent: "center" }}>
+                 {currentChoices.map((choice, i) => (
+                    <button 
+                      key={i} 
+                      onClick={() => handleChoice(choice.label, choice.icon)}
+                      style={{
+                        background: "white",
+                        border: `3px solid #6366F1`,
+                        borderRadius: "24px",
+                        padding: "16px",
+                        flex: 1,
+                        cursor: "pointer",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        gap: "8px",
+                        transition: "all 0.2s",
+                        minWidth: 0
+                      }}
+                    >
+                      <span style={{ fontSize: "32px" }}>{choice.icon || '✨'}</span>
+                      <span style={{ fontSize: "14px", fontWeight: 800, color: "#1E1B4B", textAlign: "center" }}>
+                        {choice.label}
+                      </span>
+                    </button>
+                 ))}
+               </div>
+            </div>
           </div>
         )}
 
-        {started && !loading && !error && !summaryData && (
-          <div className="choices-section" style={{ position: "sticky", bottom: "24px", background: "rgba(255,255,255,0.9)", backdropFilter: "blur(10px)", padding: "20px", borderRadius: "24px", boxShadow: "0 8px 32px rgba(0,0,0,0.1)" }}>
-            <h3 style={{ fontFamily: "var(--font-fun)", fontSize: "20px", color: "var(--cute-purple)", marginBottom: "16px", textAlign: "center" }}>
-              <MagicalSparkles>What happens next?</MagicalSparkles>
-            </h3>
-            
-            <div style={{ display: "flex", gap: "16px", justifyContent: "center", flexWrap: "wrap" }}>
-              <button onClick={() => handleChoice("I want to explore further!")} className="btn btn-primary" style={{ flex: "1", minWidth: "200px" }}>Explore Further 👀</button>
-              <button onClick={() => handleChoice("I try to talk to them.")} className="btn btn-outline" style={{ flex: "1", minWidth: "200px" }}>Talk to Someone 👄</button>
-              <button onClick={() => handleChoice("I look for a secret path.")} className="btn btn-outline" style={{ flex: "1", minWidth: "200px" }}>Find a Secret 🔍</button>
-            </div>
-            
-            <div style={{ marginTop: "16px", display: "flex", gap: "8px" }}>
-              <input 
-                 type="text" 
-                 placeholder="Or type your own magical idea here..." 
-                 className="form-control" 
-                 id="customChoice"
-                 onKeyPress={(e) => {
-                   if (e.key === 'Enter' && e.target.value.trim()) {
-                     handleChoice(e.target.value);
-                     e.target.value = '';
-                   }
-                 }}
-              />
-            </div>
-          </div>
-        )}
-
-        {loading && started && (
-          <div style={{ textAlign: "center", padding: "24px" }}>
-            <div className="spinner" style={{ width: "40px", height: "40px", borderWidth: "4px" }} />
-            <p style={{ marginTop: "16px", color: "var(--cute-purple)", fontFamily: "var(--font-fun)", fontSize: "20px" }}>
-              The Story Weaver is thinking...
-            </p>
+        {loading && phase === "playing" && (
+          <div style={{ textAlign: "center", padding: "40px" }}>
+            <div className="spinner" style={{ width: "60px", height: "60px", margin: "0 auto" }} />
+            <p style={{ marginTop: "24px", color: "#4F46E5", fontWeight: 800, fontSize: "20px" }}>The Story Weaver is thinking...</p>
           </div>
         )}
 
         {error && (
-          <div className="alert alert-error" style={{ marginTop: "24px" }}>{error}</div>
+          <div className="alert alert-error">{error}</div>
         )}
       </div>
     </div>

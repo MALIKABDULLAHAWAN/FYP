@@ -232,17 +232,24 @@ export async function getPersonalizedHint(gameType, question, wrongAttempts, age
 /**
  * Continue a story
  */
-export async function continueStory(currentStory, childChoice, agentKey = "story_weaver", difficulty = 1) {
+export async function continueStory(currentStory, childChoice, agentKey = "story_weaver", turnsLeft = 5) {
   try {
     const response = await apiRequest('/ai/continue-story', 'POST', {
       current_story: currentStory,
       child_choice: childChoice,
       agent: agentKey,
-      difficulty: difficulty
+      turns_left: turnsLeft
     });
     return response.continuation;
   } catch (error) {
-    return "What happens next? You decide! ✨";
+    return {
+      narrative: "What happens next? You decide! ✨",
+      choices: [
+        { label: "Look around", icon: "👀" },
+        { label: "Keep going", icon: "🚶" },
+        { label: "Find a clue", icon: "🔍" }
+      ]
+    };
   }
 }
 

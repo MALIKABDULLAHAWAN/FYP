@@ -19,6 +19,8 @@ export function useVoiceAPI() {
   const audioContextRef = useRef(null);
   const audioQueueRef = useRef([]);
   const isPlayingRef = useRef(false);
+  const retryCountRef = useRef(0);
+  const MAX_RETRIES = 3;
 
   // Initialize Audio Context for streaming playback
   const initAudio = () => {
@@ -89,11 +91,21 @@ export function useVoiceAPI() {
       }
     }, 20000);
 
+    ws.onerror = (event) => {
+      console.warn('Voice WebSocket error (server may be offline)');
+    };
+
     ws.onclose = () => {
       console.log('Voice WebSocket disconnected');
       clearInterval(heartbeat);
-      setStatus("Reconnecting...");
-      setTimeout(connectWS, 3000);
+      retryCountRef.current += 1;
+      if (retryCountRef.current <= MAX_RETRIES) {
+        const delay = Math.min(3000 * Math.pow(2, retryCountRef.current - 1), 30000);
+        setStatus(`Reconnecting (${retryCountRef.current}/${MAX_RETRIES})...`);
+        setTimeout(connectWS, delay);
+      } else {
+        setStatus("Voice server offline — text commands still work");
+      }
     };
   }, []);
 
@@ -162,6 +174,43 @@ export function useVoiceAPI() {
     wsRef.current.send(blob);
   }, []);
 
+  const startListening = useCallback(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      setError("Speech recognition not supported in this browser");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => {
+      setIsListening(true);
+      setStatus("Listening... 👂");
+    };
+
+    recognition.onresult = (event) => {
+      const text = event.results[0][0].transcript;
+      console.log("Speech recognized:", text);
+      sendTextCommand(text);
+      setIsListening(false);
+    };
+
+    recognition.onerror = (event) => {
+      console.error("Speech recognition error", event.error);
+      setError(event.error);
+      setIsListening(false);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.start();
+  }, [sendTextCommand]);
+
   const stopPlayback = useCallback(() => {
     audioQueueRef.current = [];
     if (audioContextRef.current) {
@@ -181,6 +230,7 @@ export function useVoiceAPI() {
     setNavCommand,
     sendTextCommand,
     sendAudioBlob,
+    startListening,
     stopPlayback,
     setIsListening
   };

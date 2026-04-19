@@ -23,6 +23,10 @@ export function getChildProgress(childId) {
   return apiFetch(`${BASE}/children/${childId}/progress`);
 }
 
+export function getChildInsights(childId) {
+  return apiFetch(`${BASE}/children/${childId}/insights`);
+}
+
 // ── Generic Game API (works for matching, object_discovery, problem_solving) ──
 export function startGameSession(gameCode, childId, trialCount = 10, opts = {}) {
   return apiFetch(`${BASE}/games/${gameCode}/start/`, {
@@ -62,4 +66,11 @@ export function endSession(sessionId) {
     method: "POST",
     body: {},
   });
+}
+export function getRandomGameImages(gameType, count = 8, difficulty = null) {
+  const params = new URLSearchParams();
+  params.set("game_type", gameType);
+  params.set("count", count);
+  if (difficulty) params.set("difficulty", difficulty);
+  return apiFetch(`${BASE}/images/random?${params.toString()}`);
 }

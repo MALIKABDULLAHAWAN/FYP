@@ -15,18 +15,18 @@ from patients.serializers import (
     ChildUpdateSerializer,
     AssignTherapistSerializer,
 )
-from patients.permissions import IsAdminOrTherapist, CanAccessChild, user_has_role
+from patients.permissions import IsAdminOrTherapistOrParent, CanAccessChild, user_has_role
 
 User = get_user_model()
 
 
 class ChildListCreateView(APIView):
-    permission_classes = [IsAuthenticated, IsAdminOrTherapist]
+    permission_classes = [IsAuthenticated, IsAdminOrTherapistOrParent]
 
     def get(self, request):
         if user_has_role(request.user, "admin"):
             qs = ChildProfile.objects.select_related("user").prefetch_related("guardians").order_by("-created_at")
-        else:
+        elif user_has_role(request.user, "therapist"):
             # therapist: only assigned children
             child_ids = TherapistChildAssignment.objects.filter(
                 therapist=request.user
@@ -34,6 +34,11 @@ class ChildListCreateView(APIView):
             qs = ChildProfile.objects.select_related("user").prefetch_related("guardians").filter(
                 user_id__in=child_ids
             ).order_by("-created_at")
+        else:
+            # parent: children where they are a guardian
+            qs = ChildProfile.objects.select_related("user").prefetch_related("guardians").filter(
+                guardians__email=request.user.email
+            ).distinct().order_by("-created_at")
 
         return Response(ChildProfileSerializer(qs, many=True).data)
 
@@ -49,12 +54,25 @@ class ChildListCreateView(APIView):
                 child_user=profile.user,
                 defaults={"is_primary": True},
             )
+        
+        # If creator is parent, auto-add as primary guardian
+        if user_has_role(request.user, "parent"):
+            from patients.models import Guardian
+            Guardian.objects.get_or_create(
+                child_profile=profile,
+                email=request.user.email,
+                defaults={
+                    "name": request.user.full_name or "Parent",
+                    "relation": "Parent",
+                    "is_legal_guardian": True
+                }
+            )
 
         return Response(ChildProfileSerializer(profile).data, status=status.HTTP_201_CREATED)
 
 
 class ChildDetailView(APIView):
-    permission_classes = [IsAuthenticated, IsAdminOrTherapist, CanAccessChild]
+    permission_classes = [IsAuthenticated, IsAdminOrTherapistOrParent, CanAccessChild]
 
     def get_object(self, child_id: int) -> ChildProfile:
         return ChildProfile.objects.select_related("user").prefetch_related("guardians").get(id=child_id)

@@ -78,13 +78,26 @@ class AudioFeedback {
 
   createTickSound() {
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    return () => this.playTone(audioContext, [1000], 0.03, 'square');
+    return () => this.playTone(audioContext, [1000], 0.05, 'sine');
+  }
+
+  createMissionCompleteSound() {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    return () => {
+      const melody = [523.25, 659.25, 783.99, 1046.50, 783.99, 1318.51];
+      melody.forEach((freq, i) => {
+        setTimeout(() => this.playTone(audioContext, [freq], 0.2, 'sine'), i * 120);
+      });
+    };
   }
 
   playTone(audioContext, frequencies, duration, type = 'sine') {
     if (!this.enabled) return;
     
     try {
+      if (audioContext.state === 'suspended') {
+        audioContext.resume();
+      }
       const now = audioContext.currentTime;
       
       frequencies.forEach((freq, index) => {
@@ -97,11 +110,12 @@ class AudioFeedback {
         oscillator.type = type;
         oscillator.frequency.setValueAtTime(freq, now + (index * 0.05));
         
-        gainNode.gain.setValueAtTime(this.volume * 0.3, now);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, now + duration);
+        gainNode.gain.setValueAtTime(0, now);
+        gainNode.gain.linearRampToValueAtTime(this.volume * 0.15, now + 0.01);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
         
         oscillator.start(now + (index * 0.05));
-        oscillator.stop(now + duration + (index * 0.05));
+        oscillator.stop(now + duration + 0.1);
       });
     } catch (e) {
       console.warn('Audio playback failed:', e);

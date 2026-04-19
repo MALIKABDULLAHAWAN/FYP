@@ -4,36 +4,39 @@
  */
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { getRandomGameImages } from "../../api/games";
+import { useChild } from "../../hooks/useChild";
+import GameConclusionFlow from "../../components/GameConclusionFlow";
 
 // Card emoji pool – 20 unique emoji pairs
 const ALL_CARDS = [
-  { id:"dog",       emoji:"🐶" },
-  { id:"cat",       emoji:"🐱" },
-  { id:"rabbit",    emoji:"🐰" },
-  { id:"bear",      emoji:"🐼" },
-  { id:"fox",       emoji:"🦊" },
-  { id:"tiger",     emoji:"🐯" },
-  { id:"frog",      emoji:"🐸" },
-  { id:"pig",       emoji:"🐷" },
-  { id:"butterfly", emoji:"🦋" },
-  { id:"unicorn",   emoji:"🦄" },
-  { id:"rainbow",   emoji:"🌈" },
-  { id:"star",      emoji:"⭐" },
-  { id:"balloon",   emoji:"🎈" },
-  { id:"pizza",     emoji:"🍕" },
-  { id:"icecream",  emoji:"🍦" },
-  { id:"gamepad",   emoji:"🎮" },
-  { id:"cake",      emoji:"🎂" },
-  { id:"sun",       emoji:"🌞" },
-  { id:"flower",    emoji:"🌸" },
-  { id:"rocket",    emoji:"🚀" },
+  { id: "dog", emoji: "🐶" },
+  { id: "cat", emoji: "🐱" },
+  { id: "rabbit", emoji: "🐰" },
+  { id: "bear", emoji: "🐼" },
+  { id: "fox", emoji: "🦊" },
+  { id: "tiger", emoji: "🐯" },
+  { id: "frog", emoji: "🐸" },
+  { id: "pig", emoji: "🐷" },
+  { id: "butterfly", emoji: "🦋" },
+  { id: "unicorn", emoji: "🦄" },
+  { id: "rainbow", emoji: "🌈" },
+  { id: "star", emoji: "⭐" },
+  { id: "balloon", emoji: "🎈" },
+  { id: "pizza", emoji: "🍕" },
+  { id: "icecream", emoji: "🍦" },
+  { id: "gamepad", emoji: "🎮" },
+  { id: "cake", emoji: "🎂" },
+  { id: "sun", emoji: "🌞" },
+  { id: "flower", emoji: "🌸" },
+  { id: "rocket", emoji: "🚀" },
 ];
 
 // Level configs: pairs, cols
 const LEVELS = [
-  { label:"Easy",   pairs:4,  cols:4, time:60  },
-  { label:"Medium", pairs:8,  cols:4, time:90  },
-  { label:"Hard",   pairs:12, cols:6, time:120 },
+  { label: "Easy", pairs: 4, cols: 4, time: 60 },
+  { label: "Medium", pairs: 8, cols: 4, time: 90 },
+  { label: "Hard", pairs: 12, cols: 6, time: 120 },
 ];
 
 function playFlip() {
@@ -84,12 +87,21 @@ function shuffle(arr) {
   return a;
 }
 
-function buildDeck(pairs) {
-  const selected = shuffle(ALL_CARDS).slice(0, pairs);
+function buildDeck(cards) {
   const deck = [];
-  selected.forEach(card => {
-    deck.push({ uid: `${card.id}_A`, pairId: card.id, emoji: card.emoji });
-    deck.push({ uid: `${card.id}_B`, pairId: card.id, emoji: card.emoji });
+  cards.forEach(card => {
+    deck.push({ 
+      uid: `${card.id}_A`, 
+      pairId: card.id, 
+      emoji: card.emoji, 
+      image: card.image_url 
+    });
+    deck.push({ 
+      uid: `${card.id}_B`, 
+      pairId: card.id, 
+      emoji: card.emoji, 
+      image: card.image_url 
+    });
   });
   return shuffle(deck);
 }
@@ -141,44 +153,87 @@ function MemoryCard({ card, isFlipped, isMatched, onClick, size }) {
           boxShadow: isMatched
             ? "0 0 18px rgba(107,203,119,0.5)"
             : "0 4px 14px rgba(255,217,61,0.3)",
-          fontSize: size * 0.52,
+          overflow: "hidden",
           transition:"background 0.3s, border-color 0.3s",
         }}>
-          {card.emoji}
+          {card.image ? (
+            <img 
+              src={card.image} 
+              alt="card" 
+              style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+            />
+          ) : (
+            <span style={{ fontSize: size * 0.52 }}>{card.emoji}</span>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-export default function MemoryMatchGame() {
+export default function MemoryMatchGame({ isSession = false, level: sessionLevel = "easy", onComplete }) {
   const navigate = useNavigate();
-  const [phase, setPhase] = useState("level_select"); // level_select | playing | over
+  const { childProfile } = useChild();
+  const [phase, setPhase] = useState(isSession ? "playing" : "level_select"); 
   const [levelIdx, setLevelIdx] = useState(0);
   const [deck, setDeck] = useState([]);
-  const [flipped, setFlipped] = useState([]); // uids of face-up unmatched cards
+  const [flipped, setFlipped] = useState([]);
   const [matched, setMatched] = useState(new Set());
   const [moves, setMoves] = useState(0);
   const [timeLeft, setTimeLeft] = useState(60);
   const [lock, setLock] = useState(false);
   const [confetti, setConfetti] = useState([]);
+  const [loading, setLoading] = useState(false);
   const timerRef = useRef(null);
 
   const level = LEVELS[levelIdx];
 
-  // Start game
-  const startGame = useCallback((idx) => {
+  const fetchCardsAndStart = async (idx) => {
     const lv = LEVELS[idx];
-    setLevelIdx(idx);
-    setDeck(buildDeck(lv.pairs));
-    setFlipped([]);
-    setMatched(new Set());
-    setMoves(0);
-    setTimeLeft(lv.time);
-    setLock(false);
-    setConfetti([]);
-    setPhase("playing");
+    setLoading(true);
+    try {
+      const resp = await getRandomGameImages("memory_match", lv.pairs);
+      const cards = resp.results.map(img => ({
+        id: img.id,
+        emoji: img.emoji || "❓",
+        image_url: img.image_url
+      }));
+      
+      const finalCards = cards.length >= lv.pairs ? cards : shuffle(ALL_CARDS).slice(0, lv.pairs);
+      
+      setDeck(buildDeck(finalCards));
+      setLevelIdx(idx);
+      setFlipped([]);
+      setMatched(new Set());
+      setMoves(0);
+      setTimeLeft(lv.time);
+      setLock(false);
+      setPhase("playing");
+    } catch (err) {
+      console.error("Failed to load images", err);
+      setDeck(buildDeck(shuffle(ALL_CARDS).slice(0, lv.pairs)));
+      setLevelIdx(idx);
+      setFlipped([]);
+      setMatched(new Set());
+      setMoves(0);
+      setTimeLeft(lv.time);
+      setLock(false);
+      setPhase("playing");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const startGame = useCallback((idx) => {
+    fetchCardsAndStart(idx);
   }, []);
+
+  useEffect(() => {
+    if (isSession) {
+      const idx = LEVELS.findIndex(l => l.label.toLowerCase() === sessionLevel.toLowerCase());
+      startGame(idx !== -1 ? idx : 0);
+    }
+  }, [isSession, sessionLevel]);
 
   // Timer
   useEffect(() => {
@@ -188,23 +243,43 @@ export default function MemoryMatchGame() {
         if (t <= 1) {
           clearInterval(timerRef.current);
           setPhase("over");
+          
+          if (isSession && onComplete) {
+            onComplete({
+              score: matched.size,
+              accuracy: matched.size / (LEVELS[levelIdx].pairs || 1),
+              duration: LEVELS[levelIdx].time - t
+            });
+          }
+          
           return 0;
         }
         return t - 1;
       });
     }, 1000);
     return () => clearInterval(timerRef.current);
-  }, [phase]);
+  }, [phase, isSession, onComplete, matched.size, levelIdx]);
 
   // Check win
   useEffect(() => {
-    if (phase === "playing" && matched.size === level.pairs) {
+    if (phase === "playing" && matched.size === LEVELS[levelIdx].pairs) {
       clearInterval(timerRef.current);
       playWin();
       spawnConfetti();
-      setTimeout(() => setPhase("over"), 800);
+      
+      if (isSession && onComplete) {
+        setTimeout(() => {
+           onComplete({
+              score: moves,
+              accuracy: 1.0,
+              duration: LEVELS[levelIdx].time - timeLeft
+            });
+        }, 1000);
+      } else {
+        setTimeout(() => setPhase("over"), 1000);
+      }
     }
-  }, [matched, phase, level]);
+  }, [matched, phase, levelIdx, isSession, onComplete, moves, timeLeft]);
 
   const spawnConfetti = () => {
     const pieces = Array.from({ length: 30 }, (_, i) => ({
@@ -275,29 +350,38 @@ export default function MemoryMatchGame() {
         <div key={p.id} className="confetti-piece" style={{ left:`${p.x}%`, top:0, width:p.size, height:p.size, background:p.color, animationDuration:`${1.2 + Math.random() * 0.8}s`, animationDelay:`${p.delay}s` }} />
       ))}
 
-      {/* Header */}
-      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 18px", background:"rgba(255,255,255,0.88)", backdropFilter:"blur(12px)", borderBottom:"2px solid rgba(99,102,241,0.12)", flexShrink:0, zIndex:10 }}>
-        <button onClick={() => phase === "playing" ? setPhase("level_select") : navigate("/games")} style={{ background:"#FF6B6B", color:"white", border:"none", borderRadius:"50%", width:44, height:44, fontSize:22, cursor:"pointer", lineHeight:1 }}>←</button>
-        {phase === "playing" && (
-          <div style={{ display:"flex", alignItems:"center", gap:16 }}>
-            <div style={{ fontSize:16, fontWeight:700, color:"#888" }}>
-              {matchedCount}/{totalPairs} 🃏
+      {/* Header - hide if in session, as TherapyFlow provides one */}
+      {!isSession && (
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 18px", background:"rgba(255,255,255,0.88)", backdropFilter:"blur(12px)", borderBottom:"2px solid rgba(99,102,241,0.12)", flexShrink:0, zIndex:10 }}>
+          <button onClick={() => phase === "playing" ? setPhase("level_select") : navigate("/games")} style={{ background:"#FF6B6B", color:"white", border:"none", borderRadius:"50%", width:44, height:44, fontSize:22, cursor:"pointer", lineHeight:1 }}>←</button>
+          {phase === "playing" && (
+            <div style={{ display:"flex", alignItems:"center", gap:16 }}>
+              <div style={{ fontSize:16, fontWeight:700, color:"#888" }}>
+                {matchedCount}/{totalPairs} 🃏
+              </div>
+              <div style={{ fontSize:16, fontWeight:700, color:"#888" }}>
+                👣 {moves}
+              </div>
+              <div style={{ background:timeLeft < 20 ? "#FF6B6B" : "#6366F1", color:"white", borderRadius:20, padding:"5px 14px", fontWeight:800, fontSize:18, minWidth:64, textAlign:"center", transition:"background 0.3s" }}>
+                ⏱ {timeLeft}
+              </div>
             </div>
-            <div style={{ fontSize:16, fontWeight:700, color:"#888" }}>
-              👣 {moves}
-            </div>
-            <div style={{ background:timeLeft < 20 ? "#FF6B6B" : "#6366F1", color:"white", borderRadius:20, padding:"5px 14px", fontWeight:800, fontSize:18, minWidth:64, textAlign:"center", transition:"background 0.3s" }}>
-              ⏱ {timeLeft}
-            </div>
-          </div>
-        )}
-        {phase !== "playing" && <div style={{ fontSize:22, fontWeight:900, color:"#6366F1" }}>🃏 Memory!</div>}
-      </div>
+          )}
+          {phase !== "playing" && <div style={{ fontSize:22, fontWeight:900, color:"#6366F1" }}>🃏 Memory!</div>}
+        </div>
+      )}
 
       <div style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"16px", gap:18 }}>
+        
+        {loading && (
+          <div style={{ textAlign: "center" }}>
+            <div className="spinner" style={{ width: 50, height: 50, border: "5px solid #E2E8F0", borderTopColor: "#6366F1", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto 20px" }} />
+            <p style={{ fontWeight: 700, color: "#6366F1" }}>Loading Magical Cards...</p>
+            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+          </div>
+        )}
 
-        {/* Level select */}
-        {phase === "level_select" && (
+        {!loading && phase === "level_select" && (
           <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:20, width:"100%", maxWidth:420 }}>
             <div style={{ fontSize:72 }}>🃏</div>
             <div style={{ fontSize:32, fontWeight:900, color:"#6366F1" }}>Memory Match!</div>
@@ -322,10 +406,6 @@ export default function MemoryMatchGame() {
                     animationDelay:`${i * 0.08}s`,
                     fontSize:18, fontWeight:800,
                   }}
-                  onMouseDown={e => e.currentTarget.style.transform="scale(0.97)"}
-                  onMouseUp={e => e.currentTarget.style.transform="scale(1)"}
-                  onTouchStart={e => e.currentTarget.style.transform="scale(0.97)"}
-                  onTouchEnd={e => e.currentTarget.style.transform="scale(1)"}
                 >
                   <div style={{ display:"flex", flexDirection:"column", alignItems:"flex-start", gap:4 }}>
                     <div style={{ fontSize:22, fontWeight:900 }}>{lv.label}</div>
@@ -340,8 +420,7 @@ export default function MemoryMatchGame() {
           </div>
         )}
 
-        {/* Game board */}
-        {phase === "playing" && (
+        {!loading && phase === "playing" && (
           <div style={{
             display:"grid",
             gridTemplateColumns: `repeat(${level.cols}, ${cardSize}px)`,
@@ -364,34 +443,16 @@ export default function MemoryMatchGame() {
           </div>
         )}
 
-        {/* Game over panel */}
-        {phase === "over" && (
-          <div className="over-panel" style={{ textAlign:"center", display:"flex", flexDirection:"column", alignItems:"center", gap:16, background:"white", borderRadius:32, padding:"36px 28px", boxShadow:"0 20px 60px rgba(99,102,241,0.2)", maxWidth:380, width:"100%" }}>
-            <div style={{ fontSize:72 }}>{isWin ? "🎉" : "⏱"}</div>
-            <div style={{ fontSize:28, fontWeight:900, color:"#6366F1" }}>
-              {isWin ? "You Win!" : "Time's Up!"}
-            </div>
-            {isWin && <div style={{ fontSize:48, letterSpacing:4 }}>{"⭐".repeat(stars)}</div>}
-            <div style={{ fontSize:18, color:"#555", fontWeight:600 }}>
-              {isWin
-                ? `${matchedCount}/${totalPairs} pairs in ${moves} moves!`
-                : `${matchedCount}/${totalPairs} pairs found`}
-            </div>
-
-            {/* Next level button if won and not on last level */}
-            {isWin && levelIdx < LEVELS.length - 1 && (
-              <button onClick={() => startGame(levelIdx + 1)} style={{ background:"linear-gradient(135deg,#6BCB77,#4CAF50)", color:"white", border:"none", borderRadius:50, padding:"14px 36px", fontSize:20, fontWeight:900, cursor:"pointer", width:"100%", boxShadow:"0 6px 20px rgba(107,203,119,0.4)" }}>
-                Next Level →
-              </button>
-            )}
-
-            <button onClick={() => startGame(levelIdx)} style={{ background:"linear-gradient(135deg,#FF8C42,#FF6B6B)", color:"white", border:"none", borderRadius:50, padding:"14px 36px", fontSize:20, fontWeight:900, cursor:"pointer", width:"100%", boxShadow:"0 6px 20px rgba(255,140,66,0.4)" }}>
-              🔄 Play Again
-            </button>
-            <button onClick={() => setPhase("level_select")} style={{ background:"linear-gradient(135deg,#6366F1,#8B5CF6)", color:"white", border:"none", borderRadius:50, padding:"14px 36px", fontSize:20, fontWeight:900, cursor:"pointer", width:"100%", boxShadow:"0 6px 20px rgba(99,102,241,0.4)" }}>
-              🏠 Choose Level
-            </button>
-          </div>
+        {!loading && phase === "over" && (
+          <GameConclusionFlow
+            gameName="Memory Match"
+            score={matched.size}
+            total={LEVELS[levelIdx].pairs}
+            duration={LEVELS[levelIdx].time - timeLeft}
+            skills={["Memory", "Visual Scanning", "Pattern Recon"]}
+            onAction={isSession ? onComplete : () => setPhase("level_select")}
+            actionLabel={isSession ? "Return to Journey" : "Play Again"}
+          />
         )}
       </div>
     </div>

@@ -9,7 +9,7 @@ import { useChild } from "../../hooks/useChild";
 import { useToast } from "../../hooks/useToast";
 import { startGameSession, nextGameTrial } from "../../api/games";
 import { apiFetch } from "../../api/client";
-import SummaryPanel from "../../components/summarypanel";
+import GameConclusionFlow from "../../components/GameConclusionFlow";
 import UiIcon from "../../components/ui/UiIcon";
 import DifficultyIndicator from "../../components/DifficultyIndicator";
 
@@ -210,7 +210,15 @@ export default function SceneDescriptionGame() {
   if (status === "completed") {
     return (
       <div className="container">
-        <SummaryPanel summary={summary} onExit={handleExit} gameName="Scene Description" />
+        <GameConclusionFlow
+          gameName="Scene Description"
+          score={summary?.correct || 0}
+          total={summary?.total_trials || 20}
+          duration={summary?.total_duration || 0}
+          skills={["Language", "Categorization", "Observation"]}
+          onAction={handleExit}
+          actionLabel="Return Home"
+        />
       </div>
     );
   }

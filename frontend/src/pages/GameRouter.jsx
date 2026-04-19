@@ -120,6 +120,7 @@ const GAMES = [
     emoji: "🧩",
     name: "What Comes Next?",
     tagline: "Complete the pattern!",
+    description: "Complete 1 Adventure",
     color: "#6366F1",
     grad: "linear-gradient(135deg,#6366F1,#8B5CF6)",
     skills: ["Patterns","Logic","Thinking"],
@@ -156,16 +157,20 @@ const GAMES = [
   },
 ];
 
+import { useChild, ChildSelector } from "../hooks/useChild";
+
 const DIFFICULTY_ORDER = { Easy: 0, Medium: 1, Advanced: 2 };
 
 export default function GameRouter() {
   const navigate = useNavigate();
+  const { selectedChild, childProfile } = useChild();
+  
   const easy   = GAMES.filter(g => g.difficulty === "Easy");
   const medium = GAMES.filter(g => g.difficulty === "Medium");
   const adv    = GAMES.filter(g => g.difficulty === "Advanced");
 
   return (
-    <div style={{ minHeight:"100vh", background:"linear-gradient(160deg,#F8F0FF 0%,#F0F8FF 50%,#FFF8F0 100%)", fontFamily:"'Nunito','Inter',sans-serif" }}>
+    <div style={{ minHeight:"100vh", background:"linear-gradient(160deg,#F8F0FF 0%,#F0F8FF 50%,#FFF8F0 100%)", fontFamily:"'Nunito','Inter',sans-serif", position: "relative" }}>
       <style>{`
         @keyframes title-wave { 0%,100%{transform:rotate(-3deg)} 50%{transform:rotate(3deg)} }
         @keyframes card-hover-lift { to { transform:translateY(-4px); box-shadow:0 16px 40px rgba(0,0,0,0.15); } }
@@ -175,14 +180,49 @@ export default function GameRouter() {
         .new-badge { animation: title-wave 1.5s ease-in-out infinite; display:inline-block; }
         @keyframes emoji-bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
         .emoji-icon { animation: emoji-bounce 2.5s ease-in-out infinite; display:inline-block; }
+        .selection-overlay {
+          position: fixed;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background: rgba(255,255,255,0.7);
+          backdrop-filter: blur(8px);
+          z-index: 1000;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          animation: fadeIn 0.4s ease-out;
+        }
+        .selection-modal {
+          background: white;
+          padding: 40px;
+          border-radius: 40px;
+          box-shadow: 0 20px 50px rgba(99, 102, 241, 0.2);
+          text-align: center;
+          max-width: 400px;
+          border: 1px solid rgba(99, 102, 241, 0.1);
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
       `}</style>
 
       {/* Hero banner */}
       <div style={{ background:"linear-gradient(135deg,#6366F1 0%,#8B5CF6 50%,#EC4899 100%)", color:"white", padding:"32px 20px 40px", textAlign:"center", position:"relative", overflow:"hidden" }}>
         <div style={{ position:"absolute", inset:0, opacity:0.08, backgroundImage:"radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)", backgroundSize:"40px 40px" }} />
+        
+        {/* Secondary Header with Child Selector */}
+        <div style={{ 
+          position: "absolute", top: 16, right: 20, 
+          background: "rgba(255,255,255,0.2)", backdropFilter: "blur(10px)",
+          padding: "8px 16px", borderRadius: "20px", border: "1px solid rgba(255,255,255,0.3)",
+          zIndex: 10
+        }}>
+          <ChildSelector style={{ color: "white" }} />
+        </div>
+
         <div style={{ fontSize:56, marginBottom:8 }}>🎮</div>
-        <h1 style={{ fontSize:32, fontWeight:900, margin:"0 0 8px", textShadow:"0 4px 12px rgba(0,0,0,0.2)" }}>Therapy Games</h1>
-        <p style={{ fontSize:16, opacity:0.9, margin:0, maxWidth:320, marginLeft:"auto", marginRight:"auto" }}>Fun games to learn and grow! 🌟</p>
+        <h1 style={{ fontSize:32, fontWeight:900, margin:"0 0 8px", textShadow:"0 4px 12px rgba(0,0,0,0.2)" }}>Learning Adventures</h1>
+        <p style={{ fontSize: "20px", opacity: 0.9, marginBottom: "32px", maxWidth: "500px", lineHeight: 1.6, marginLeft: "auto", marginRight: "auto" }}>
+          Jump into your fun activity adventure! We'll play games, earn stars, and your buddy will guide you every step of the way.
+        </p>
+        
         {/* Stat pills */}
         <div style={{ display:"flex", justifyContent:"center", gap:12, marginTop:20, flexWrap:"wrap" }}>
           {[["🎮","13 Games"],["⭐","Earn Stars"],["🏆","Get Better"]].map(([ic,lb]) => (
@@ -191,7 +231,20 @@ export default function GameRouter() {
         </div>
       </div>
 
-      <div style={{ maxWidth:780, margin:"0 auto", padding:"20px 16px 40px" }}>
+      {!selectedChild && (
+        <div className="selection-overlay">
+          <div className="selection-modal">
+            <div style={{ fontSize: 60, marginBottom: 20 }}>🧑‍🚀</div>
+            <h2 style={{ fontSize: 24, fontWeight: 900, marginBottom: 12, color: "#1E293B" }}>Choose Your Adventurer</h2>
+            <p style={{ color: "#64748B", marginBottom: 24, lineHeight: 1.5 }}>Please select a child to start playing and tracking progress!</p>
+            <div style={{ background: "#F8FAFC", padding: 20, borderRadius: 24 }}>
+              <ChildSelector />
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div style={{ maxWidth:780, margin:"0 auto", padding:"20px 16px 40px", opacity: selectedChild ? 1 : 0.4, pointerEvents: selectedChild ? "auto" : "none" }}>
         <GameSection title="🌟 Easy Games" subtitle="Perfect for starting out!" games={easy} navigate={navigate} bgColor="#E8FFE8" borderColor="#6BCB77" />
         <GameSection title="🔥 Medium Games" subtitle="Ready for a challenge?" games={medium} navigate={navigate} bgColor="#FFF3E0" borderColor="#FF8C42" />
         <GameSection title="🚀 Advanced Games" subtitle="For master players!" games={adv} navigate={navigate} bgColor="#F3E8FF" borderColor="#8B5CF6" />

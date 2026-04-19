@@ -12,6 +12,7 @@ from therapy.views import (
     GameSessionDetailView,
     ChildProgressMetricsView,
 )
+from therapy.api.insight_views import SessionInsightView
 from therapy.api.dashboard_views import (
     DashboardStatsView,
     ChildProgressView,
@@ -73,6 +74,7 @@ urlpatterns = [
     # --- Dashboard & Analytics ---
     path("dashboard/stats", DashboardStatsView.as_view(), name="dashboard-stats"),
     path("children/<int:child_id>/progress", ChildProgressView.as_view(), name="child-progress"),
+    path("children/<int:child_id>/insights", SessionInsightView.as_view(), name="child-insights"),
     path("sessions/history", SessionHistoryView.as_view(), name="session-history"),
 
     # --- Joint Attention Game (legacy routes) ---

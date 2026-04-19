@@ -507,3 +507,68 @@
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
+
+/* Premium Sticker Book Aesthetics */
+.sticker-book-container {
+  perspective: 1000px;
+}
+
+.sticker-page-card {
+  background: white;
+  background-image: 
+    linear-gradient(90deg, rgba(0,0,0,0.03) 0%, transparent 5%, transparent 95%, rgba(0,0,0,0.03) 100%),
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,0.8), transparent);
+  border-radius: 20px;
+  border-left: 8px solid #f1f5f9;
+  box-shadow: 
+    5px 5px 15px rgba(0,0,0,0.02),
+    0 10px 40px rgba(0,0,0,0.05);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.sticker-page-card:hover {
+  transform: rotateY(-5deg) rotateX(2deg) translateY(-8px);
+  box-shadow: 
+    15px 15px 30px rgba(0,0,0,0.1),
+    0 20px 60px rgba(99, 102, 241, 0.1);
+}
+
+.shimmer-rare {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-rare::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0) 60%,
+    transparent 100%
+  );
+  transform: rotate(45deg);
+  animation: shimmerRotate 3s infinite;
+}
+
+@keyframes shimmerRotate {
+  0% { transform: translate(-30%, -30%) rotate(45deg); }
+  100% { transform: translate(30%, 30%) rotate(45deg); }
+}
+
+.sticker-tag {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}

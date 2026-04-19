@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
+import GameConclusionFlow from "../../components/GameConclusionFlow";
 import * as faceapi from "face-api.js";
 import { useChild } from "../../hooks/useChild";
 import { startGameSession, submitGameTrial, nextGameTrial, endSession } from "../../api/games";
@@ -143,7 +144,7 @@ function ProgressBar({ value, max, color }) {
 /* ─────────────────────────────────────────────────────────────
    MAIN COMPONENT
 ──────────────────────────────────────────────────────────────*/
-export default function EmotionGestureQuest() {
+export default function EmotionGestureQuest({ isSession = false, onComplete }) {
   const { childProfile } = useChild();
   const videoRef  = useRef(null);
   const canvasRef = useRef(null);
@@ -410,11 +411,6 @@ export default function EmotionGestureQuest() {
   }
 
   const restart   = useCallback(() => { pickTask(null); startGame(0); }, [childProfile]);
-  const nextLevel = useCallback(() => {
-    const lv = Math.min(levelRef.current + 1, LEVELS.length - 1);
-    pickTask(null);
-    startGame(lv);
-  }, [childProfile]);
 
   const lv = LEVELS[level];
 
@@ -497,15 +493,15 @@ export default function EmotionGestureQuest() {
       </div>
 
       {gameOver && (
-        <div style={styles.gameOverCard}>
-          <div style={{ fontSize: 64 }}>{score >= 10 ? "🏆" : score >= 5 ? "🥳" : "👏"}</div>
-          <h3 style={{ fontSize: 28, margin: "12px 0 4px", color: "#f1f5f9" }}>{level < LEVELS.length - 1 ? "Level Complete!" : "Amazing Job!"}</h3>
-          <p style={{ color: "#94a3b8", marginBottom: 4 }}>Final Score: <b style={{ color: "#a78bfa" }}>{score} points</b></p>
-          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginTop: 20 }}>
-            {level < LEVELS.length - 1 && <button style={styles.btnPrimary} onClick={nextLevel}>Next Level →</button>}
-            <button style={styles.btnSecondary} onClick={restart}>Play Again</button>
-          </div>
-        </div>
+        <GameConclusionFlow
+          gameName="Emotion & Gesture Quest"
+          score={score}
+          total={score + 5}
+          duration={LEVELS[level].time}
+          skills={["Social-Emotional", "Fine Motor", "Mirroring"]}
+          onAction={isSession ? onComplete : restart}
+          actionLabel={isSession ? "Continue Journey" : "Play Again"}
+        />
       )}
 
       <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>

@@ -1,23 +1,55 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useChild } from "../../hooks/useChild";
+import GameConclusionFlow from "../../components/GameConclusionFlow";
+import { Sticker3D } from "../../components/AmbientEffects";
 
-// Each animal: emoji, name, and what sound text to speak
+// Each animal: emoji, name, sound text, and real audio URL
 const ANIMALS = [
-  { id:"dog",      emoji:"🐶", name:"Dog",      sound:"Woof! Woof!",        color:"#FF8C42", bg:"#FFF0E8" },
-  { id:"cat",      emoji:"🐱", name:"Cat",      sound:"Meow! Meow!",        color:"#FF9FF3", bg:"#FFE8FF" },
-  { id:"cow",      emoji:"🐮", name:"Cow",      sound:"Moo! Moo!",          color:"#6BCB77", bg:"#E8FFE8" },
-  { id:"duck",     emoji:"🐥", name:"Duck",     sound:"Quack! Quack!",      color:"#FFD93D", bg:"#FFFACD" },
-  { id:"lion",     emoji:"🦁", name:"Lion",     sound:"Roar!",              color:"#FF6B6B", bg:"#FFE5E5" },
-  { id:"frog",     emoji:"🐸", name:"Frog",     sound:"Ribbit! Ribbit!",    color:"#4D96FF", bg:"#E5F0FF" },
-  { id:"sheep",    emoji:"🐑", name:"Sheep",    sound:"Baa! Baa!",          color:"#A8DADC", bg:"#E8F8F8" },
-  { id:"elephant", emoji:"🐘", name:"Elephant", sound:"Trumpet! Trumpet!",  color:"#8B5CF6", bg:"#F0E8FF" },
-  { id:"bee",      emoji:"🐝", name:"Bee",      sound:"Buzz! Buzz!",        color:"#F59E0B", bg:"#FFFCE8" },
-  { id:"horse",    emoji:"🐴", name:"Horse",    sound:"Neigh! Neigh!",      color:"#EC4899", bg:"#FFE8F5" },
-  { id:"pig",      emoji:"🐷", name:"Pig",      sound:"Oink! Oink!",        color:"#FB923C", bg:"#FFF2E8" },
-  { id:"bird",     emoji:"🐦", name:"Bird",     sound:"Tweet! Tweet!",      color:"#06B6D4", bg:"#E0FAFF" },
+  { id:"dog",      emoji:"🐶", name:"Dog",      sound:"Woof! Woof!",        color:"#FF8C42", bg:"#FFF0E8", audioUrl:"https://cdn.freesound.org/previews/557/557304_5265935-lq.mp3" },
+  { id:"cat",      emoji:"🐱", name:"Cat",      sound:"Meow! Meow!",        color:"#FF9FF3", bg:"#FFE8FF", audioUrl:"https://cdn.freesound.org/previews/415/415209_2269796-lq.mp3" },
+  { id:"cow",      emoji:"🐮", name:"Cow",      sound:"Moo! Moo!",          color:"#6BCB77", bg:"#E8FFE8", audioUrl:"https://cdn.freesound.org/previews/58/58277_634166-lq.mp3" },
+  { id:"duck",     emoji:"🐥", name:"Duck",     sound:"Quack! Quack!",      color:"#FFD93D", bg:"#FFFACD", audioUrl:"https://cdn.freesound.org/previews/111/111789_1186697-lq.mp3" },
+  { id:"lion",     emoji:"🦁", name:"Lion",     sound:"Roar!",              color:"#FF6B6B", bg:"#FFE5E5", audioUrl:"https://cdn.freesound.org/previews/460/460165_9415424-lq.mp3" },
+  { id:"frog",     emoji:"🐸", name:"Frog",     sound:"Ribbit! Ribbit!",    color:"#4D96FF", bg:"#E5F0FF", audioUrl:"https://cdn.freesound.org/previews/194/194740_1062850-lq.mp3" },
+  { id:"sheep",    emoji:"🐑", name:"Sheep",    sound:"Baa! Baa!",          color:"#A8DADC", bg:"#E8F8F8", audioUrl:"https://cdn.freesound.org/previews/430/430039_5738510-lq.mp3" },
+  { id:"elephant", emoji:"🐘", name:"Elephant", sound:"Trumpet! Trumpet!",  color:"#8B5CF6", bg:"#F0E8FF", audioUrl:"https://cdn.freesound.org/previews/520/520328_6927782-lq.mp3" },
+  { id:"bee",      emoji:"🐝", name:"Bee",      sound:"Buzz! Buzz!",        color:"#F59E0B", bg:"#FFFCE8", audioUrl:"https://cdn.freesound.org/previews/398/398165_2269796-lq.mp3" },
+  { id:"horse",    emoji:"🐴", name:"Horse",    sound:"Neigh! Neigh!",      color:"#EC4899", bg:"#FFE8F5", audioUrl:"https://cdn.freesound.org/previews/322/322443_5828649-lq.mp3" },
+  { id:"pig",      emoji:"🐷", name:"Pig",      sound:"Oink! Oink!",        color:"#FB923C", bg:"#FFF2E8", audioUrl:"https://cdn.freesound.org/previews/331/331848_5917506-lq.mp3" },
+  { id:"bird",     emoji:"🐦", name:"Bird",     sound:"Tweet! Tweet!",      color:"#06B6D4", bg:"#E0FAFF", audioUrl:"https://cdn.freesound.org/previews/398/398917_1429152-lq.mp3" },
 ];
 
-function speak(text, rate = 0.8) {
+// Preload audio cache
+const audioCache = {};
+ANIMALS.forEach(a => {
+  if (a.audioUrl) {
+    const audio = new Audio();
+    audio.preload = "auto";
+    audio.src = a.audioUrl;
+    audioCache[a.id] = audio;
+  }
+});
+
+// Play real animal sound with TTS fallback
+function playAnimalSound(animal) {
+  if (!animal) return;
+  const cached = audioCache[animal.id];
+  if (cached) {
+    // Clone to allow overlapping playback
+    const clone = cached.cloneNode();
+    clone.volume = 1.0;
+    clone.play().catch(() => {
+      // Fallback to speech synthesis if audio fails
+      speakText(animal.sound);
+    });
+    return;
+  }
+  // If no audio URL, use TTS
+  speakText(animal.sound);
+}
+
+function speakText(text, rate = 0.8) {
   try {
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
@@ -69,9 +101,10 @@ function getChoices(correct, all, count = 4) {
 
 const ROUNDS = 12;
 
-export default function AnimalSoundGame() {
+export default function AnimalSoundGame({ isSession = false, level = "easy", onComplete }) {
   const navigate = useNavigate();
-  const [phase, setPhase] = useState("idle");
+  const { childProfile } = useChild();
+  const [phase, setPhase] = useState(isSession ? "playing" : "idle");
   const [queue, setQueue] = useState([]);
   const [current, setCurrent] = useState(null);
   const [choices, setChoices] = useState([]);
@@ -81,20 +114,28 @@ export default function AnimalSoundGame() {
   const [wrongId, setWrongId] = useState(null);
   const [streak, setStreak] = useState(0);
 
+  // Difficulty / Rounds configuration
+  const roundsPerLevel = {
+    easy: 6,
+    medium: 10,
+    hard: 15
+  };
+  const TOTAL_ROUNDS = roundsPerLevel[level] || 8;
+
   const presentAnimal = useCallback((animal) => {
     setCurrent(animal);
     setChoices(getChoices(animal, ANIMALS, 4));
-    setTimeout(() => speak(animal.sound), 350);
+    setTimeout(() => playAnimalSound(animal), 350);
   }, []);
 
   const buildQueue = useCallback(() => {
     const base = shuffle([...ANIMALS]);
     const q = [];
-    while (q.length < ROUNDS) q.push(...base);
-    return q.slice(0, ROUNDS);
-  }, []);
+    while (q.length < TOTAL_ROUNDS) q.push(...base);
+    return q.slice(0, TOTAL_ROUNDS);
+  }, [TOTAL_ROUNDS]);
 
-  const startGame = () => {
+  const startGame = useCallback(() => {
     const q = buildQueue();
     setScore(0);
     setRound(1);
@@ -104,7 +145,14 @@ export default function AnimalSoundGame() {
     setQueue(q.slice(1));
     presentAnimal(q[0]);
     setPhase("playing");
-  };
+  }, [buildQueue, presentAnimal]);
+
+  // Auto-start in session
+  useEffect(() => {
+    if (isSession) {
+      startGame();
+    }
+  }, [isSession, level, startGame]);
 
   const handleChoice = (animal) => {
     if (phase !== "playing" || !current) return;
@@ -127,6 +175,14 @@ export default function AnimalSoundGame() {
       setWrongId(null);
       if (queue.length === 0) {
         setPhase("over");
+        if (isSession && onComplete) {
+          onComplete({
+            total_trials: TOTAL_ROUNDS,
+            correct: score + (correct ? 1 : 0),
+            accuracy: (score + (correct ? 1 : 0)) / TOTAL_ROUNDS,
+            current_level: level
+          });
+        }
       } else {
         setRound(r => r + 1);
         setQueue(q => {
@@ -138,7 +194,7 @@ export default function AnimalSoundGame() {
     }, correct ? 700 : 1200);
   };
 
-  const stars = score >= 11 ? 3 : score >= 8 ? 2 : 1;
+  const stars = score >= (TOTAL_ROUNDS * 0.9) ? 3 : score >= (TOTAL_ROUNDS * 0.6) ? 2 : 1;
 
   return (
     <div style={{ minHeight:"calc(100vh - 70px)", background:"linear-gradient(160deg,#F0FDF4 0%,#FFFBEB 50%,#FFF0F5 100%)", fontFamily:"'Nunito','Inter',sans-serif", display:"flex", flexDirection:"column" }}>
@@ -155,22 +211,26 @@ export default function AnimalSoundGame() {
         .correct-anim { animation: correct-bounce 0.4s ease; }
       `}</style>
 
-      {/* Header */}
-      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 18px", background:"rgba(255,255,255,0.88)", backdropFilter:"blur(12px)", borderBottom:"2px solid rgba(16,185,129,0.12)", flexShrink:0 }}>
-        <button onClick={() => navigate("/games")} style={{ background:"#FF6B6B", color:"white", border:"none", borderRadius:"50%", width:44, height:44, fontSize:22, cursor:"pointer", lineHeight:1 }}>←</button>
-        <div style={{ display:"flex", alignItems:"center", gap:16 }}>
-          {phase !== "idle" && <div style={{ fontSize:15, fontWeight:700, color:"#888" }}>{round}/{ROUNDS}</div>}
-          <div style={{ fontSize:24, fontWeight:900, color:"#10B981" }}>⭐ {score}</div>
-          {streak >= 2 && <div style={{ fontSize:14, fontWeight:800, color:"#FF8C42" }}>🔥×{streak}</div>}
+      {/* Header - Suppressed in session */}
+      {!isSession && (
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 18px", background:"rgba(255,255,255,0.88)", backdropFilter:"blur(12px)", borderBottom:"2px solid rgba(16,185,129,0.12)", flexShrink:0 }}>
+          <button onClick={() => navigate("/games")} style={{ background:"#FF6B6B", color:"white", border:"none", borderRadius:"50%", width:44, height:44, fontSize:22, cursor:"pointer", lineHeight:1 }}>←</button>
+          <div style={{ display:"flex", alignItems:"center", gap:16 }}>
+            <div style={{ fontSize:16, fontWeight:700, color:"#888" }}>{round}/{TOTAL_ROUNDS}</div>
+            <div style={{ fontSize:24, fontWeight:900, color:"#10B981" }}>⭐ {score}</div>
+            {streak >= 2 && <div style={{ fontSize:14, fontWeight:800, color:"#FF8C42" }}>🔥×{streak}</div>}
+          </div>
         </div>
-      </div>
+      )}
 
       <div style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"20px 16px", gap:22 }}>
 
         {/* Idle */}
-        {phase === "idle" && (
+        {phase === "idle" && !isSession && (
           <div style={{ textAlign:"center", display:"flex", flexDirection:"column", alignItems:"center", gap:20 }}>
-            <div style={{ fontSize:80, filter:"drop-shadow(0 8px 20px rgba(16,185,129,0.3))" }}>🔊</div>
+            <Sticker3D animate={true}>
+              <div style={{ fontSize:80, filter:"drop-shadow(0 8px 20px rgba(16,185,129,0.3))" }}>🔊</div>
+            </Sticker3D>
             <div style={{ fontSize:34, fontWeight:900, color:"#10B981" }}>Animal Sounds!</div>
             <div style={{ fontSize:17, color:"#666", maxWidth:290, lineHeight:1.5 }}>Listen to the sound and tap the right animal!</div>
             <div style={{ display:"flex", gap:12, fontSize:38 }}>
@@ -189,7 +249,7 @@ export default function AnimalSoundGame() {
             <div key={round} style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:12 }}>
               <div style={{ fontSize:16, fontWeight:700, color:"#888" }}>Who makes this sound?</div>
               <button
-                onClick={() => speak(current.sound)}
+                onClick={() => playAnimalSound(current)}
                 className={phase === "playing" ? "speaker-btn" : ""}
                 style={{ width:130, height:130, borderRadius:32, background:"linear-gradient(135deg,#10B981,#06B6D4)", border:"none", cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:6, boxShadow:"0 10px 36px rgba(16,185,129,0.35)", color:"white", fontSize:52 }}
               >
@@ -199,7 +259,7 @@ export default function AnimalSoundGame() {
 
             {/* Progress bar */}
             <div style={{ width:"100%", maxWidth:320, height:10, background:"#EEE", borderRadius:10, overflow:"hidden" }}>
-              <div style={{ width:`${(round/ROUNDS)*100}%`, height:"100%", background:"linear-gradient(90deg,#10B981,#06B6D4)", borderRadius:10, transition:"width 0.4s ease" }} />
+              <div style={{ width:`${(round/TOTAL_ROUNDS)*100}%`, height:"100%", background:"linear-gradient(90deg,#10B981,#06B6D4)", borderRadius:10, transition:"width 0.4s ease" }} />
             </div>
 
             {/* Animal choices - 2x2 grid */}
@@ -242,16 +302,15 @@ export default function AnimalSoundGame() {
 
         {/* Game over */}
         {phase === "over" && (
-          <div style={{ textAlign:"center", display:"flex", flexDirection:"column", alignItems:"center", gap:18 }}>
-            <div style={{ fontSize:80 }}>🎉</div>
-            <div style={{ fontSize:30, fontWeight:900, color:"#10B981" }}>Fantastic!</div>
-            <div style={{ fontSize:52, letterSpacing:4 }}>{"⭐".repeat(stars)}</div>
-            <div style={{ fontSize:22, fontWeight:700, color:"#555" }}>Score: <b style={{ color:"#10B981" }}>{score}</b> / {ROUNDS}</div>
-            <div style={{ display:"flex", gap:14, flexWrap:"wrap", justifyContent:"center" }}>
-              <button onClick={startGame} style={{ background:"linear-gradient(135deg,#FF6B6B,#FFD93D)", color:"white", border:"none", borderRadius:50, padding:"15px 38px", fontSize:22, fontWeight:900, cursor:"pointer" }}>🔄 Again!</button>
-              <button onClick={() => navigate("/games")} style={{ background:"linear-gradient(135deg,#10B981,#06B6D4)", color:"white", border:"none", borderRadius:50, padding:"15px 38px", fontSize:22, fontWeight:900, cursor:"pointer" }}>🏠 Games</button>
-            </div>
-          </div>
+          <GameConclusionFlow
+            gameName="Animal Sounds"
+            score={score}
+            total={TOTAL_ROUNDS}
+            duration={0}
+            skills={["Fine Motor", "Auditory Processing", "Visual Recognition"]}
+            onAction={isSession ? onComplete : () => setPhase("idle")}
+            actionLabel={isSession ? "Next Journey Task" : "Play Again"}
+          />
         )}
       </div>
     </div>

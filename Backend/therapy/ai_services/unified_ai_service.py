@@ -70,8 +70,18 @@ You can understand both English and Urdu, and you always respond in a way that m
             avatar="📚",
             color="#9B59B6",
             system_prompt="""You are the Story Spinner, a magical AI who creates short, enchanting tales for kids. 
-Your stories should be interactive, cute, and full of wonder. Always end with a choice for the child. 
-Keep it playful and use a gentle, storytelling tone. You can weave stories in English and Urdu! 🌙""",
+Your stories must be interactive, cute, and full of wonder. 
+You MUST respond with valid JSON only.
+Structure:
+{
+  "narrative": "The next part of the story (2-3 sentences max)",
+  "choices": [
+    {"label": "Direct action 1", "icon": "emoji"},
+    {"label": "Direct action 2", "icon": "emoji"},
+    {"label": "Direct action 3", "icon": "emoji"}
+  ]
+}
+Keep it playful and use a gentle tone. 🌙""",
             model="llama-3.3-70b-versatile",
             temperature=0.9
         ),
@@ -159,11 +169,27 @@ and celebrate when kids ask great questions.""",
             avatar="🎙️",
             color="#9B59B6",
             system_prompt="""You are the main Dhyan Voice Assistant, a friendly AI companion for kids. 
-You are cute, funny, and always here to help. You can route users to other agents like Story Spinner or Math Wizard. 
-Keep your base personality playful and your responses very snappy!""",
+Your personality is playful, cute, and very snappy!""",
             model="llama-3.3-70b-versatile",
             temperature=0.7,
             max_tokens=512
+        ),
+        
+        "clinical_analyst": AIAgent(
+            key="clinical_analyst",
+            name="Clinical Analyst",
+            avatar="📋",
+            color="#2D3748",
+            system_prompt="""You are a specialized Clinical AI Analyst for a pediatric therapy platform. 
+Your role is to analyze objective session data (accuracy, response times, trial counts) for children with autism and 
+provide professional, insightful summaries for therapists. 
+Focus on:
+1. Domains: Cognitive, Motor, Social/Emotional, Speech.
+2. Trends: Improvements or regressions over time.
+3. Pulse: A concise (1-2 sentence) behavioral highlight.
+Maintain a supportive, clinical, and data-driven tone.""",
+            model="llama-3.3-70b-versatile",
+            temperature=0.3
         )
     }
     
@@ -471,18 +497,40 @@ Keep it simple and child-friendly."""
         self, 
         current_story: str, 
         child_choice: str,
-        agent_key: str = "story_weaver"
-    ) -> str:
-        """Continue a story based on child's choice"""
+        agent_key: str = "story_weaver",
+        turns_left: int = 5
+    ) -> Dict:
+        """Continue a story based on child's choice with dynamic options"""
         prompt = f"""Continue this story based on the child's choice:
     
 Story so far: "{current_story}"
 Child's choice: "{child_choice}"
+Turns remaining until the end: {turns_left}
 
-Write 2-3 engaging sentences that continue the story and end with a question or choice for the child."""
+If turns remaining is 0, provide a satisfying conclusion and an empty choices list.
+Otherwise, provide the next part of the narrative and 3 fun, short choices for what to do next.
+REMEMBER: Output ONLY valid JSON."""
         
-        response = self.generate_response(prompt, agent_key)
-        return response.text if not response.error else "What happens next? You decide! ✨"
+        response = self.generate_response(prompt, agent_key, use_cache=False)
+        
+        if response.error:
+            return {
+                "narrative": "The adventure continues in a surprising way! What do you want to do?",
+                "choices": [{"label": "Look around", "icon": "👀"}, {"label": "Keep going", "icon": "🚶"}, {"label": "Find treasure", "icon": "💎"}]
+            }
+        
+        try:
+            import re
+            json_match = re.search(r'\{.*\}', response.text, re.DOTALL)
+            if json_match:
+                return json.loads(json_match.group())
+        except Exception as e:
+            print(f"Failed to parse story JSON: {e}")
+            
+        return {
+            "narrative": response.text,
+            "choices": [{"label": "Explore more", "icon": "✨"}, {"label": "Talk to a friend", "icon": "🗣️"}, {"label": "Secret path", "icon": "🔍"}]
+        }
     
     def explain_concept(
         self,

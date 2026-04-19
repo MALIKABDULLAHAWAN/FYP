@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useChild } from "../../hooks/useChild";
+import GameConclusionFlow from "../../components/GameConclusionFlow";
 
-// Items grouped by color bucket
 const COLOR_BUCKETS = [
   { id: "red",    label: "🔴", bg: "#FF6B6B", light: "#FFE5E5", text: "#C0392B" },
   { id: "yellow", label: "🟡", bg: "#FFD93D", light: "#FFFACD", text: "#B7860B" },
@@ -10,26 +11,26 @@ const COLOR_BUCKETS = [
 ];
 
 const ITEMS = [
-  { emoji:"🍎", color:"red",    name:"Apple"      },
-  { emoji:"🍓", color:"red",    name:"Strawberry" },
-  { emoji:"🌹", color:"red",    name:"Rose"       },
-  { emoji:"🍒", color:"red",    name:"Cherry"     },
-  { emoji:"❤️", color:"red",    name:"Heart"      },
-  { emoji:"🍌", color:"yellow", name:"Banana"     },
-  { emoji:"🌻", color:"yellow", name:"Sunflower"  },
-  { emoji:"⭐", color:"yellow", name:"Star"       },
-  { emoji:"🐝", color:"yellow", name:"Bee"        },
-  { emoji:"🌟", color:"yellow", name:"Gold Star"  },
-  { emoji:"🐸", color:"green",  name:"Frog"       },
-  { emoji:"🥦", color:"green",  name:"Broccoli"   },
-  { emoji:"🌿", color:"green",  name:"Leaf"       },
-  { emoji:"🐢", color:"green",  name:"Turtle"     },
-  { emoji:"🥝", color:"green",  name:"Kiwi"       },
-  { emoji:"🌊", color:"blue",   name:"Wave"       },
-  { emoji:"🫐", color:"blue",   name:"Blueberry"  },
-  { emoji:"🐟", color:"blue",   name:"Fish"       },
-  { emoji:"💧", color:"blue",   name:"Drop"       },
-  { emoji:"🦋", color:"blue",   name:"Butterfly"  },
+  { emoji: "🍎", color: "red",    name: "Apple"      },
+  { emoji: "🍓", color: "red",    name: "Strawberry" },
+  { emoji: "🌹", color: "red",    name: "Rose"       },
+  { emoji: "🍒", color: "red",    name: "Cherry"     },
+  { emoji: "❤️", color: "red",    name: "Heart"      },
+  { emoji: "🍌", color: "yellow", name: "Banana"     },
+  { emoji: "🌻", color: "yellow", name: "Sunflower"  },
+  { emoji: "⭐", color: "yellow", name: "Star"       },
+  { emoji: "🐝", color: "yellow", name: "Bee"        },
+  { emoji: "🌟", color: "yellow", name: "Gold Star"  },
+  { emoji: "🐸", color: "green",  name: "Frog"       },
+  { emoji: "🥦", color: "green",  name: "Broccoli"   },
+  { emoji: "🌿", color: "green",  name: "Leaf"       },
+  { emoji: "🐢", color: "green",  name: "Turtle"     },
+  { emoji: "🥝", color: "green",  name: "Kiwi"       },
+  { emoji: "🌊", color: "blue",   name: "Wave"       },
+  { emoji: "🫐", color: "blue",   name: "Blueberry"  },
+  { emoji: "🐟", color: "blue",   name: "Fish"       },
+  { emoji: "💧", color: "blue",   name: "Drop"       },
+  { emoji: "🦋", color: "blue",   name: "Butterfly"  },
 ];
 
 function playCorrect() {
@@ -66,25 +67,38 @@ function shuffle(arr) {
   return a;
 }
 
-const ROUNDS = 12;
-
-export default function ColorMatchGame() {
+export default function ColorMatchGame({ isSession = false, level = "easy", onComplete }) {
   const navigate = useNavigate();
+  const { childProfile } = useChild();
   const [queue, setQueue] = useState([]);
   const [current, setCurrent] = useState(null);
   const [score, setScore] = useState(0);
   const [round, setRound] = useState(0);
-  const [phase, setPhase] = useState("idle"); // idle | playing | feedback | over
-  const [feedback, setFeedback] = useState(null); // null | "correct" | "wrong"
+  const [phase, setPhase] = useState(isSession ? "playing" : "idle");
+  const [feedback, setFeedback] = useState(null);
   const [wrongBucket, setWrongBucket] = useState(null);
   const [streak, setStreak] = useState(0);
 
-  const buildQueue = useCallback(() => {
-    const shuffled = shuffle(ITEMS);
-    return shuffled.slice(0, ROUNDS);
-  }, []);
+  const currentSettings = useMemo(() => {
+    const s = {
+      easy:   { bucketCount: 3, rounds: 8  },
+      medium: { bucketCount: 4, rounds: 12 },
+      hard:   { bucketCount: 4, rounds: 20 }
+    };
+    return s[level] || s.easy;
+  }, [level]);
 
-  const startGame = () => {
+  const activeBuckets = useMemo(() =>
+    COLOR_BUCKETS.slice(0, currentSettings.bucketCount)
+  , [currentSettings.bucketCount]);
+
+  const buildQueue = useCallback(() => {
+    const validColors = activeBuckets.map(b => b.id);
+    const validItems = ITEMS.filter(item => validColors.includes(item.color));
+    return shuffle(validItems).slice(0, currentSettings.rounds);
+  }, [activeBuckets, currentSettings.rounds]);
+
+  const startGame = useCallback(() => {
     const q = buildQueue();
     setQueue(q.slice(1));
     setCurrent(q[0]);
@@ -94,7 +108,16 @@ export default function ColorMatchGame() {
     setFeedback(null);
     setWrongBucket(null);
     setPhase("playing");
-  };
+  }, [buildQueue]);
+
+  // Auto-start when used inside a therapy session
+  const initialized = useRef(false);
+  useEffect(() => {
+    if (isSession && !initialized.current) {
+      initialized.current = true;
+      startGame();
+    }
+  }, [isSession, startGame]);
 
   const handleBucket = (bucketId) => {
     if (phase !== "playing" || !current) return;
@@ -111,6 +134,7 @@ export default function ColorMatchGame() {
       setWrongBucket(bucketId);
     }
     setPhase("feedback");
+
     setTimeout(() => {
       setFeedback(null);
       setWrongBucket(null);
@@ -125,10 +149,14 @@ export default function ColorMatchGame() {
     }, correct ? 700 : 1000);
   };
 
-  const stars = score >= ROUNDS + 4 ? 3 : score >= ROUNDS - 2 ? 2 : 1;
-
   return (
-    <div style={{ minHeight:"calc(100vh - 70px)", background:"linear-gradient(160deg,#FFF9F0 0%,#FFF0F5 50%,#F0F8FF 100%)", fontFamily:"'Nunito','Inter',sans-serif", display:"flex", flexDirection:"column" }}>
+    <div style={{
+      minHeight: "calc(100vh - 70px)",
+      background: "linear-gradient(160deg,#FFF9F0 0%,#FFF0F5 50%,#F0F8FF 100%)",
+      fontFamily: "'Nunito','Inter',sans-serif",
+      display: "flex",
+      flexDirection: "column"
+    }}>
       <style>{`
         @keyframes item-bounce { 0%{transform:scale(0.5);opacity:0} 60%{transform:scale(1.15)} 100%{transform:scale(1);opacity:1} }
         @keyframes correct-flash { 0%{background:rgba(107,203,119,0.15)} 100%{background:transparent} }
@@ -136,78 +164,121 @@ export default function ColorMatchGame() {
         @keyframes streak-pop { 0%{transform:scale(0);opacity:0} 60%{transform:scale(1.2)} 100%{transform:scale(1);opacity:1} }
         .correct-anim { animation: correct-flash 0.7s ease; }
         .wrong-anim   { animation: wrong-shake  0.4s ease; }
+        .bucket-btn:hover:not(:disabled) { transform: scale(1.06); box-shadow: 0 8px 24px rgba(0,0,0,0.15) !important; }
       `}</style>
 
-      {/* Header */}
-      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 18px", background:"rgba(255,255,255,0.88)", backdropFilter:"blur(12px)", borderBottom:"2px solid rgba(99,102,241,0.12)", flexShrink:0 }}>
-        <button onClick={() => navigate("/games")} style={{ background:"#FF6B6B", color:"white", border:"none", borderRadius:"50%", width:44, height:44, fontSize:22, cursor:"pointer", lineHeight:1 }}>←</button>
-        <div style={{ display:"flex", alignItems:"center", gap:16 }}>
-          <div style={{ fontSize:16, fontWeight:700, color:"#888" }}>{round}/{ROUNDS}</div>
-          <div style={{ fontSize:24, fontWeight:900, color:"#6366F1" }}>⭐ {score}</div>
-          {streak >= 2 && <div style={{ fontSize:14, fontWeight:800, color:"#FF8C42", animation:"streak-pop 0.3s ease" }}>🔥×{streak}</div>}
+      {/* Header - only shown in standalone mode */}
+      {!isSession && (
+        <div style={{
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+          padding: "12px 18px", background: "rgba(255,255,255,0.88)",
+          backdropFilter: "blur(12px)", borderBottom: "2px solid rgba(99,102,241,0.12)", flexShrink: 0
+        }}>
+          <button onClick={() => navigate("/games")} style={{
+            background: "#FF6B6B", color: "white", border: "none",
+            borderRadius: "50%", width: 44, height: 44, fontSize: 22, cursor: "pointer", lineHeight: 1
+          }}>←</button>
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <div style={{ fontSize: 16, fontWeight: 700, color: "#888" }}>{round}/{currentSettings.rounds}</div>
+            <div style={{ fontSize: 24, fontWeight: 900, color: "#6366F1" }}>⭐ {score}</div>
+            {streak >= 2 && (
+              <div style={{ fontSize: 14, fontWeight: 800, color: "#FF8C42", animation: "streak-pop 0.3s ease" }}>
+                🔥×{streak}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Main content */}
-      <div style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"24px 20px", gap:28 }}>
+      <div style={{
+        flex: 1, display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center",
+        padding: "24px 20px", gap: 28
+      }}>
 
-        {/* Idle screen */}
+        {/* Idle screen (standalone only) */}
         {phase === "idle" && (
-          <div style={{ textAlign:"center", display:"flex", flexDirection:"column", alignItems:"center", gap:20 }}>
-            <div style={{ fontSize:80 }}>🎨</div>
-            <div style={{ fontSize:34, fontWeight:900, color:"#6366F1" }}>Color Match!</div>
-            <div style={{ fontSize:17, color:"#666", maxWidth:280, lineHeight:1.5 }}>Match each item to its color bucket!</div>
-            <div style={{ display:"flex", gap:10, justifyContent:"center", fontSize:36 }}>
-              {COLOR_BUCKETS.map(b => <span key={b.id}>{b.label}</span>)}
+          <div style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
+            <div style={{ fontSize: 80 }}>🎨</div>
+            <div style={{ fontSize: 34, fontWeight: 900, color: "#6366F1" }}>Color Match!</div>
+            <div style={{ fontSize: 17, color: "#666", maxWidth: 280, lineHeight: 1.5 }}>
+              Match each item to its color bucket!
             </div>
-            <button onClick={startGame} style={{ background:"linear-gradient(135deg,#6366F1,#EC4899)", color:"white", border:"none", borderRadius:50, padding:"18px 52px", fontSize:26, fontWeight:900, cursor:"pointer", boxShadow:"0 8px 28px rgba(99,102,241,0.35)", marginTop:8 }}>
+            <div style={{ display: "flex", gap: 10, justifyContent: "center", fontSize: 36 }}>
+              {activeBuckets.map(b => <span key={b.id}>{b.label}</span>)}
+            </div>
+            <button onClick={startGame} style={{
+              background: "linear-gradient(135deg,#6366F1,#EC4899)", color: "white",
+              border: "none", borderRadius: 50, padding: "18px 52px",
+              fontSize: 26, fontWeight: 900, cursor: "pointer",
+              boxShadow: "0 8px 28px rgba(99,102,241,0.35)", marginTop: 8
+            }}>
               ▶ Play!
             </button>
           </div>
         )}
 
-        {/* Playing & feedback */}
+        {/* Playing & Feedback */}
         {(phase === "playing" || phase === "feedback") && current && (
           <>
-            {/* Item display */}
-            <div className={feedback === "correct" ? "correct-anim" : ""} style={{ width:160, height:160, borderRadius:32, background:"white", boxShadow:"0 8px 32px rgba(99,102,241,0.15)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:90, animation:"item-bounce 0.4s ease", position:"relative" }}>
+            {/* Current item to sort */}
+            <div
+              className={feedback === "correct" ? "correct-anim" : ""}
+              key={round}
+              style={{
+                width: 160, height: 160, borderRadius: 32,
+                background: "white",
+                boxShadow: "0 8px 32px rgba(99,102,241,0.15)",
+                display: "flex", flexDirection: "column",
+                alignItems: "center", justifyContent: "center",
+                fontSize: 90, position: "relative",
+                animation: "item-bounce 0.4s ease"
+              }}
+            >
               {current.emoji}
               {feedback === "correct" && (
-                <div style={{ position:"absolute", top:-12, right:-12, fontSize:36, animation:"streak-pop 0.3s ease" }}>✅</div>
+                <div style={{ position: "absolute", top: -12, right: -12, fontSize: 36, animation: "streak-pop 0.3s ease" }}>✅</div>
               )}
               {feedback === "wrong" && (
-                <div style={{ position:"absolute", top:-12, right:-12, fontSize:36 }}>❌</div>
+                <div style={{ position: "absolute", top: -12, right: -12, fontSize: 36 }}>❌</div>
               )}
             </div>
 
             {/* Progress bar */}
-            <div style={{ width:"100%", maxWidth:320, height:10, background:"#EEE", borderRadius:10, overflow:"hidden" }}>
-              <div style={{ width:`${(round/ROUNDS)*100}%`, height:"100%", background:"linear-gradient(90deg,#6366F1,#EC4899)", borderRadius:10, transition:"width 0.4s ease" }} />
+            <div style={{ width: "100%", maxWidth: 320, height: 10, background: "#EEE", borderRadius: 10, overflow: "hidden" }}>
+              <div style={{
+                width: `${(round / currentSettings.rounds) * 100}%`,
+                height: "100%",
+                background: "linear-gradient(90deg,#6366F1,#EC4899)",
+                borderRadius: 10,
+                transition: "width 0.4s ease"
+              }} />
             </div>
 
-            {/* Color buckets */}
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:14, width:"100%", maxWidth:360 }}>
-              {COLOR_BUCKETS.map(b => {
+            {/* Color bucket buttons */}
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: `repeat(${activeBuckets.length > 3 ? 2 : 3}, 1fr)`,
+              gap: 14, width: "100%", maxWidth: 360
+            }}>
+              {activeBuckets.map(b => {
                 const isWrong = wrongBucket === b.id;
                 return (
                   <button
                     key={b.id}
-                    className={isWrong ? "wrong-anim" : ""}
+                    className={`bucket-btn ${isWrong ? "wrong-anim" : ""}`}
                     onClick={() => handleBucket(b.id)}
                     disabled={phase === "feedback"}
                     style={{
-                      height:80, borderRadius:20, border:`3px solid ${b.bg}`,
+                      height: 80, borderRadius: 20,
+                      border: `3px solid ${b.bg}`,
                       background: isWrong ? "#FFE5E5" : b.light,
                       cursor: phase === "feedback" ? "default" : "pointer",
-                      display:"flex", alignItems:"center", justifyContent:"center",
-                      fontSize:42, transition:"transform 0.12s,box-shadow 0.12s",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: 42,
+                      transition: "transform 0.12s, box-shadow 0.12s",
                       boxShadow: `0 4px 16px ${b.bg}33`,
-                      transform: phase === "playing" ? "scale(1)" : "scale(0.97)",
                     }}
-                    onMouseDown={e => e.currentTarget.style.transform = "scale(0.92)"}
-                    onMouseUp={e => e.currentTarget.style.transform = "scale(1)"}
-                    onTouchStart={e => e.currentTarget.style.transform = "scale(0.92)"}
-                    onTouchEnd={e => e.currentTarget.style.transform = "scale(1)"}
                   >
                     {b.label}
                   </button>
@@ -217,18 +288,17 @@ export default function ColorMatchGame() {
           </>
         )}
 
-        {/* Game over */}
+        {/* Game Over - Diagnostic Report */}
         {phase === "over" && (
-          <div style={{ textAlign:"center", display:"flex", flexDirection:"column", alignItems:"center", gap:18 }}>
-            <div style={{ fontSize:80 }}>🎉</div>
-            <div style={{ fontSize:30, fontWeight:900, color:"#6366F1" }}>Amazing!</div>
-            <div style={{ fontSize:52, letterSpacing:4 }}>{"⭐".repeat(stars)}</div>
-            <div style={{ fontSize:22, fontWeight:700, color:"#555" }}>Score: <b style={{ color:"#6366F1" }}>{score}</b> / {ROUNDS}</div>
-            <div style={{ display:"flex", gap:14, flexWrap:"wrap", justifyContent:"center", marginTop:8 }}>
-              <button onClick={startGame} style={{ background:"linear-gradient(135deg,#FF6B6B,#FFD93D)", color:"white", border:"none", borderRadius:50, padding:"15px 38px", fontSize:22, fontWeight:900, cursor:"pointer" }}>🔄 Again!</button>
-              <button onClick={() => navigate("/games")} style={{ background:"linear-gradient(135deg,#6366F1,#EC4899)", color:"white", border:"none", borderRadius:50, padding:"15px 38px", fontSize:22, fontWeight:900, cursor:"pointer" }}>🏠 Games</button>
-            </div>
-          </div>
+          <GameConclusionFlow
+            gameName="Color Match"
+            score={score}
+            total={currentSettings.rounds}
+            duration={0}
+            skills={["Visual Perception", "Categorization", "Color Recognition"]}
+            onAction={isSession ? onComplete : () => setPhase("idle")}
+            actionLabel={isSession ? "Continue Journey" : "Play Again"}
+          />
         )}
       </div>
     </div>

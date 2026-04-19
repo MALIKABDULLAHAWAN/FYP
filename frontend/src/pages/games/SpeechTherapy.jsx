@@ -17,6 +17,7 @@ import "../../styles/professional.css";
 import Confetti from "../../components/Confetti";
 import UiIcon from "../../components/ui/UiIcon";
 import SummaryPanel from "../../components/summarypanel";
+import GameConclusionFlow from "../../components/GameConclusionFlow";
 import AssetManager from "../../services/EmojiReplacer/AssetManager";
 import GameMetadataService from "../../services/EmojiReplacer/GameMetadataService";
 
@@ -113,7 +114,7 @@ function useTextToSpeech() {
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
-export default function SpeechTherapy() {
+export default function SpeechTherapy({ isSession = false, onComplete = null }) {
   const nav = useNavigate();
   const { user } = useAuth();
   const { selectedChild, childProfile } = useChild();
@@ -168,6 +169,25 @@ export default function SpeechTherapy() {
     }
     load();
   }, []);
+
+  // AUTO-START for Guided Journey
+  useEffect(() => {
+    if (isSession && activities.length > 0 && phase === 'setup' && !loading) {
+      // Pick a random or first activity for the journey
+      const defaultActivity = activities.find(a => a.category === 'picture_naming') || activities[0];
+      if (defaultActivity) {
+        setSelectedActivity(String(defaultActivity.id));
+        setTrialsPlanned(5); // Shorter for the 8-game journey
+        setPromptLevel(1); // Standard prompt level
+        
+        // Short delay to ensure state reflects activity selection
+        const timer = setTimeout(() => {
+          handleStartSession();
+        }, 500);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [isSession, activities, phase]);
 
   // Load activity metadata when activity is selected
   useEffect(() => {
@@ -401,6 +421,19 @@ export default function SpeechTherapy() {
         }
         
         setPhase("summary");
+        
+        // Report to Unified Therapy Flow
+        if (isSession && onComplete) {
+          onComplete({
+            total_trials: sum.total_completed,
+            correct: sum.correct,
+            accuracy: sum.accuracy,
+            metrics: {
+              partial: sum.partial || 0,
+              avg_response_time: sum.avg_latency || 0
+            }
+          });
+        }
       } else {
         setCurrentTrialIndex((i) => i + 1);
         setAudioBlob(null);
@@ -418,6 +451,19 @@ export default function SpeechTherapy() {
 
   function handleNewSession() {
     tts.stop();
+    if (isSession && onComplete && summary) {
+      onComplete({
+        score: summary.total_correct || 0,
+        total: summary.total_trials || 0,
+        accuracy: summary.total_score || 0,
+        duration: summary.total_duration || 0,
+        metrics: {
+           partial: summary.partial || 0,
+           avg_latency: summary.avg_latency || 0
+        }
+      });
+      return;
+    }
     setSession(null);
     setSummary(null);
     setAnalysis(null);
@@ -436,37 +482,47 @@ export default function SpeechTherapy() {
 
   return (
     <div className="container">
-      {/* Header */}
-      <div className="header">
-        <div>
-          <div className="h1" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <UiIcon name="speech" size={48} />
-            Speech Therapy
+      {/* Header - HIDE IN SESSION MODE */}
+      {!isSession && (
+        <div className="header">
+          <div>
+            <div className="h1" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <UiIcon name="speech" size={48} />
+              Speech Sparkles
+            </div>
+            <div className="sub">
+              AI-powered speech analysis with voice prompts for children
+            </div>
           </div>
-          <div className="sub">
-            AI-powered speech analysis with voice prompts for children
-          </div>
-        </div>
-        <div className="row" style={{ gap: 8 }}>
-          <button
-            className={`btn ${tts.enabled ? "btn-primary" : "btn-outline"}`}
-            onClick={() => tts.setEnabled(!tts.enabled)}
-            title={tts.enabled ? "Voice prompts ON" : "Voice prompts OFF"}
-            style={{ display: 'flex', alignItems: 'center', gap: 6 }}
-          >
-            <UiIcon name={tts.enabled ? "volume" : "volume-off"} size={20} />
-            {tts.enabled ? "Voice On" : "Voice Off"}
-          </button>
-          {session && (
-            <button className="btn" onClick={handleNewSession}>
-              Reset
+          <div className="row" style={{ gap: 8 }}>
+            <button
+              className={`btn ${tts.enabled ? "btn-primary" : "btn-outline"}`}
+              onClick={() => tts.setEnabled(!tts.enabled)}
+              title={tts.enabled ? "Voice prompts ON" : "Voice prompts OFF"}
+              style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+            >
+              <UiIcon name={tts.enabled ? "volume" : "volume-off"} size={20} />
+              {tts.enabled ? "Voice On" : "Voice Off"}
             </button>
-          )}
-          <button className="btn" onClick={() => nav("/dashboard")}>
-            ← Back
-          </button>
+            {session && (
+              <button className="btn" onClick={handleNewSession}>
+                Reset
+              </button>
+            )}
+            <button className="btn" onClick={() => nav("/dashboard")}>
+              ← Back
+            </button>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Hero title for session mode */}
+      {isSession && (
+        <div style={{ textAlign: 'center', marginBottom: 20 }}>
+          <h2 style={{ fontSize: 28, fontWeight: 900, color: '#4F46E5', margin: 0 }}>Speech Sparkles! ✨</h2>
+          <p style={{ fontSize: 16, color: '#6366F1', fontWeight: 600 }}>Let's talk with our buddy!</p>
+        </div>
+      )}
 
       {/* Child Info Bar */}
       {childProfile && (
@@ -942,61 +998,22 @@ export default function SpeechTherapy() {
       )}
 
       {/* ══════════ SUMMARY PHASE ══════════ */}
-      {phase === "summary" && summary && (() => {
-        const accPct = Math.round((summary.accuracy || 0) * 100);
-        // Normalise into the format SummaryPanel expects
-        const panelData = {
-          accuracy: summary.accuracy || 0,
-          total_trials: summary.total_completed,
-          correct: summary.correct,
-          suggestion: accPct >= 70
-            ? "Awesome speech session! Keep it up!"
-            : "Good effort! Practice makes perfect.",
-        };
-        return (
-        <div style={{ maxWidth: 680, margin: "0 auto" }}>
-          {/* Shared SummaryPanel — awards sticker if accuracy >= 70% */}
-          <SummaryPanel data={panelData} />
-
-          {/* Trial Breakdown Table */}
-          {summary.trials?.length > 0 && (
-            <div className="table-wrapper" style={{ margin: "16px 0" }}>
-              <table className="data-table">
-                <thead>
-                  <tr><th>#</th><th>Target</th><th>Response</th><th>Result</th></tr>
-                </thead>
-                <tbody>
-                  {summary.trials.map((t, i) => (
-                    <tr key={t.trial_id}>
-                      <td style={{ fontWeight: 600 }}>{i + 1}</td>
-                      <td>{t.target_text || "—"}</td>
-                      <td style={{ color: "var(--text-secondary)" }}>{t.transcript || "—"}</td>
-                      <td>
-                        <span className={`accuracy-badge ${
-                          t.therapist_score === "success" ? "acc-high" :
-                          t.therapist_score === "partial" ? "acc-mid" : "acc-low"
-                        }`}>
-                          {t.therapist_score || t.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          <button
-            className="btn btn-primary btn-lg"
-            style={{ width: "100%", marginTop: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
-            onClick={handleNewSession}
-          >
-            <UiIcon name="refresh" size={20} />
-            Start New Session
-          </button>
-        </div>
-        );
-      })()}
+      {phase === "summary" && summary && (
+        <GameConclusionFlow 
+          results={{
+            accuracy: summary.accuracy || 0,
+            total_trials: summary.total_completed,
+            correct: summary.correct,
+            score: summary.total_correct || 0,
+            metrics: {
+              partial: summary.partial || 0,
+              avg_latency: summary.avg_latency || 0
+            }
+          }}
+          onReplay={handleNewSession}
+          onHome={() => nav("/dashboard")}
+        />
+      )}
 
       {/* Analysis Loading Indicator */}
       {analysisPolling && (

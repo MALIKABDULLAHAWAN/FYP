@@ -271,7 +271,7 @@ class EmojiClassifier {
     }
     
     if (detectedContexts.includes('speech') && emojiData.category === 'speech') {
-      return 'speech-therapy-session-photo';
+      return 'speech-adventure-photo';
     }
     
     if (detectedContexts.includes('child') && emojiData.category === 'demographic') {

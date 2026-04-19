@@ -81,7 +81,7 @@ const ACHIEVEMENTS = {
     first_session: {
       id: 'first_session',
       name: 'First Steps',
-      description: 'Complete your first therapy session',
+      description: 'Complete your first activity adventure',
       icon: 'footprints',
       color: '#A8E6CF',
       condition: (stats) => stats.totalSessions >= 1,
@@ -105,7 +105,7 @@ const ACHIEVEMENTS = {
     game_explorer: {
       id: 'game_explorer',
       name: 'Game Explorer',
-      description: 'Try all 4 therapy games',
+      description: 'Try all 4 fun games',
       icon: 'compass',
       color: '#95E1D3',
       condition: (stats) => stats.gamesPlayed >= 4,

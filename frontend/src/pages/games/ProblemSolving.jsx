@@ -2,8 +2,10 @@
  * Problem Solving – Standalone Pattern Completion Game
  * Complete the pattern sequence by choosing the correct next item.
  */
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useChild } from "../../hooks/useChild";
+import GameConclusionFlow from "../../components/GameConclusionFlow";
 
 // Pattern definitions – each has a repeating unit and a display sequence
 const PATTERNS = [
@@ -15,7 +17,7 @@ const PATTERNS = [
   // Animal patterns
   { seq:["🐶","🐱","🐶","🐱","❓"], answer:"🐶", options:["🐶","🐱","🐸"],      hint:"animal" },
   { seq:["🐸","🐰","🐸","🐰","❓"], answer:"🐸", options:["🐰","🐸","🐱"],      hint:"animal" },
-  { seq:["🦊","🐻","🐼","🦊","🐻","❓"], answer:"🐼", options:["🐼","🦊","🐻"], hint:"animal" },
+  { seq:[" foxes ","🐻","🐼","🦊","🐻","❓"], answer:"🐼", options:["🐼","🦊","🐻"], hint:"animal" },
   // Fruit patterns
   { seq:["🍎","🍌","🍎","🍌","❓"], answer:"🍎", options:["🍎","🍌","🍇"],      hint:"fruit" },
   { seq:["🍊","🍇","🍊","🍇","❓"], answer:"🍊", options:["🍊","🍇","🍌"],      hint:"fruit" },
@@ -76,23 +78,28 @@ function playWin() {
   } catch (e) {}
 }
 
-const ROUNDS = 10;
+const ROUNDS_PER_GAME = 10;
 
-export default function ProblemSolving() {
+export default function ProblemSolving({ isSession = false, level = "easy", onComplete }) {
   const navigate = useNavigate();
-  const [phase, setPhase] = useState("idle");
+  const { childProfile } = useChild();
+  const [phase, setPhase] = useState(isSession ? "playing" : "idle");
   const [queue, setQueue] = useState([]);
   const [current, setCurrent] = useState(null);
   const [score, setScore] = useState(0);
   const [round, setRound] = useState(0);
   const [feedback, setFeedback] = useState(null); // null | "correct" | wrong-option
   const [streak, setStreak] = useState(0);
+  const [startTime] = useState(Date.now());
+  const [endTime, setEndTime] = useState(null);
+
+  const roundsToPlay = level === "easy" ? 6 : level === "medium" ? 10 : 15;
 
   const buildQueue = useCallback(() => {
-    return shuffle(PATTERNS).slice(0, ROUNDS);
-  }, []);
+    return shuffle(PATTERNS).slice(0, roundsToPlay);
+  }, [roundsToPlay]);
 
-  const startGame = () => {
+  const startGame = useCallback(() => {
     const q = buildQueue();
     setScore(0);
     setRound(1);
@@ -101,14 +108,23 @@ export default function ProblemSolving() {
     setQueue(q.slice(1));
     setCurrent(q[0]);
     setPhase("playing");
-  };
+  }, [buildQueue]);
+
+  // Auto-start for guided sessions
+  const initialized = useRef(false);
+  useEffect(() => {
+    if (isSession && !initialized.current) {
+        initialized.current = true;
+        startGame();
+    }
+  }, [isSession, startGame]);
 
   const handleOption = (opt) => {
     if (phase !== "playing" || feedback !== null || !current) return;
     const correct = opt === current.answer;
     if (correct) {
       playCorrect();
-      setScore(s => s + (streak >= 2 ? 2 : 1));
+      setScore(s => s + 1);
       setStreak(s => s + 1);
       setFeedback("correct");
     } else {
@@ -120,6 +136,7 @@ export default function ProblemSolving() {
       setFeedback(null);
       if (queue.length === 0) {
         playWin();
+        setEndTime(Date.now());
         setPhase("over");
       } else {
         setRound(r => r + 1);
@@ -129,10 +146,15 @@ export default function ProblemSolving() {
     }, correct ? 700 : 1000);
   };
 
-  const stars = score >= ROUNDS + 4 ? 3 : score >= ROUNDS - 2 ? 2 : 1;
-
   return (
-    <div style={{ minHeight:"calc(100vh - 70px)", background:"linear-gradient(160deg,#F0F8FF 0%,#F8F0FF 50%,#FFFBEB 100%)", fontFamily:"'Nunito','Inter',sans-serif", display:"flex", flexDirection:"column" }}>
+    <div style={{ 
+      minHeight:"calc(100vh - 70px)", 
+      background:"linear-gradient(160deg,#F0F8FF 0%,#F8F0FF 50%,#FFFBEB 100%)", 
+      fontFamily:"'Nunito','Inter',sans-serif", 
+      display:"flex", 
+      flexDirection:"column",
+      padding: isSession ? "0" : "inherit"
+    }}>
       <style>{`
         @keyframes seq-item-in { 0%{transform:scale(0.5) translateY(-10px);opacity:0} 60%{transform:scale(1.1)} 100%{transform:scale(1) translateY(0);opacity:1} }
         @keyframes question-pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.12)} }
@@ -148,15 +170,17 @@ export default function ProblemSolving() {
         .opt-wrong   { animation: wrong-shake   0.35s ease; }
       `}</style>
 
-      {/* Header */}
-      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 18px", background:"rgba(255,255,255,0.88)", backdropFilter:"blur(12px)", borderBottom:"2px solid rgba(99,102,241,0.12)", flexShrink:0 }}>
-        <button onClick={() => navigate("/games")} style={{ background:"#FF6B6B", color:"white", border:"none", borderRadius:"50%", width:44, height:44, fontSize:22, cursor:"pointer", lineHeight:1 }}>←</button>
-        <div style={{ display:"flex", alignItems:"center", gap:14 }}>
-          {phase === "playing" && <div style={{ fontSize:15, fontWeight:700, color:"#888" }}>{round}/{ROUNDS}</div>}
-          <div style={{ fontSize:24, fontWeight:900, color:"#6366F1" }}>⭐ {score}</div>
-          {streak >= 2 && <div key={streak} style={{ fontSize:14, fontWeight:800, color:"#FF8C42", animation:"streak-pop 0.3s ease" }}>🔥×{streak}</div>}
+      {/* Header - Hid in session mode as state machine handles it */}
+      {!isSession && (
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 18px", background:"rgba(255,255,255,0.88)", backdropFilter:"blur(12px)", borderBottom:"2px solid rgba(99,102,241,0.12)", flexShrink:0 }}>
+          <button onClick={() => navigate("/games")} style={{ background:"#FF6B6B", color:"white", border:"none", borderRadius:"50%", width:44, height:44, fontSize:22, cursor:"pointer", lineHeight:1 }}>←</button>
+          <div style={{ display:"flex", alignItems:"center", gap:14 }}>
+            {phase === "playing" && <div style={{ fontSize:15, fontWeight:700, color:"#888" }}>{round}/{roundsToPlay}</div>}
+            <div style={{ fontSize:24, fontWeight:900, color:"#6366F1" }}>⭐ {score}</div>
+            {streak >= 2 && <div key={streak} style={{ fontSize:14, fontWeight:800, color:"#FF8C42", animation:"streak-pop 0.3s ease" }}>🔥×{streak}</div>}
+          </div>
         </div>
-      </div>
+      )}
 
       <div style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"20px 16px", gap:24 }}>
 
@@ -210,7 +234,7 @@ export default function ProblemSolving() {
 
             {/* Progress bar */}
             <div style={{ width:"100%", maxWidth:320, height:10, background:"#EEE", borderRadius:10, overflow:"hidden" }}>
-              <div style={{ width:`${(round/ROUNDS)*100}%`, height:"100%", background:"linear-gradient(90deg,#6366F1,#8B5CF6)", borderRadius:10, transition:"width 0.4s ease" }} />
+              <div style={{ width:`${(round/roundsToPlay)*100}%`, height:"100%", background:"linear-gradient(90deg,#6366F1,#8B5CF6)", borderRadius:10, transition:"width 0.4s ease" }} />
             </div>
 
             {/* Options */}
@@ -250,20 +274,17 @@ export default function ProblemSolving() {
           </>
         )}
 
-        {/* Game over */}
+        {/* Game over - Integrated StandaloneGameReport */}
         {phase === "over" && (
-          <div style={{ textAlign:"center", display:"flex", flexDirection:"column", alignItems:"center", gap:18, background:"white", borderRadius:32, padding:"36px 28px", boxShadow:"0 20px 60px rgba(99,102,241,0.2)", maxWidth:380, width:"100%" }}>
-            <div style={{ fontSize:80 }}>🎉</div>
-            <div style={{ fontSize:30, fontWeight:900, color:"#6366F1" }}>Brilliant!</div>
-            <div style={{ fontSize:52, letterSpacing:4 }}>{"⭐".repeat(stars)}</div>
-            <div style={{ fontSize:22, fontWeight:700, color:"#555" }}>
-              Score: <b style={{ color:"#6366F1" }}>{score}</b> / {ROUNDS}
-            </div>
-            <div style={{ display:"flex", gap:14, flexWrap:"wrap", justifyContent:"center", width:"100%" }}>
-              <button onClick={startGame} style={{ background:"linear-gradient(135deg,#FF6B6B,#FFD93D)", color:"white", border:"none", borderRadius:50, padding:"15px 32px", fontSize:20, fontWeight:900, cursor:"pointer", flex:1 }}>🔄 Again!</button>
-              <button onClick={() => navigate("/games")} style={{ background:"linear-gradient(135deg,#6366F1,#8B5CF6)", color:"white", border:"none", borderRadius:50, padding:"15px 32px", fontSize:20, fontWeight:900, cursor:"pointer", flex:1 }}>🏠 Games</button>
-            </div>
-          </div>
+           <GameConclusionFlow 
+             gameName="Problem Solving"
+             score={score}
+             total={roundsToPlay}
+             duration={endTime ? (endTime - startTime) / 1000 : 0}
+             skills={["Pattern Recognition", "Logic", "Sequential Thinking"]}
+             onAction={isSession ? onComplete : () => setPhase("idle")}
+             actionLabel={isSession ? "Continue Journey" : "Play Again"}
+           />
         )}
       </div>
     </div>

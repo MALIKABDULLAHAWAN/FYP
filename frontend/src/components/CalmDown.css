@@ -1,0 +1,105 @@
+.calm-down-overlay {
+  position: fixed;
+  inset: 0;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2100;
+  animation: fadeIn 0.8s ease-out;
+}
+
+.calm-down-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.calm-title {
+  font-size: 32px;
+  font-weight: 900;
+  color: #4f46e5;
+  margin: 0;
+  letter-spacing: -1px;
+}
+
+.breathing-circle {
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 4s linear;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+  border: 2px solid rgba(99, 102, 241, 0.2);
+  position: relative;
+}
+
+.circle-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.phase-text {
+  font-size: 24px;
+  font-weight: 800;
+  color: #6366f1;
+}
+
+.timer-text {
+  font-size: 48px;
+  font-weight: 900;
+  color: #4f46e5;
+  opacity: 0.5;
+}
+
+/* Breathing Animations */
+.breathing-circle.inhale {
+  transform: scale(1.4);
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, rgba(99, 102, 241, 0.1) 100%);
+  transition: transform 4s linear, background 4s linear;
+}
+
+.breathing-circle.hold {
+  transform: scale(1.4);
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.3) 0%, rgba(16, 185, 129, 0.1) 100%);
+  transition: transform 3s linear, background 3s linear;
+}
+
+.breathing-circle.exhale {
+  transform: scale(1);
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+  transition: transform 4s linear, background 4s linear;
+}
+
+.progress-dots {
+  display: flex;
+  gap: 12px;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.dot.active {
+  background: #10b981;
+  transform: scale(1.2);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+.calm-hint {
+  font-size: 18px;
+  color: #64748b;
+  font-weight: 600;
+  max-width: 300px;
+  line-height: 1.5;
+}

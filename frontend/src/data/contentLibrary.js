@@ -479,8 +479,8 @@ export const CONTENT_LIBRARY = {
       skip: { name: "Skip", emoji: "⏭️", description: "Skip this question", cost: 40 },
       extraLife: { name: "Extra Life", emoji: "❤️", description: "Continue after wrong answer", cost: 60 }
     },
-    // THERAPY SYSTEM: Goals and Session Management
-    therapyGoals: {
+    // ADVENTURE SYSTEM: Goals and Journey Management
+    adventureGoals: {
       cognitive: {
         title: "Cognitive Development",
         icon: "🧠",
@@ -537,8 +537,8 @@ export const CONTENT_LIBRARY = {
         ]
       }
     },
-    // THERAPY SESSIONS: Structured 20-30 minute sessions
-    therapySessions: {
+    // ADVENTURE JOURNEYS: Structured 20-30 minute adventures
+    adventureSessions: {
       focus: {
         title: "Focus & Attention",
         duration: 20,
@@ -607,11 +607,11 @@ export const CONTENT_LIBRARY = {
           { type: "patterns", duration: 5, goal: "Pattern completion" },
           { type: "breathing", duration: 5, goal: "Relaxation" }
         ],
-        rewards: ["All-Rounder", "Therapy Star"]
+        rewards: ["All-Rounder", "Adventure Star"]
       }
     },
-    // THERAPY PROGRESS TRACKING
-    therapyProgress: {
+    // ADVENTURE PROGRESS TRACKING
+    adventureProgress: {
       levels: [
         { level: 1, title: "Beginner", minScore: 0, color: "#95A5A6" },
         { level: 2, title: "Explorer", minScore: 100, color: "#3498DB" },
@@ -627,7 +627,7 @@ export const CONTENT_LIBRARY = {
         { id: "daily-7", title: "Weekly Warrior", description: "Play for 7 days straight", icon: "📅", points: 100 },
         { id: "all-games", title: "Game Master", description: "Try all 10 game types", icon: "🏆", points: 150 },
         { id: "high-score", title: "High Scorer", description: "Score 50+ points in one game", icon: "💎", points: 75 },
-        { id: "therapy-complete", title: "Therapy Champion", description: "Complete 10 therapy sessions", icon: "🎖️", points: 200 },
+        { id: "adventure-complete", title: "Adventure Champion", description: "Complete 10 activity adventures", icon: "🎖️", points: 200 },
         { id: "focus-master", title: "Focus Master", description: "Complete 5 Focus sessions", icon: "🎯", points: 100 }
       ]
     },
@@ -857,7 +857,7 @@ export const CONTENT_LIBRARY = {
         { id: "daily-7", title: "Story Time", description: "Listen to or read 2 stories", reward: 30, icon: "📚", type: "reading" },
         { id: "daily-8", title: "Song Bird", description: "Sing along with 2 songs", reward: 30, icon: "🎵", type: "music" },
         { id: "daily-9", title: "Calm Master", description: "Do 1 breathing exercise", reward: 40, icon: "🧘", type: "mindfulness" },
-        { id: "daily-10", title: "Helper Hero", description: "Complete 1 therapy session", reward: 100, icon: "🦸", type: "therapy" }
+        { id: "daily-10", title: "Helper Hero", description: "Complete 1 Adventure", reward: 100, icon: "🦸", type: "therapy" }
       ],
       streakBonus: { 3: 25, 7: 50, 14: 100, 30: 250 }
     },

@@ -28,8 +28,10 @@ logger = logging.getLogger("dhyan_voice")
 os.environ["DJANGO_ALLOW_ASYNC_QUERY"] = "true"
 
 # Paths
-BASE_DIR = Path("C:/Users/alido/Downloads/FYP/FYP")
+BASE_DIR = Path(__file__).resolve().parents[2]
+sys.path.append(str(BASE_DIR))
 sys.path.append(str(BASE_DIR / "Backend"))
+sys.path.append(str(Path(__file__).resolve().parent))
 
 # Load .env
 load_dotenv(BASE_DIR / ".env")
@@ -49,13 +51,33 @@ class HighSpeedOrchestrator:
 
     def __init__(self):
         api_key = os.getenv("GROQ_API_KEY")
-        if not api_key: raise ValueError("GROQ_API_KEY missing")
-        self.client = groq.Groq(api_key=api_key)
-        self.model = "llama-3.3-70b-versatile"
+        if not api_key: 
+            logger.error("GROQ_API_KEY missing from environment")
+            raise ValueError("GROQ_API_KEY missing")
+        
+        try:
+            # Explicitly initialize with no-proxy client if environment causes issues
+            import httpx
+            http_client = httpx.Client(proxies=None)
+            self.client = groq.Groq(api_key=api_key, http_client=http_client)
+            logger.info("Groq Client initialized with explicit httpx client (no proxies)")
+        except Exception as e:
+            logger.warning(f"Failed explicit client init, falling back: {e}")
+            self.client = groq.Groq(api_key=api_key)
+            
+        self.model = os.getenv("AI_MODEL_DEFAULT", "llama-3.3-70b-versatile")
 
     async def get_response(self, text: str, history: List[Dict], child_id: int = None):
+        if not self.client:
+            return {"text": "I'm still waking up! Can you wait a second? ✨", "agent": "buddy", "nav_command": None}
+            
         logger.info(f"Orchestrating response for: {text}")
-        intent = await self._detect_intent(text)
+        try:
+            intent = await self._detect_intent(text)
+        except Exception as e:
+            logger.error(f"Intent detection failed: {e}")
+            intent = "buddy"
+            
         agent_config = self.AGENTS.get(intent, self.AGENTS['buddy'])
         
         extra_context = ""
@@ -65,15 +87,25 @@ class HighSpeedOrchestrator:
             try:
                 summary = await asyncio.wait_for(task_agent.get_child_summary(child_id), timeout=3.0)
                 if summary: extra_context = f"\n[Data]: {json.dumps(summary)}"
-            except: pass
+            except Exception as e:
+                logger.warning(f"Task summary fetch failed: {e}")
+
         elif intent == "navigation":
-            nav_command = await self._map_navigation(text)
+            try:
+                nav_command = await self._map_navigation(text)
+            except Exception as e:
+                logger.warning(f"Nav mapping failed: {e}")
 
         messages = [{"role": "system", "content": agent_config['system']}]
         messages.append({"role": "user", "content": text + extra_context})
 
         try:
-            completion = await asyncio.to_thread(self.client.chat.completions.create, messages=messages, model=self.model, temperature=0.7)
+            completion = await asyncio.to_thread(
+                self.client.chat.completions.create, 
+                messages=messages, 
+                model=self.model, 
+                temperature=0.7
+            )
             return {"text": completion.choices[0].message.content, "agent": intent, "nav_command": nav_command}
         except Exception as e:
             logger.error(f"Groq API Error: {e}")
@@ -84,7 +116,9 @@ class HighSpeedOrchestrator:
             prompt = f"Categorize: 'buddy', 'story', 'translation', 'task', or 'navigation'. Text: '{text}'. Respond ONLY with the word."
             resp = await asyncio.to_thread(self.client.chat.completions.create, messages=[{"role": "user", "content": prompt}], model=self.model, max_tokens=10)
             return resp.choices[0].message.content.lower().strip().replace(".", "")
-        except: return "buddy"
+        except Exception as e: 
+            logger.error(f"Intent detection API call failed: {e}")
+            return "buddy"
 
     async def _map_navigation(self, text):
         try:
@@ -92,17 +126,22 @@ class HighSpeedOrchestrator:
             resp = await asyncio.to_thread(self.client.chat.completions.create, messages=[{"role": "user", "content": prompt}], model=self.model, max_tokens=20)
             res = resp.choices[0].message.content.strip()
             return res if "/" in res else None
-        except: return None
+        except Exception as e:
+            logger.error(f"Nav mapping API call failed: {e}")
+            return None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global orchestrator
+    print("STARTING DHYAN VOICE SERVICE...")
     try:
         orchestrator = HighSpeedOrchestrator()
         print("DHYAN READY: Orchestrator initialized successfully! ⚡")
     except Exception as e:
-        print(f"DHYAN ERROR: Failed to start: {e}")
+        print(f"DHYAN FATAL ERROR: Failed to start orchestrator: {e}")
+        logger.critical(f"FATAL STARTUP ERROR: {e}")
     yield
+    print("SHUTTING DOWN DHYAN VOICE SERVICE...")
 
 app = FastAPI(title="Dhyan High-Speed", lifespan=lifespan)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])

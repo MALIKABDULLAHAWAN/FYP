@@ -160,7 +160,7 @@ describe('EmojiClassifier', () => {
       const therapeuticPriority = 'high';
       
       const recommendation = emojiClassifier.recommendReplacement(emojiData, detectedContexts, therapeuticPriority);
-      expect(recommendation).toBe('speech-therapy-session-photo');
+      expect(recommendation).toBe('speech-adventure-photo');
     });
 
     test('should provide category-based fallback', () => {

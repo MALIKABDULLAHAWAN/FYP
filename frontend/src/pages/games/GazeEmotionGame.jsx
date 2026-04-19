@@ -1,6 +1,4 @@
-import React, { useRef, useEffect, useState, useCallback } from "react";
-import * as faceapi from "face-api.js";
-import UiIcon from "../../components/ui/UiIcon";
+import GameConclusionFlow from "../../components/GameConclusionFlow";
 import "../../styles/professional.css";
 
 const LEVELS = [
@@ -20,7 +18,7 @@ function randomTarget(radius) {
   };
 }
 
-export default function GazeEmotionGame() {
+export default function GazeEmotionGame({ isSession = false, onComplete }) {
   const videoRef   = useRef(null);
   const canvasRef  = useRef(null);
   const rafRef     = useRef(null);   // requestAnimationFrame id
@@ -308,35 +306,15 @@ export default function GazeEmotionGame() {
 
       {/* Game Over panel */}
       {gameOver && (
-        <div style={{
-          margin: "20px auto",
-          textAlign: "center",
-          background: "rgba(255,255,255,0.08)",
-          borderRadius: 16,
-          padding: "24px 32px",
-        }}>
-          <h3 style={{ fontSize: 26, marginBottom: 8 }}>
-            {level < LEVELS.length - 1 ? "🎉 Level Complete!" : "🏆 You finished all levels!"}
-          </h3>
-          <div style={{ fontSize: 18, marginBottom: 4 }}>Score: <b>{score}</b></div>
-          <div style={{ fontSize: 18, marginBottom: 20 }}>Smiles: <b>{smileCount}</b></div>
-          {level < LEVELS.length - 1 ? (
-            <button className="btn btn-cute btn-cute-primary" onClick={nextLevel}>
-              Next Level →
-            </button>
-          ) : (
-            <button className="btn btn-cute btn-cute-primary" onClick={restart}>
-              Play Again
-            </button>
-          )}
-          <button
-            className="btn btn-cute"
-            onClick={restart}
-            style={{ marginLeft: 12 }}
-          >
-            Restart
-          </button>
-        </div>
+        <GameConclusionFlow
+          gameName="Gaze & Emotion"
+          score={score}
+          total={score + smileCount}
+          duration={30}
+          skills={["Ocular Motor", "Facial Expression", "Focus"]}
+          onAction={isSession ? onComplete : restart}
+          actionLabel={isSession ? "Finish Activity" : "Play Again"}
+        />
       )}
     </div>
   );

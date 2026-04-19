@@ -1,142 +1,102 @@
-/**
- * Object Discovery – Standalone
- * Find all items belonging to the given category.
- */
-import { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { Search, RotateCcw, Home, CheckCircle2, AlertCircle } from 'lucide-react';
+import { 
+  AmbientParticles, 
+  MagicalSparkles, 
+  SuccessBurst 
+} from "../../components/AmbientEffects";
+import { useChild } from "../../hooks/useChild";
+import GameConclusionFlow from "../../components/GameConclusionFlow";
 
 const CATEGORIES = [
   {
-    id:"animals", label:"Animals", emoji:"🦁", color:"#FF8C42", bg:"#FFF0E8",
-    items:[
-      { emoji:"🐶", yes:true  },{ emoji:"🐱", yes:true  },{ emoji:"🐸", yes:true  },
-      { emoji:"🦊", yes:true  },{ emoji:"🐧", yes:true  },{ emoji:"🦋", yes:true  },
-      { emoji:"🍕", yes:false },{ emoji:"🚗", yes:false },{ emoji:"🏠", yes:false },
-      { emoji:"⭐", yes:false },
+    id: "animals", label: "Animals", icon: "🦁", color: "#FF8C42", bg: "#FFF0E8",
+    items: [
+      { label: "Dog", emoji: "🐶", yes: true }, { label: "Cat", emoji: "🐱", yes: true }, { label: "Frog", emoji: "🐸", yes: true },
+      { label: "Fox", emoji: "🦊", yes: true }, { label: "Penguin", emoji: "🐧", yes: true }, { label: "Butterfly", emoji: "🦋", yes: true },
+      { label: "Pizza", emoji: "🍕", yes: false }, { label: "Car", emoji: "🚗", yes: false }, { label: "House", emoji: "🏠", yes: false },
+      { label: "Star", emoji: "⭐", yes: false },
     ],
   },
   {
-    id:"fruits", label:"Fruits", emoji:"🍎", color:"#FF6B6B", bg:"#FFE5E5",
-    items:[
-      { emoji:"🍎", yes:true  },{ emoji:"🍌", yes:true  },{ emoji:"🍇", yes:true  },
-      { emoji:"🍓", yes:true  },{ emoji:"🍊", yes:true  },{ emoji:"🍒", yes:true  },
-      { emoji:"🚀", yes:false },{ emoji:"📚", yes:false },{ emoji:"🎸", yes:false },
-      { emoji:"🧦", yes:false },
+    id: "fruits", label: "Fruits", icon: "🍎", color: "#FF6B6B", bg: "#FFE5E5",
+    items: [
+      { label: "Apple", emoji: "🍎", yes: true }, { label: "Banana", emoji: "🍌", yes: true }, { label: "Grapes", emoji: "🍇", yes: true },
+      { label: "Strawberry", emoji: "🍓", yes: true }, { label: "Orange", emoji: "🍊", yes: true }, { label: "Cherry", emoji: "🍒", yes: true },
+      { label: "Rocket", emoji: "🚀", yes: false }, { label: "Books", emoji: "📚", yes: false }, { label: "Guitar", emoji: "🎸", yes: false },
+      { label: "Socks", emoji: "🧦", yes: false },
     ],
   },
   {
-    id:"vehicles", label:"Vehicles", emoji:"🚗", color:"#4D96FF", bg:"#E5F0FF",
-    items:[
-      { emoji:"🚗", yes:true  },{ emoji:"🚌", yes:true  },{ emoji:"✈️", yes:true  },
-      { emoji:"🚂", yes:true  },{ emoji:"🛸", yes:true  },{ emoji:"🚁", yes:true  },
-      { emoji:"🐰", yes:false },{ emoji:"🍦", yes:false },{ emoji:"🌸", yes:false },
-      { emoji:"🎃", yes:false },
+    id: "toys", label: "Toys", icon: "🧸", color: "#8B5CF6", bg: "#F5F3FF",
+    items: [
+      { label: "Teddy", emoji: "🧸", yes: true }, { label: "Ball", emoji: "⚽", yes: true }, { label: "Robot", emoji: "🤖", yes: true },
+      { label: "Train", emoji: "🚂", yes: true }, { label: "Blocks", emoji: "🧱", yes: true }, { label: "Kite", emoji: "🪁", yes: true },
+      { label: "Tree", emoji: "🌳", yes: false }, { label: "Cloud", emoji: "☁️", yes: false }, { label: "Phone", emoji: "📱", yes: false },
+      { label: "Cup", emoji: "🥤", yes: false },
     ],
-  },
-  {
-    id:"food", label:"Food", emoji:"🍔", color:"#F59E0B", bg:"#FFFCE8",
-    items:[
-      { emoji:"🍔", yes:true  },{ emoji:"🍕", yes:true  },{ emoji:"🌮", yes:true  },
-      { emoji:"🍜", yes:true  },{ emoji:"🍩", yes:true  },{ emoji:"🍦", yes:true  },
-      { emoji:"🎈", yes:false },{ emoji:"🐢", yes:false },{ emoji:"🎵", yes:false },
-      { emoji:"🏆", yes:false },
-    ],
-  },
-  {
-    id:"toys", label:"Toys", emoji:"🎮", color:"#8B5CF6", bg:"#F0E8FF",
-    items:[
-      { emoji:"🎮", yes:true  },{ emoji:"🪀", yes:true  },{ emoji:"🎲", yes:true  },
-      { emoji:"🪁", yes:true  },{ emoji:"🎯", yes:true  },{ emoji:"🧩", yes:true  },
-      { emoji:"🌵", yes:false },{ emoji:"🍋", yes:false },{ emoji:"🐋", yes:false },
-      { emoji:"🏔️", yes:false },
-    ],
-  },
-  {
-    id:"nature", label:"Nature", emoji:"🌿", color:"#6BCB77", bg:"#E8FFE8",
-    items:[
-      { emoji:"🌸", yes:true  },{ emoji:"🌻", yes:true  },{ emoji:"🌿", yes:true  },
-      { emoji:"🍂", yes:true  },{ emoji:"🌈", yes:true  },{ emoji:"⛅", yes:true  },
-      { emoji:"🎸", yes:false },{ emoji:"🛒", yes:false },{ emoji:"💻", yes:false },
-      { emoji:"👟", yes:false },
-    ],
-  },
+  }
 ];
 
-function playCorrect() {
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    [523, 784].forEach((f, i) => {
-      const o = ctx.createOscillator(); const g = ctx.createGain();
-      o.connect(g); g.connect(ctx.destination); o.frequency.value = f;
-      const t = ctx.currentTime + i * 0.1;
-      g.gain.setValueAtTime(0.22, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
-      o.start(t); o.stop(t + 0.22);
-    });
-  } catch (e) {}
-}
+const SpringBtn = ({ children, onClick, disabled, style }) => (
+  <motion.button
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    onClick={onClick}
+    disabled={disabled}
+    style={{
+      border: "none",
+      cursor: disabled ? "default" : "pointer",
+      ...style
+    }}
+  >
+    {children}
+  </motion.button>
+);
 
-function playWrong() {
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const o = ctx.createOscillator(); const g = ctx.createGain();
-    o.connect(g); g.connect(ctx.destination); o.type = "square";
-    o.frequency.value = 180;
-    g.gain.setValueAtTime(0.15, ctx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
-    o.start(); o.stop(ctx.currentTime + 0.2);
-  } catch (e) {}
-}
-
-function playWin() {
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    [523, 659, 784, 1047].forEach((f, i) => {
-      const o = ctx.createOscillator(); const g = ctx.createGain();
-      o.connect(g); g.connect(ctx.destination); o.frequency.value = f;
-      const t = ctx.currentTime + i * 0.11;
-      g.gain.setValueAtTime(0.2, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
-      o.start(t); o.stop(t + 0.22);
-    });
-  } catch (e) {}
-}
-
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-export default function ObjectDiscovery() {
+export default function ObjectDiscovery({ isSession = false, level = "easy", onComplete }) {
   const navigate = useNavigate();
-  const [phase, setPhase] = useState("idle");
+  const { childProfile } = useChild();
+  const [phase, setPhase] = useState(isSession ? "playing" : "idle"); 
   const [catIdx, setCatIdx] = useState(0);
   const [items, setItems] = useState([]);
   const [selected, setSelected] = useState(new Set());
   const [score, setScore] = useState(0);
   const [round, setRound] = useState(0);
   const [submitted, setSubmitted] = useState(false);
-  const [roundResult, setRoundResult] = useState(null); // "perfect" | "good" | "miss"
+  const [showWin, setShowWin] = useState(false);
+  const [startTime] = useState(Date.now());
+  const [endTime, setEndTime] = useState(null);
 
-  const TOTAL_ROUNDS = CATEGORIES.length;
+  const currentCategory = CATEGORIES[catIdx % CATEGORIES.length];
 
-  const loadRound = useCallback((idx) => {
-    const cat = CATEGORIES[idx];
+  const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
+
+  const startRound = useCallback((idx) => {
+    const cat = CATEGORIES[idx % CATEGORIES.length];
     setItems(shuffle(cat.items));
     setSelected(new Set());
     setSubmitted(false);
-    setRoundResult(null);
-    setCatIdx(idx);
+    setRound(idx);
+    setShowWin(false);
   }, []);
 
-  const startGame = () => {
+  const startGame = useCallback(() => {
     setScore(0);
-    setRound(0);
-    loadRound(0);
+    startRound(0);
     setPhase("playing");
-  };
+  }, [startRound]);
+
+  // Auto-start for sessions
+  const initialized = useRef(false);
+  useEffect(() => {
+    if (isSession && !initialized.current) {
+        initialized.current = true;
+        startGame();
+    }
+  }, [isSession, startGame]);
 
   const toggleItem = (i) => {
     if (submitted) return;
@@ -148,168 +108,167 @@ export default function ObjectDiscovery() {
     });
   };
 
-  const submit = () => {
+  const handleSubmit = () => {
     if (submitted) return;
-    const cat = CATEGORIES[catIdx];
-    const correctYes = cat.items.filter(it => it.yes);
-    const selectedItems = [...selected].map(i => cat.items[i]);
-    const correctSelected = selectedItems.filter(it => it.yes).length;
-    const wrongSelected   = selectedItems.filter(it => !it.yes).length;
-    const missed          = correctYes.length - correctSelected;
+    const correctItems = items.filter(it => it.yes);
+    const correctCount = correctItems.length;
+    const selectedCorrect = [...selected].filter(i => items[i].yes).length;
+    const selectedWrong = [...selected].filter(i => !items[i].yes).length;
 
-    let pts = 0;
-    let result = "miss";
-    if (wrongSelected === 0 && missed === 0) {
-      pts = 3; result = "perfect"; playWin();
-    } else if (correctSelected >= correctYes.length * 0.6 && wrongSelected <= 1) {
-      pts = 1; result = "good"; playCorrect();
-    } else {
-      playWrong();
+    // Award partial points or full points
+    if (selectedCorrect === correctCount && selectedWrong === 0) {
+      setScore(s => s + 1); // We'll count rounds as "score" for report
+      setShowWin(true);
     }
-
-    setScore(s => s + pts);
     setSubmitted(true);
-    setRoundResult(result);
   };
 
   const nextRound = () => {
-    const nextIdx = round + 1;
-    if (nextIdx >= TOTAL_ROUNDS) {
-      setPhase("over");
+    const maxRounds = level === "easy" ? 2 : level === "medium" ? 3 : CATEGORIES.length;
+    if (round + 1 < maxRounds) {
+      startRound(round + 1);
     } else {
-      setRound(nextIdx);
-      loadRound(nextIdx);
+      setEndTime(Date.now());
+      setPhase("over");
     }
   };
 
-  const cat = CATEGORIES[catIdx];
-  const totalScore = score;
-  const maxScore = TOTAL_ROUNDS * 3;
-  const stars = totalScore >= maxScore - 2 ? 3 : totalScore >= maxScore / 2 ? 2 : 1;
+  const totalRounds = level === "easy" ? 2 : level === "medium" ? 3 : CATEGORIES.length;
 
   return (
-    <div style={{ minHeight:"calc(100vh - 70px)", background:"linear-gradient(160deg,#FFFBEB 0%,#FFF0F5 50%,#F0F5FF 100%)", fontFamily:"'Nunito','Inter',sans-serif", display:"flex", flexDirection:"column" }}>
-      <style>{`
-        @keyframes item-pop { 0%{transform:scale(0.6);opacity:0} 60%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
-        @keyframes category-in { 0%{transform:translateY(-10px);opacity:0} 100%{transform:translateY(0);opacity:1} }
-        .item-btn { transition: transform 0.12s, box-shadow 0.12s; animation: item-pop 0.3s ease both; }
-        .item-btn:active { transform: scale(0.9) !important; }
-      `}</style>
-
-      {/* Header */}
-      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 18px", background:"rgba(255,255,255,0.88)", backdropFilter:"blur(12px)", borderBottom:"2px solid rgba(245,158,11,0.12)", flexShrink:0 }}>
-        <button onClick={() => navigate("/games")} style={{ background:"#FF6B6B", color:"white", border:"none", borderRadius:"50%", width:44, height:44, fontSize:22, cursor:"pointer", lineHeight:1 }}>←</button>
-        <div style={{ display:"flex", alignItems:"center", gap:16 }}>
-          {phase === "playing" && <div style={{ fontSize:15, fontWeight:700, color:"#888" }}>{round + 1}/{TOTAL_ROUNDS}</div>}
-          <div style={{ fontSize:24, fontWeight:900, color:"#F59E0B" }}>⭐ {score}</div>
-        </div>
-      </div>
-
-      <div style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"20px 16px", gap:18 }}>
-
-        {/* Idle */}
-        {phase === "idle" && (
-          <div style={{ textAlign:"center", display:"flex", flexDirection:"column", alignItems:"center", gap:20 }}>
-            <div style={{ fontSize:80 }}>🔍</div>
-            <div style={{ fontSize:34, fontWeight:900, color:"#F59E0B" }}>Object Discovery!</div>
-            <div style={{ fontSize:17, color:"#666", maxWidth:280, lineHeight:1.5 }}>Find all items that belong to the category!</div>
-            <div style={{ display:"flex", gap:12, fontSize:36 }}>
-              {CATEGORIES.slice(0,5).map(c => <span key={c.id}>{c.emoji}</span>)}
+    <div style={{
+      minHeight: "100vh",
+      background: "linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%)",
+      fontFamily: "'Fredoka', sans-serif",
+      position: "relative",
+      overflow: "hidden",
+      padding: isSession ? "0" : "20px"
+    }}>
+      <AmbientParticles count={10} />
+      
+      {/* Header - Hid in session mode as state machine handles it */}
+      {!isSession && (
+        <div style={{
+          maxWidth: "900px", margin: "0 auto 30px",
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+          background: "rgba(255,255,255,0.7)", backdropFilter: "blur(10px)",
+          padding: "15px 25px", borderRadius: "20px",
+          boxShadow: "0 8px 32px rgba(0,0,0,0.05)"
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ background: currentCategory?.color, padding: 8, borderRadius: 12 }}>
+              <Search size={20} color="white" />
             </div>
-            <button onClick={startGame} style={{ background:"linear-gradient(135deg,#F59E0B,#FB923C)", color:"white", border:"none", borderRadius:50, padding:"18px 52px", fontSize:26, fontWeight:900, cursor:"pointer", boxShadow:"0 8px 28px rgba(245,158,11,0.35)" }}>
-              ▶ Play!
-            </button>
+            <span style={{ fontWeight: 800, color: "#4a4a4a", fontSize: 18 }}>Object Discovery</span>
           </div>
+          <div style={{ fontWeight: 900, fontSize: 22, color: "#f59e0b" }}>⭐ {score}</div>
+        </div>
+      )}
+
+      <div style={{ maxWidth: "900px", margin: "0 auto", textAlign: "center", padding: isSession ? "20px" : "0" }}>
+        {phase === "idle" && (
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
+            <div style={{ fontSize: 100, marginBottom: 20 }}>🦁</div>
+            <h1 style={{ fontSize: 44, fontWeight: 900, color: "#2d3748", marginBottom: 20 }}>Ready to Explore?</h1>
+            <p style={{ fontSize: 18, color: "#718096", marginBottom: 40 }}>Find all the things that belong together!</p>
+            <SpringBtn onClick={startGame} style={{
+              background: "linear-gradient(135deg, #FF8C42, #FB923C)",
+              color: "white", padding: "20px 60px", borderRadius: "50px",
+              fontSize: 24, fontWeight: 900, boxShadow: "0 10px 25px rgba(255, 140, 66, 0.4)"
+            }}>
+              Start Search!
+            </SpringBtn>
+          </motion.div>
         )}
 
-        {/* Playing */}
         {phase === "playing" && (
-          <>
-            {/* Category banner */}
-            <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:8 }}>
-              <div style={{ fontSize:14, fontWeight:700, color:"#888", textTransform:"uppercase", letterSpacing:1 }}>Find all</div>
-              <div style={{ display:"flex", alignItems:"center", gap:10, background:cat.bg, border:`2px solid ${cat.color}`, borderRadius:24, padding:"10px 24px", boxShadow:`0 4px 16px ${cat.color}33` }}>
-                <span style={{ fontSize:36 }}>{cat.emoji}</span>
-                <span style={{ fontSize:26, fontWeight:900, color:cat.color }}>{cat.label}</span>
-              </div>
+          <div>
+            <div style={{ marginBottom: 30 }}>
+              <h2 style={{ fontSize: 14, color: "#718096", textTransform: "uppercase", letterSpacing: 2, marginBottom: 10 }}>Can you find all the...</h2>
+              <motion.div
+                key={currentCategory?.id}
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                style={{
+                  display: "inline-block", padding: "12px 30px", background: currentCategory?.bg,
+                  borderRadius: "20px", border: `2px solid ${currentCategory?.color}`,
+                  color: currentCategory?.color, fontSize: 32, fontWeight: 900
+                }}
+              >
+                {currentCategory?.icon} {currentCategory?.label}
+              </motion.div>
             </div>
 
-            {/* Progress bar */}
-            <div style={{ width:"100%", maxWidth:340, height:8, background:"#EEE", borderRadius:8, overflow:"hidden" }}>
-              <div style={{ width:`${((round)/TOTAL_ROUNDS)*100}%`, height:"100%", background:`linear-gradient(90deg,${cat.color},#FB923C)`, borderRadius:8, transition:"width 0.4s ease" }} />
-            </div>
+            <div style={{
+              display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))",
+              gap: 15, marginBottom: 40
+            }}>
+              {items.map((item, idx) => {
+                const isSelected = selected.has(idx);
+                const isCorrect = submitted && item.yes && isSelected;
+                const isWrong = submitted && !item.yes && isSelected;
+                const isMissed = submitted && item.yes && !isSelected;
 
-            {/* Items grid */}
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr 1fr 1fr", gap:10, width:"100%", maxWidth:380 }}>
-              {items.map((item, i) => {
-                const isSel = selected.has(i);
-                const isRight = submitted && item.yes;
-                const isWrong = submitted && isSel && !item.yes;
-                const isMissed = submitted && !isSel && item.yes;
                 return (
-                  <button
-                    key={i}
-                    className="item-btn"
-                    onClick={() => toggleItem(i)}
-                    disabled={submitted}
+                  <motion.div
+                    key={idx}
+                    whileHover={!submitted ? { scale: 1.05 } : {}}
+                    whileTap={!submitted ? { scale: 0.95 } : {}}
+                    onClick={() => toggleItem(idx)}
                     style={{
-                      height:68, borderRadius:18,
-                      border:`3px solid ${isRight ? "#6BCB77" : isWrong ? "#FF6B6B" : isMissed ? "#FFD93D" : isSel ? cat.color : "#E0E0E0"}`,
-                      background: isRight ? "#E8FFE8" : isWrong ? "#FFE5E5" : isMissed ? "#FFFACD" : isSel ? cat.bg : "white",
-                      cursor: submitted ? "default" : "pointer",
-                      display:"flex", alignItems:"center", justifyContent:"center",
-                      fontSize:38, position:"relative",
-                      boxShadow: isSel ? `0 4px 14px ${cat.color}44` : "0 2px 8px rgba(0,0,0,0.08)",
-                      transform: isSel && !submitted ? "scale(1.06)" : "scale(1)",
-                      animationDelay:`${i * 0.04}s`,
+                      height: 130, background: "white", borderRadius: "24px",
+                      boxShadow: isSelected ? `0 8px 24px ${currentCategory.color}33` : "0 4px 12px rgba(0,0,0,0.03)",
+                      border: `3px solid ${isCorrect ? "#48bb78" : isWrong ? "#f56565" : isSelected ? currentCategory.color : "transparent"}`,
+                      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                      cursor: submitted ? "default" : "pointer", position: "relative"
                     }}
                   >
-                    {item.emoji}
-                    {isSel && !submitted && <div style={{ position:"absolute", top:-6, right:-6, width:18, height:18, background:cat.color, borderRadius:"50%", display:"flex", alignItems:"center", justifyContent:"center", fontSize:11, color:"white", fontWeight:900 }}>✓</div>}
-                    {isRight  && <div style={{ position:"absolute", top:-6, right:-6, fontSize:16 }}>✅</div>}
-                    {isWrong  && <div style={{ position:"absolute", top:-6, right:-6, fontSize:16 }}>❌</div>}
-                    {isMissed && <div style={{ position:"absolute", top:-6, right:-6, fontSize:16 }}>⚠️</div>}
-                  </button>
+                    <span style={{ fontSize: 44 }}>{item.emoji}</span>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: "#718096", marginTop: 8 }}>{item.label}</span>
+                    <AnimatePresence>
+                      {isSelected && !submitted && (
+                        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} style={{ position: "absolute", top: -8, right: -8, background: currentCategory.color, color: "white", borderRadius: "50%", padding: 2 }}><CheckCircle2 size={24} /></motion.div>
+                      )}
+                      {isMissed && (
+                        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} style={{ position: "absolute", top: -8, right: -8, background: "#f59e0b", color: "white", borderRadius: "50%", padding: 2 }}><AlertCircle size={24} /></motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
                 );
               })}
             </div>
 
-            {/* Submit / Next */}
             {!submitted ? (
-              <button
-                onClick={submit}
-                disabled={selected.size === 0}
-                style={{ background: selected.size > 0 ? `linear-gradient(135deg,${cat.color},#FB923C)` : "#CCC", color:"white", border:"none", borderRadius:50, padding:"16px 48px", fontSize:22, fontWeight:900, cursor: selected.size > 0 ? "pointer" : "default", boxShadow: selected.size > 0 ? `0 6px 20px ${cat.color}44` : "none", width:"100%", maxWidth:320 }}
-              >
-                ✓ Check!
-              </button>
+              <SpringBtn onClick={handleSubmit} disabled={selected.size === 0} style={{
+                background: selected.size > 0 ? currentCategory.color : "#cbd5e0",
+                color: "white", padding: "18px 50px", borderRadius: "50px",
+                fontSize: 20, fontWeight: 900
+              }}>
+                Check My Finds!
+              </SpringBtn>
             ) : (
-              <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:10, width:"100%", maxWidth:320 }}>
-                <div style={{ fontSize:36 }}>
-                  {roundResult === "perfect" ? "🎉 Perfect!" : roundResult === "good" ? "👍 Good!" : "💪 Try again!"}
-                </div>
-                <button onClick={nextRound} style={{ background:"linear-gradient(135deg,#6366F1,#8B5CF6)", color:"white", border:"none", borderRadius:50, padding:"16px 48px", fontSize:22, fontWeight:900, cursor:"pointer", width:"100%" }}>
-                  {round + 1 < TOTAL_ROUNDS ? "Next →" : "Finish!"}
-                </button>
-              </div>
+              <SpringBtn onClick={nextRound} style={{
+                background: "#6366f1", color: "white", padding: "18px 50px", borderRadius: "50px",
+                fontSize: 20, fontWeight: 900
+              }}>
+                {round + 1 < totalRounds ? "Next Task →" : "See Summary"}
+              </SpringBtn>
             )}
-          </>
+          </div>
         )}
 
-        {/* Game over */}
+        {showWin && <SuccessBurst />}
+        
         {phase === "over" && (
-          <div style={{ textAlign:"center", display:"flex", flexDirection:"column", alignItems:"center", gap:18, background:"white", borderRadius:32, padding:"36px 28px", boxShadow:"0 20px 60px rgba(245,158,11,0.2)", maxWidth:380, width:"100%" }}>
-            <div style={{ fontSize:80 }}>🎉</div>
-            <div style={{ fontSize:30, fontWeight:900, color:"#F59E0B" }}>Great Explorer!</div>
-            <div style={{ fontSize:52, letterSpacing:4 }}>{"⭐".repeat(stars)}</div>
-            <div style={{ fontSize:20, fontWeight:700, color:"#555" }}>
-              Score: <b style={{ color:"#F59E0B" }}>{totalScore}</b> / {maxScore}
-            </div>
-            <div style={{ display:"flex", gap:14, flexWrap:"wrap", justifyContent:"center", width:"100%" }}>
-              <button onClick={startGame} style={{ background:"linear-gradient(135deg,#FF6B6B,#FFD93D)", color:"white", border:"none", borderRadius:50, padding:"15px 32px", fontSize:20, fontWeight:900, cursor:"pointer", flex:1 }}>🔄 Again!</button>
-              <button onClick={() => navigate("/games")} style={{ background:"linear-gradient(135deg,#F59E0B,#FB923C)", color:"white", border:"none", borderRadius:50, padding:"15px 32px", fontSize:20, fontWeight:900, cursor:"pointer", flex:1 }}>🏠 Games</button>
-            </div>
-          </div>
+           <GameConclusionFlow 
+             gameName="Object Discovery"
+             score={score}
+             total={totalRounds}
+             duration={endTime ? (endTime - startTime) / 1000 : 0}
+             skills={["Categorization", "Visual Scanning", "Attention"]}
+             onAction={isSession ? onComplete : () => setPhase("idle")}
+             actionLabel={isSession ? "Continue Journey" : "Play Again"}
+           />
         )}
       </div>
     </div>

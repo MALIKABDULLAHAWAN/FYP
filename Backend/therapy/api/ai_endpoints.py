@@ -163,6 +163,7 @@ def continue_story(request):
         current_story = data.get('current_story')
         child_choice = data.get('child_choice')
         agent_key = data.get('agent', 'story_weaver')
+        turns_left = data.get('turns_left', 5)
         
         if not all([current_story, child_choice]):
             return Response(
@@ -171,7 +172,12 @@ def continue_story(request):
             )
         
         ai_service = get_ai_service()
-        continuation = ai_service.continue_story(current_story, child_choice, agent_key)
+        continuation = ai_service.continue_story(
+            current_story=current_story, 
+            child_choice=child_choice, 
+            agent_key=agent_key,
+            turns_left=turns_left
+        )
         
         return Response({'continuation': continuation})
         

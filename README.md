@@ -1,157 +1,72 @@
-# 🧠 DHYAN — AI-Powered Pediatric Therapy Platform
+# 🧠 DHYAN — AI-Powered Pediatric Therapy & Learning Platform
 
-**DHYAN** is a full-stack web application designed to assist therapists, parents, and caregivers in delivering structured, data-driven therapy for children with developmental needs. It combines ABA-based therapy games, AI-powered speech analysis, and real-time progress tracking in a single platform.
-
----
-
-## ✨ Key Features
-
-### 🎮 Therapy Games
-- **Multiple game types** with ABA prompt-fading (Full Model → Independent)
-- **Global child selection** — select a child once, used across all games
-- **Real-time scoring** — therapist scores each trial (success / partial / fail)
-- **Session summaries** with accuracy metrics and trial-by-trial breakdown
-
-### 🗣️ Speech Therapy Module
-- **5 clinically distinct activities**, each targeting a different skill:
-
-  | Activity | Skill Targeted |
-  |----------|---------------|
-  | 🗣️ Repetition Practice | Articulation, phonology, verbal memory |
-  | 🖼️ Picture Naming | Word retrieval, expressive vocabulary |
-  | ❓ Question & Answer | Comprehension, reasoning, formulation |
-  | 📖 Story Retell | Narrative sequencing, connected speech |
-  | 🧠 Category Naming | Semantic fluency, divergent retrieval |
-
-- **Voice-enabled prompts (TTS)** — prompts are spoken aloud for children using Web Speech API
-- **AI speech analysis pipeline** — automatic ASR transcription, speech metrics (WPM, pause ratio, latency), keyword matching, and AI-generated clinical feedback
-- **4-level ABA prompt hierarchy** — Full Model, Partial, Visual/Gestural, Independent
-
-### 👥 User Management
-- **Role-based access control** — Admin, Therapist, Parent, Supervisor
-- **JWT authentication** with token refresh
-- **Child profiles** linked to therapists and parents
-
-### 📊 Dashboard & Progress
-- **Session history** with detailed trial data
-- **Per-child speech progress** metrics over time
-- **Therapist notes** and scoring per trial
+**DHYAN** is a state-of-the-art, adaptive therapy ecosystem designed to bridge the gap between clinical ABA therapy and engaging, gamified learning. It empowers children with developmental needs through immersive 3D interactions, persistent AI companionship, and real-time clinical intelligence.
 
 ---
 
-## 🏗️ Tech Stack
+## 💎 Premium Features (Apotheosis Edition)
 
-| Layer | Technology |
-|-------|-----------|
-| **Frontend** | React 19, Vite, React Router 7 |
-| **Backend** | Django 5.0, Django REST Framework |
-| **Database** | PostgreSQL (Supabase cloud) |
-| **Auth** | SimpleJWT (access + refresh tokens) |
-| **ASR Engine** | faster-whisper (base model) |
-| **Audio Processing** | pydub, Python wave module |
-| **TTS** | Web Speech API (browser-native) |
-| **Deployment** | Docker support included |
+### 🤖 Dhyan: The Persistent AI Companion
+*   **Global Presence**: Dhyan resides within the `TherapyFlow`, guiding children from the welcome screen to the final reward.
+*   **Intelligent Encouragement**: Uses specialized speech synthesis with adaptive pitch and rate to provide a "Gentle & Professional" voice.
+*   **Prompt Handoff**: Seamlessly transitions between therapeutic prompts and motivational coaching.
+
+### 🎮 The Magical Activities Suite
+*   **15+ High-Fidelity Games**: Including Physics-based Drag-and-Drop, Object Discovery with Magnifying Glass, and AI-Powered Speech Sparkles.
+*   **Glassmorphic UI**: A premium visual design language inspired by modern aesthetics, featuring ambient particles, floating orbs, and blurred backgrounds.
+*   **Session Persistence**: Advanced state recovery ensures children never lose progress, even during browser refreshes.
+
+### 📖 The 3D Sticker Book & Missions
+*   **Tangible Rewards**: A physical-book experience using 3D CSS transforms and rare shimmer effects for achievement stickers.
+*   **Daily Mission Engine**: Encourages consistent engagement through randomized daily goals (e.g., "Find 10 Animals").
+*   **Golden Synthesis**: A secret, high-tier reward for completing all daily missions.
+
+### 📈 Clinical Intelligence Console
+*   **Radar Analytics**: Visualize Cognitive, Social, and Motor progress via interactive multi-axis charts.
+*   **AI Clinical Feedback**: Automatically generates detailed observations on speech latency, articulation, and vocabulary growth.
+*   **Longitudinal Trends**: Monitor a child's therapeutic journey across weeks and months.
 
 ---
 
-## 📁 Project Structure
+## 🏗️ Technical Architecture
 
+| Layer | Technology | Role |
+|-------|-----------|------|
+| **Core** | React 19 + Vite | High-performance reactive UI |
+| **Physics** | Framer Motion | Fluid, physics-based interactions |
+| **State** | React Hooks + Context | Global Child & Auth management |
+| **Audio** | Web Audio API / Synth | Custom ASMR audio feedback system |
+| **Optimization** | React.lazy / Suspense | Dynamic code splitting & bundle optimization |
+| **Backend** | Django + DRF | Secure, HIPA-ready clinical data storage |
+| **AI Vision** | Groq / Whisper | High-accuracy speech and image validation |
+
+---
+
+## 📁 System Walkthrough
 ```
 DHYAN-FYP/
-├── Backend/                  # Django REST API
-│   ├── accounts/             # User auth, roles, RBAC
-│   ├── patients/             # Child profiles & therapist assignments
-│   ├── therapy/              # Game engine, sessions, trials
-│   ├── speech/               # Speech therapy module
-│   │   ├── processing/       # ASR, VAD, feature extraction, feedback
-│   │   └── management/       # Seed commands
-│   ├── compliance/           # Consent & data policies
-│   ├── audit/                # Audit logging
-│   └── core/                 # Django settings, URLs
-├── frontend/                 # React + Vite SPA
-│   └── src/
-│       ├── pages/            # Login, Signup, Dashboard, Games
-│       │   └── games/        # SpeechTherapy, game components
-│       ├── components/       # GenericGame, shared UI
-│       ├── hooks/            # useAuth, useChild (global context)
-│       └── api/              # API client functions
-├── Presentations/            # Project presentations
-└── SRS/                      # Software Requirements Specification
+├── Backend/                  # Clinical Data Layer & AI Services
+├── frontend/                 # High-Fidelity Experience Layer
+│   ├── src/
+│   │   ├── services/         # MissionService, AudioFeedback, VisualEffects
+│   │   ├── components/       # StickerBook, AICompanion, GlassmorphicUI
+│   │   └── pages/games/      # High-fidelity therapeutic modules
 ```
 
 ---
 
 ## 🚀 Getting Started
 
-### Prerequisites
-- Python 3.12+
-- Node.js 18+
-- PostgreSQL (local or Supabase)
-
-### Backend Setup
-
-```bash
-cd Backend
-
-# Create virtual environment
-python -m venv ../.venv
-../.venv/Scripts/Activate.ps1     # Windows
-# source ../.venv/bin/activate    # Linux/Mac
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Configure environment
-cp .env.example .env
-# Edit .env with your database credentials
-
-# Run migrations & seed data
-python manage.py migrate
-python manage.py seed_roles
-python manage.py seed_speech_activities
-python manage.py createsuperuser
-
-# Start server
-python manage.py runserver
-```
-
-### Frontend Setup
-
-```bash
-cd frontend
-
-# Install dependencies
-npm install
-
-# Configure environment
-cp .env.example .env
-# Edit .env with your API URL
-
-# Start dev server
-npm run dev
-```
-
-### Environment Variables
-
-Create `.env` files in both `Backend/` and `frontend/` directories. Refer to `.env.example` files for the required variables.
+1. **Clone & Install**: Follow the instructions in the `Getting Started` section below.
+2. **Clinical Seeding**: Run `python manage.py seed_clinical_assets` to populate the library with verified therapy imagery.
+3. **Launch**: Use `npm run dev` to experience the platform at its peak.
 
 ---
 
-## 🐳 Docker
-
-```bash
-cd Backend
-docker-compose up --build
-```
+## 🛡️ Clinical Compliance
+DHYAN is built with a focus on data privacy and professional accountability, featuring full audit logging and role-based consent management.
 
 ---
 
-## 👨‍💻 Authors
-
-- **Malik Abdullah Awan** — [GitHub](https://github.com/MalikAbdullahAwan)
-
----
-
-## 📄 License
-
-This project is developed as a Final Year Project (FYP) for academic purposes.
+### **Experience the Future of Pediatric Therapy.**
+Developed by [Malik Abdullah Awan](https://github.com/MalikAbdullahAwan).

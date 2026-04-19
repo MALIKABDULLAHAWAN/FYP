@@ -1,258 +1,439 @@
-/**
- * DHYAN Voice Assistant Page
- * A dedicated page for the voice agent
- */
-
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth } from "../hooks/useAuth";
-import { useVoiceAPI } from "../hooks/useVoiceAPI";
 import { getDashboardStats } from "../api/games";
+import buddyBrain from "../services/BuddyBrainService";
+
 import "./VoiceAssistant.css";
+
+/**
+ * DHYAN Voice Assistant Page
+ * A cute, interactive space for child-AI interaction.
+ * Integrates BuddyBrain for personality-driven responses.
+ */
+
+// ── TTS helper ──
+function speakText(text) {
+  try {
+    window.speechSynthesis.cancel();
+    // Simplified regex for clean TTS
+    const cleanText = text.replace(/[^\w\s!?.,'":;\-()🎵⭐🌟💕✨🧸🦕🍌🐶🎉💭🚀😊🤩🥳]/g, "");
+    const u = new SpeechSynthesisUtterance(cleanText);
+    u.rate = 0.95;
+    u.pitch = 1.25; // Slightly higher pitch for cuteness
+    u.lang = "en-US";
+    const voices = window.speechSynthesis.getVoices();
+    const preferred = voices.find(v => v.lang.startsWith("en") && v.name.toLowerCase().includes("female"));
+    if (preferred) u.voice = preferred;
+    window.speechSynthesis.speak(u);
+  } catch (e) {
+    console.warn("TTS failed:", e);
+  }
+}
 
 function VoiceAssistant() {
   const { user } = useAuth();
-  const { sendTextCommand, isProcessing, response, error } = useVoiceAPI();
   const [currentMessage, setCurrentMessage] = useState("");
-  const [isSpeaking, setIsSpeaking] = useState(false);
   const [emotion, setEmotion] = useState("happy");
   const [stats, setStats] = useState(null);
-  const [selectedAvatar, setSelectedAvatar] = useState("🐰");
-  const [voiceSpeed, setVoiceSpeed] = useState(1.0);
-  const [voicePitch, setVoicePitch] = useState(1.0);
-  const synthRef = useRef(null);
+  const [isListening, setIsListening] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [transcript, setTranscript] = useState("");
+  const [chatHistory, setChatHistory] = useState([]);
+  const [buddyAvatar, setBuddyAvatar] = useState("🐰");
+  const recognitionRef = useRef(null);
 
-  // Emojis for different emotions
   const avatars = {
     happy: "😊",
-    excited: "🤩",
+    excited: "🥳",
     thinking: "🤔",
     celebrating: "🥳",
     calm: "😌",
-    story: "📚",
+    story: "📖",
     song: "🎵",
     game: "🎮",
   };
 
-  // Load stats on mount
   useEffect(() => {
     getDashboardStats().then(setStats).catch(() => setStats(null));
-    synthRef.current = window.speechSynthesis;
   }, []);
 
-  // Get current avatar based on emotion
-  const getCurrentAvatar = () => avatars[emotion] || avatars.happy;
+  // Greet on mount using BuddyBrain
+  useEffect(() => {
+    const greeting = buddyBrain.getResponse("greetings");
+    setCurrentMessage(greeting.text);
+    setEmotion(greeting.emotion);
+    setBuddyAvatar(greeting.avatar);
+    setTimeout(() => speakText(greeting.text), 1000);
+  }, [user]);
 
-  // Speak text using Web Speech API
-  const speak = useCallback(
-    (text, emotionType = "happy") => {
-      if (!synthRef.current) return;
+  const handleCommand = useCallback(async (text) => {
+    setIsProcessing(true);
+    setTranscript(text);
+    setEmotion("thinking");
 
-      synthRef.current.cancel();
-      setEmotion(emotionType);
-      setCurrentMessage(text);
-      setIsSpeaking(true);
+    // Add user message to chat
+    setChatHistory(prev => [...prev.slice(-10), { role: "user", text }]);
 
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = voiceSpeed;
-      utterance.pitch = emotionType === "excited" ? 1.3 : emotionType === "calm" ? 0.9 : voicePitch;
-      utterance.volume = 0.95;
+    try {
+      // Get response from BuddyBrain (now async!)
+      const response = await buddyBrain.processInput(text);
+      
+      setCurrentMessage(response.text);
+      setEmotion(response.emotion);
+      setBuddyAvatar(response.avatar);
+      setChatHistory(prev => [...prev, { role: "assistant", text: response.text }]);
+      speakText(response.text);
+    } catch (err) {
+      console.error("Buddy interaction failed:", err);
+      setCurrentMessage("I'm having a little trouble thinking right now, but I still love you! ✨");
+    } finally {
+      setIsProcessing(false);
+    }
+  }, []);
 
-      utterance.onend = () => setIsSpeaking(false);
-      utterance.onerror = () => setIsSpeaking(false);
+  const startListening = useCallback(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      setCurrentMessage("I'm sorry, I can't listen right now. Try using Google Chrome! 🌐");
+      return;
+    }
 
-      synthRef.current.speak(utterance);
-    },
-    [voiceSpeed, voicePitch]
-  );
+    if (isListening && recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+      return;
+    }
 
-  // Handle commands
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.interimResults = true;
+    recognition.continuous = false;
+    recognition.maxAlternatives = 1;
+    recognitionRef.current = recognition;
+
+    recognition.onstart = () => {
+      setIsListening(true);
+      setTranscript("");
+      setEmotion("calm");
+      setCurrentMessage("I'm all ears! Speak now, buddy! 👂");
+    };
+
+    recognition.onresult = (event) => {
+      let interimTranscript = "";
+      let finalTranscript = "";
+
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const result = event.results[i];
+        if (result.isFinal) finalTranscript += result[0].transcript;
+        else interimTranscript += result[0].transcript;
+      }
+
+      if (interimTranscript) setTranscript(interimTranscript);
+
+      if (finalTranscript) {
+        setTranscript(finalTranscript);
+        setIsListening(false);
+        handleCommand(finalTranscript);
+      }
+    };
+
+    recognition.onerror = (event) => {
+      console.error("Speech recognition error:", event.error);
+      setIsListening(false);
+      setEmotion("happy");
+      if (event.error === "not-allowed") {
+        setCurrentMessage("I need to use your microphone to hear you! Please let me in! 🎤");
+      } else {
+        setCurrentMessage("Oopsie! I didn't catch that. Can you say it again? 🔄");
+      }
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+      recognitionRef.current = null;
+    };
+
+    try {
+      recognition.start();
+    } catch (e) {
+      console.error("Failed to start recognition:", e);
+    }
+  }, [isListening, handleCommand]);
+
   const handleStats = () => {
     const msg = stats
-      ? `📊 Your Progress: ${stats.total_sessions || 0} games played, ${stats.completed_sessions || 0} completed. Keep it up!`
-      : "📊 Play some games to see your stats!";
+      ? `📊 You've played ${stats.total_sessions || 0} games! You're the best! Accuracy: ${Math.round((stats.weekly_accuracy || 0) * 100)}% 🌟`
+      : "📊 Let's play some games to earn your first stars!";
     setCurrentMessage(msg);
-    speak(msg, "thinking");
+    setEmotion("excited");
+    speakText(msg);
   };
 
-  const handleEncourage = () => {
-    const encouragements = [
-      "🌟 You are capable of amazing things! Keep going!",
-      "💪 Believe in yourself! You have unique talents!",
-      "🌈 Mistakes help us learn. You're getting better every day!",
-      "⭐ You are braver than you believe!",
-      "🎯 You're doing great! Keep it up!",
-    ];
-    const msg = encouragements[Math.floor(Math.random() * encouragements.length)];
-    setCurrentMessage(msg);
-    speak(msg, "celebrating");
+  const handleBuddyAction = (action) => {
+    const response = buddyBrain.getResponse(action);
+    setCurrentMessage(response.text);
+    setEmotion(response.emotion);
+    setBuddyAvatar(response.avatar);
+    setChatHistory(prev => [...prev.slice(-10), { role: "assistant", text: response.text }]);
+    speakText(response.text);
   };
 
-  const handleJoke = () => {
-    const jokes = [
-      "😄 Why don't scientists trust atoms? Because they make up everything!",
-      "🤣 Why did the scarecrow win an award? He was outstanding in his field!",
-      "😂 Why don't eggs tell jokes? They'd crack each other up!",
-      "🎭 What do you call a fake noodle? An impasta!",
-    ];
-    const msg = jokes[Math.floor(Math.random() * jokes.length)];
-    setCurrentMessage(msg);
-    speak(msg, "excited");
-  };
-
-  const handleSong = () => {
-    const songs = [
-      "🎵 Twinkle twinkle little star, how I wonder what you are!",
-      "🎵 The itsy bitsy spider went up the water spout!",
-      "🎵 If you're happy and you know it, clap your hands!",
-    ];
-    const msg = songs[Math.floor(Math.random() * songs.length)];
-    setCurrentMessage(msg);
-    speak(msg, "song");
-  };
-
-  const handleStory = () => {
-    const intros = [
-      "📚 Once upon a time, in a magical forest...",
-      "📚 Long ago, in a land far away...",
-      "📚 In a cozy little village...",
-    ];
-    const msg = intros[Math.floor(Math.random() * intros.length)] + " (Ask me to continue the story!)";
-    setCurrentMessage(msg);
-    speak(msg, "story");
-  };
-
-  const handleAICommand = async (command) => {
-    setEmotion("thinking");
-    try {
-      const result = await sendTextCommand(command);
-      if (result?.response) {
-        setCurrentMessage(result.response);
-        speak(result.response, "happy");
-      }
-    } catch (err) {
-      const msg = "I'm thinking... Try asking me something else! 🧠";
-      setCurrentMessage(msg);
-      speak(msg, "thinking");
-    }
-  };
-
-  const avatarOptions = ["🐰", "🐻", "🐱", "🐶", "🦁", "🐼", "🦄", "🦊"];
+  const getEmotionIcon = () => avatars[emotion] || avatars.happy;
 
   return (
-    <div className="voice-assistant-page">
-      <div className="voice-container">
-        {/* Header */}
-        <div className="voice-header">
-          <h1>🎙️ Dhyan Voice Assistant</h1>
-          <p>Hi {user?.full_name?.split(" ")[0] || "Friend"}! I'm here to chat, tell jokes, and help you learn!</p>
-        </div>
+    <div className="voice-assistant-cute">
+      <style>{`
+        .voice-assistant-cute {
+          min-height: 100vh;
+          background: linear-gradient(135deg, #FFF5F7 0%, #F0F5FF 100%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 20px;
+          font-family: 'Fredoka', 'Nunito', sans-serif;
+        }
+        .cute-card {
+          width: 100%;
+          max-width: 800px;
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(20px);
+          border-radius: 50px;
+          box-shadow: 0 30px 60px rgba(255, 182, 193, 0.2);
+          padding: 50px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          border: 4px solid #FFE4E8;
+          position: relative;
+          overflow: hidden;
+        }
+        .cute-card::before {
+          content: '✨';
+          position: absolute;
+          top: 20px;
+          left: 20px;
+          font-size: 24px;
+        }
+        .cute-card::after {
+          content: '🎨';
+          position: absolute;
+          bottom: 20px;
+          right: 20px;
+          font-size: 24px;
+        }
+        .buddy-avatar-section {
+          position: relative;
+          margin-bottom: 40px;
+        }
+        .avatar-circle {
+          width: 200px;
+          height: 200px;
+          background: linear-gradient(135deg, #FFDEE9 0%, #B5FFFC 100%);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 110px;
+          box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05);
+          transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          border: 8px solid white;
+        }
+        .avatar-circle.processing {
+          animation: buddy-bounce 0.8s infinite ease-in-out;
+        }
+        .emotion-badge {
+          position: absolute;
+          bottom: 5px;
+          right: 5px;
+          width: 60px;
+          height: 60px;
+          background: white;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 32px;
+          box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+          border: 4px solid #FFE4E8;
+        }
+        @keyframes buddy-bounce {
+          0%, 100% { transform: translateY(0) scale(1); }
+          50% { transform: translateY(-15px) scale(1.05); }
+        }
+        .cute-speech-bubble {
+          background: #FFF0F3;
+          padding: 30px;
+          border-radius: 35px;
+          margin-bottom: 25px;
+          width: 100%;
+          text-align: center;
+          font-size: 24px;
+          color: #FF5A78;
+          font-weight: 700;
+          line-height: 1.4;
+          box-shadow: inset 0 4px 10px rgba(255, 182, 193, 0.1);
+          border: 2px solid white;
+        }
+        .live-transcript-cute {
+          background: #F0F7FF;
+          border-radius: 20px;
+          padding: 15px 25px;
+          width: 100%;
+          text-align: center;
+          font-size: 18px;
+          color: #4A90E2;
+          font-weight: 700;
+          margin-bottom: 25px;
+          border: 2px dashed #B5DEFF;
+        }
+        .cute-chat-box {
+          width: 100%;
+          max-height: 180px;
+          overflow-y: auto;
+          margin-bottom: 30px;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          padding: 10px;
+        }
+        .cute-msg {
+          padding: 12px 20px;
+          border-radius: 25px;
+          font-size: 16px;
+          font-weight: 700;
+          max-width: 85%;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
+        .cute-msg.user {
+          align-self: flex-end;
+          background: #FFE4E8;
+          color: #FF5A78;
+          border-bottom-right-radius: 5px;
+        }
+        .cute-msg.assistant {
+          align-self: flex-start;
+          background: white;
+          color: #6366F1;
+          border-bottom-left-radius: 5px;
+          border: 1px solid #F0F5FF;
+        }
+        .cute-actions {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 15px;
+          width: 100%;
+          margin-bottom: 40px;
+        }
+        .cute-btn {
+          padding: 18px 10px;
+          border: none;
+          border-radius: 25px;
+          background: white;
+          color: #FF8C9E;
+          font-weight: 800;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          box-shadow: 0 10px 20px rgba(255, 182, 193, 0.15);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 10px;
+          font-size: 14px;
+        }
+        .cute-btn:hover {
+          transform: translateY(-8px) scale(1.05);
+          background: #FF8C9E;
+          color: white;
+        }
+        .big-mic-button {
+          width: 100px;
+          height: 100px;
+          border-radius: 50%;
+          border: none;
+          background: linear-gradient(135deg, #FF9A9E 0%, #FAD0C4 100%);
+          color: white;
+          font-size: 45px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          box-shadow: 0 15px 35px rgba(255, 154, 158, 0.4);
+          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          border: 6px solid white;
+        }
+        .big-mic-button.listening {
+          background: #FF4D6D;
+          animation: mic-ripple 1.5s infinite;
+          transform: scale(1.1);
+        }
+        @keyframes mic-ripple {
+          0% { box-shadow: 0 0 0 0 rgba(255, 77, 109, 0.5); }
+          100% { box-shadow: 0 0 0 40px rgba(255, 77, 109, 0); }
+        }
+      `}</style>
 
-        {/* Main Avatar Display */}
-        <div className="avatar-display">
-          <div className={`avatar-bubble ${isSpeaking ? "speaking" : ""}`}>
-            <span className="avatar-emoji">{getCurrentAvatar()}</span>
-            {isSpeaking && <span className="speaking-indicator">🔊</span>}
+      <div className="cute-card">
+        <h1 style={{ color: "#FF5A78", fontWeight: 900, marginBottom: "8px", fontSize: "36px" }}>
+          Hi {user?.full_name?.split(" ")[0] || "Friend"}! 👋
+        </h1>
+        <p style={{ color: "#A0AEC0", marginBottom: "35px", fontWeight: 700 }}>
+          I'm so happy to talk with you!
+        </p>
+
+        <div className="buddy-avatar-section">
+          <div className={`avatar-circle ${isProcessing ? "processing" : ""}`}>
+            {buddyAvatar}
+          </div>
+          <div className="emotion-badge">
+            {getEmotionIcon()}
           </div>
         </div>
 
-        {/* Message Display */}
-        <div className="message-display">
-          {currentMessage || "👋 Say hello or click a button below!"}
+        <div className="cute-speech-bubble">
+          {isProcessing ? "Hmm... let me think! 🤔" : currentMessage}
         </div>
 
-        {/* Avatar Selection */}
-        <div className="avatar-selector">
-          <p>Choose Your Friend:</p>
-          <div className="avatar-options">
-            {avatarOptions.map((avatar) => (
-              <button
-                key={avatar}
-                onClick={() => {
-                  setSelectedAvatar(avatar);
-                  const msg = `Hi! I'm your friend ${avatar}!`;
-                  setCurrentMessage(msg);
-                  speak(msg, "happy");
-                }}
-                className={selectedAvatar === avatar ? "selected" : ""}
-              >
-                {avatar}
-              </button>
+        {(isListening || transcript) && (
+          <div className="live-transcript-cute">
+            {isListening && !transcript ? "✨ I'm listening to your magic words..." : `🗣️ "${transcript}"`}
+          </div>
+        )}
+
+        {chatHistory.length > 0 && (
+          <div className="cute-chat-box">
+            {chatHistory.map((msg, i) => (
+              <div key={i} className={`cute-msg ${msg.role}`}>
+                {msg.text}
+              </div>
             ))}
           </div>
-        </div>
-
-        {/* Quick Action Buttons */}
-        <div className="quick-actions">
-          <button onClick={handleStats} className="btn-stats">
-            📊 My Stats
-          </button>
-          <button onClick={handleEncourage} className="btn-encourage">
-            💪 Encourage Me
-          </button>
-          <button onClick={handleJoke} className="btn-joke">
-            😄 Tell a Joke
-          </button>
-          <button onClick={handleSong} className="btn-song">
-            🎵 Sing a Song
-          </button>
-          <button onClick={handleStory} className="btn-story">
-            📚 Tell a Story
-          </button>
-          <button onClick={() => handleAICommand("hello")} className="btn-chat">
-            💬 Chat with AI
-          </button>
-        </div>
-
-        {/* Voice Settings */}
-        <div className="voice-settings">
-          <h3>🎛️ Voice Settings</h3>
-          <div className="setting">
-            <label>Speed: {voiceSpeed.toFixed(1)}x</label>
-            <input
-              type="range"
-              min="0.5"
-              max="2"
-              step="0.1"
-              value={voiceSpeed}
-              onChange={(e) => setVoiceSpeed(parseFloat(e.target.value))}
-            />
-          </div>
-          <div className="setting">
-            <label>Pitch: {voicePitch.toFixed(1)}x</label>
-            <input
-              type="range"
-              min="0.5"
-              max="2"
-              step="0.1"
-              value={voicePitch}
-              onChange={(e) => setVoicePitch(parseFloat(e.target.value))}
-            />
-          </div>
-        </div>
-
-        {/* Status */}
-        {isProcessing && (
-          <div className="processing-indicator">
-            🤔 Thinking...
-          </div>
-        )}
-        {error && (
-          <div className="error-message">
-            ⚠️ Oops! Something went wrong. Try again!
-          </div>
         )}
 
-        {/* Tips */}
-        <div className="voice-tips">
-          <h4>💡 Try saying:</h4>
-          <ul>
-            <li>"Hello" or "Hi Dhyan"</li>
-            <li>"Tell me a joke"</li>
-            <li>"Sing a song"</li>
-            <li>"Encourage me"</li>
-            <li>"Tell me a story"</li>
-          </ul>
+        <div className="cute-actions">
+          <button className="cute-btn" onClick={() => handleBuddyAction("stories")}>
+            <span style={{ fontSize: 32 }}>📖</span> Story
+          </button>
+          <button className="cute-btn" onClick={() => handleBuddyAction("jokes")}>
+            <span style={{ fontSize: 32 }}>🤡</span> Joke
+          </button>
+          <button className="cute-btn" onClick={() => handleBuddyAction("stories")}>
+            <span style={{ fontSize: 32 }}>🎵</span> Song
+          </button>
+          <button className="cute-btn" onClick={handleStats}>
+            <span style={{ fontSize: 32 }}>✨</span> Stars
+          </button>
         </div>
+
+        <button
+          className={`big-mic-button ${isListening ? "listening" : ""}`}
+          onClick={startListening}
+        >
+          {isListening ? "⏹️" : "🎤"}
+        </button>
+
+        <p style={{ marginTop: "25px", color: "#FFACB7", fontWeight: 800, fontSize: 18 }}>
+          {isListening ? "Tap to finish!" : "Press the mic to talk!"}
+        </p>
       </div>
     </div>
   );

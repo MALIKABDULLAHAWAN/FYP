@@ -75,9 +75,9 @@ Requirements:
 - Educational value (teaches kindness, curiosity, or problem-solving)
 - Memorable characters
 - Simple plot with a lesson
-- Include a question at the end to encourage thinking
+- Include exactly 3 fun, direct choices for what the child can do next.
 
-Format as JSON with: title, content, characters (list), lesson, discussion_question"""
+Format as JSON with: title, content, characters (list), lesson, choices (list of {{label, icon}})"""
 
         messages = [{"role": "user", "content": prompt}]
         response = self._call_groq(messages, model=self.models['quality'], temperature=0.8)

@@ -31,6 +31,8 @@ class DashboardStatsView(APIView):
     def get(self, request):
         user = request.user
         is_admin = user.is_staff or user_has_role(user, "admin")
+        is_therapist = user_has_role(user, "therapist")
+        is_parent = user_has_role(user, "parent")
 
         if is_admin:
             total_children = ChildProfile.objects.filter(deleted_at__isnull=True).count()
@@ -38,7 +40,7 @@ class DashboardStatsView(APIView):
             total_sessions = TherapySession.objects.count()
             completed_sessions = TherapySession.objects.filter(status="completed").count()
             active_sessions = TherapySession.objects.filter(status="in_progress").count()
-        else:
+        elif is_therapist:
             assigned_child_ids = TherapistChildAssignment.objects.filter(
                 therapist=user
             ).values_list("child_user_id", flat=True)
@@ -47,36 +49,32 @@ class DashboardStatsView(APIView):
                 user_id__in=assigned_child_ids, deleted_at__isnull=True
             ).count()
             total_therapists = 1
-            total_sessions = TherapySession.objects.filter(
-                therapist=user
-            ).count()
-            completed_sessions = TherapySession.objects.filter(
-                therapist=user, status="completed"
-            ).count()
-            active_sessions = TherapySession.objects.filter(
-                therapist=user, status="in_progress"
-            ).count()
+            total_sessions = TherapySession.objects.filter(therapist=user).count()
+            completed_sessions = TherapySession.objects.filter(therapist=user, status="completed").count()
+            active_sessions = TherapySession.objects.filter(therapist=user, status="in_progress").count()
+        else:
+            # Fallback: any authenticated user sees their own created sessions
+            total_children = ChildProfile.objects.filter(deleted_at__isnull=True).count()
+            total_therapists = 0
+            total_sessions = TherapySession.objects.filter(therapist=user).count()
+            completed_sessions = TherapySession.objects.filter(therapist=user, status="completed").count()
+            active_sessions = TherapySession.objects.filter(therapist=user, status="in_progress").count()
 
         # Recent 7 days activity
         week_ago = timezone.now() - timedelta(days=7)
         if is_admin:
             recent_sessions = TherapySession.objects.filter(created_at__gte=week_ago).count()
-            recent_trials = SessionTrial.objects.filter(
-                session__created_at__gte=week_ago, status="completed"
-            ).count()
-            recent_correct = SessionTrial.objects.filter(
-                session__created_at__gte=week_ago, status="completed", success=True
-            ).count()
+            recent_trials = SessionTrial.objects.filter(session__created_at__gte=week_ago, status="completed").count()
+            recent_correct = SessionTrial.objects.filter(session__created_at__gte=week_ago, status="completed", success=True).count()
+        elif is_therapist:
+            recent_sessions = TherapySession.objects.filter(therapist=user, created_at__gte=week_ago).count()
+            recent_trials = SessionTrial.objects.filter(session__therapist=user, session__created_at__gte=week_ago, status="completed").count()
+            recent_correct = SessionTrial.objects.filter(session__therapist=user, session__created_at__gte=week_ago, status="completed", success=True).count()
         else:
-            recent_sessions = TherapySession.objects.filter(
-                therapist=user, created_at__gte=week_ago
-            ).count()
-            recent_trials = SessionTrial.objects.filter(
-                session__therapist=user, session__created_at__gte=week_ago, status="completed"
-            ).count()
-            recent_correct = SessionTrial.objects.filter(
-                session__therapist=user, session__created_at__gte=week_ago, status="completed", success=True
-            ).count()
+            # Fallback: user's own sessions
+            recent_sessions = TherapySession.objects.filter(therapist=user, created_at__gte=week_ago).count()
+            recent_trials = SessionTrial.objects.filter(session__therapist=user, session__created_at__gte=week_ago, status="completed").count()
+            recent_correct = SessionTrial.objects.filter(session__therapist=user, session__created_at__gte=week_ago, status="completed", success=True).count()
 
         weekly_accuracy = (recent_correct / recent_trials) if recent_trials else 0.0
 
@@ -102,6 +100,8 @@ class ChildProgressView(APIView):
     def get(self, request, child_id: int):
         user = request.user
         is_admin = user.is_staff or user_has_role(user, "admin")
+        is_therapist = user_has_role(user, "therapist")
+        is_parent = user_has_role(user, "parent")
 
         try:
             child = ChildProfile.objects.select_related("user").get(id=child_id)
@@ -110,11 +110,17 @@ class ChildProgressView(APIView):
 
         # Check access
         if not is_admin:
-            assigned = TherapistChildAssignment.objects.filter(
-                therapist=user, child_user=child.user
-            ).exists()
-            if not assigned:
-                return Response({"detail": "Not assigned to this child"}, status=403)
+            if is_therapist:
+                assigned = TherapistChildAssignment.objects.filter(therapist=user, child_user=child.user).exists()
+                if not assigned:
+                    return Response({"detail": "Not assigned to this child"}, status=403)
+            elif is_parent:
+                from patients.models import Guardian
+                is_guardian = Guardian.objects.filter(child_profile=child, email=user.email).exists()
+                if not is_guardian:
+                    return Response({"detail": "You are not a guardian of this child"}, status=403)
+            else:
+                return Response({"detail": "Permission denied"}, status=403)
 
         sessions = TherapySession.objects.filter(child=child)
         total_sessions = sessions.count()
@@ -203,14 +209,9 @@ class SessionHistoryView(APIView):
         if is_admin:
             sessions = TherapySession.objects.select_related("child__user", "therapist").order_by("-created_at")
         else:
-            # Only sessions for children assigned to this therapist
-            from patients.models import TherapistChildAssignment
-            assigned_child_user_ids = TherapistChildAssignment.objects.filter(
-                therapist=user
-            ).values_list("child_user_id", flat=True)
+            # Show sessions where user is the therapist (works for any role)
             sessions = TherapySession.objects.select_related("child__user", "therapist").filter(
                 therapist=user,
-                child__user_id__in=assigned_child_user_ids,
             ).order_by("-created_at")
 
         # Hide orphaned sessions (in_progress with zero completed trials)
@@ -238,8 +239,7 @@ class SessionHistoryView(APIView):
         if hide_orphans:
             sessions = sessions.annotate(
                 completed_trial_count=Count("trials", filter=Q(trials__status="completed")),
-                correct_trial_count=Count("trials", filter=Q(trials__status="completed", trials__success=True)),
-            ).exclude(completed_trial_count=0).exclude(correct_trial_count=0)
+            ).exclude(completed_trial_count=0)
 
         sessions = sessions[:limit]
 

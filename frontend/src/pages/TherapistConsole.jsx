@@ -1,18 +1,24 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { listChildren, createChild, updateChild, deleteChild } from "../api/patients";
-import { getSessionHistory, getChildProgress, getDashboardStats } from "../api/games";
+import { getSessionHistory, getChildProgress, getDashboardStats, getChildInsights } from "../api/games";
 import { SkeletonStatCards, SkeletonTable } from "../components/Skeleton";
 import ProgressRing from "../components/ProgressRing";
 import { GameSelector } from "../components/GameSelector";
 import { GameCard } from "../components/GameCard";
 import { GameMetadataDisplay } from "../components/GameMetadataDisplay";
 import { useToast } from "../hooks/useToast";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer as RechartsContainer, PieChart, Pie, Cell } from "recharts";
+import { 
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer as RechartsContainer, 
+  PieChart, Pie, Cell, Radar, RadarChart, PolarGrid, 
+  PolarAngleAxis, PolarRadiusAxis, LineChart, Line, 
+  CartesianGrid, Legend 
+} from "recharts";
 import AssetManager from "../services/EmojiReplacer/AssetManager";
 import GameMetadataService from "../services/GameMetadataService";
 import GameImageManager from "../services/GameImageManager";
 import UiIcon from "../components/ui/UiIcon";
+import ClinicalRadar from "../components/ClinicalRadar";
 import { TherapistStickers } from "../components/TherapistStickers";
 import "../styles/professional.css";
 import "./TherapistConsole.css";
@@ -30,6 +36,8 @@ export default function TherapistConsole() {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState(null);
   const [activeTab, setActiveTab] = useState("overview"); // overview, children, sessions, analytics, games
+  const [childInsights, setChildInsights] = useState(null);
+  const [loadingInsights, setLoadingInsights] = useState(false);
   const [assets, setAssets] = useState({});
   const [assetManager] = useState(() => new AssetManager());
 
@@ -155,11 +163,21 @@ export default function TherapistConsole() {
   useEffect(() => {
     if (!selectedChild) {
       setChildProgress(null);
+      setChildInsights(null);
       return;
     }
+    
+    // Fetch progress
     getChildProgress(selectedChild)
       .then(setChildProgress)
       .catch(() => setChildProgress(null));
+      
+    // Fetch insights
+    setLoadingInsights(true);
+    getChildInsights(selectedChild)
+      .then(setChildInsights)
+      .catch(() => setChildInsights(null))
+      .finally(() => setLoadingInsights(false));
   }, [selectedChild]);
 
   async function handleAddChild(e) {
@@ -295,6 +313,51 @@ export default function TherapistConsole() {
       loadData();
     }
   }
+
+  // Domain mapping for games - Synchronized with Clinical Intelligence Backend
+  const DOMAIN_MAPPING = {
+    cognitive: {
+      label: "Cognitive",
+      icon: "🧠",
+      games: ["memory_match", "color_match", "matching", "problem_solving", "pattern_matching", "object_discovery"]
+    },
+    motor: {
+      label: "Fine Motor",
+      icon: "👋",
+      games: ["bubble_pop", "shape_sort", "touch_target"]
+    },
+    social_emotional: {
+      label: "Social / Emotional",
+      icon: "😊",
+      games: ["emotion_match", "emotion_gesture", "gaze_emotion", "joint_attention", "emotion_face", "gesture_quest"]
+    },
+    speech: {
+      label: "Speech Sparkles",
+      icon: "🗣️",
+      games: ["speech_therapy", "story_adventure", "animal_sounds", "speech_sparkles", "talking_time"]
+    }
+  };
+
+  const getGroupedStats = (breakdown) => {
+    if (!breakdown) return {};
+    const groups = {};
+    
+    Object.entries(DOMAIN_MAPPING).forEach(([key, config]) => {
+      const gameStats = breakdown.filter(g => config.games.includes(g.game.toLowerCase()));
+      if (gameStats.length > 0) {
+        const totalTrials = gameStats.reduce((sum, g) => sum + g.total_trials, 0);
+        const totalCorrect = gameStats.reduce((sum, g) => sum + g.correct, 0);
+        groups[key] = {
+          ...config,
+          trials: totalTrials,
+          accuracy: totalTrials > 0 ? totalCorrect / totalTrials : 0,
+          gamesCount: gameStats.length
+        };
+      }
+    });
+    
+    return groups;
+  };
 
   // Filter sessions
   const filteredSessions = sessions.filter((s) => {
@@ -1017,7 +1080,62 @@ export default function TherapistConsole() {
             )}
             Progress: {childProgress.child_name}
           </h3>
-          <div className="stats-grid">
+          {/* AI Pulse Insights - Enhanced for Phase 10 */}
+          {(childInsights || loadingInsights) && (
+            <div style={{ 
+              marginBottom: 24, 
+              padding: "24px", 
+              background: "white",
+              borderRadius: "20px",
+              border: "1px solid #edf2f7",
+              borderLeft: "6px solid #6366F1",
+              boxShadow: "0 10px 30px rgba(0,0,0,0.02)",
+              position: "relative"
+            }}>
+              <h4 style={{ margin: "0 0 12px 0", fontSize: 13, textTransform: "uppercase", letterSpacing: 1.5, color: "#6366F1", fontWeight: 800, display: "flex", alignItems: "center", gap: 10 }}>
+                {TherapistStickers.analytics} Clinical Intelligence Summary
+              </h4>
+              {loadingInsights ? (
+                <div style={{ height: 40, display: "flex", alignItems: "center", gap: 10 }}>
+                  <span className="spinner" style={{ width: 16, height: 16 }}></span>
+                  <span style={{ fontSize: 14, color: "#718096", fontWeight: 500 }}>Analyzing clinical patterns across history...</span>
+                </div>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                  <p style={{ margin: 0, fontSize: 16, lineHeight: 1.7, color: "#1e1b4b", fontWeight: 500, whiteSpace: "pre-wrap" }}>
+                    {childInsights?.insight || "Diagnostic data is being processed for clinical recommendations."}
+                  </p>
+                  
+                  {childInsights?.metrics && (
+                    <div style={{ 
+                      display: "flex", 
+                      gap: 20, 
+                      marginTop: 20, 
+                      paddingTop: 20, 
+                      borderTop: "1px solid #edf2f7" 
+                    }}>
+                      <div style={{ flex: 1, textAlign: "center" }}>
+                        <div style={{ fontSize: 12, color: "#718096", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Historical Mastery</div>
+                        <div style={{ fontSize: 24, fontWeight: 900, color: "#6366F1" }}>{Math.round(childInsights.metrics.overall_accuracy * 100)}%</div>
+                      </div>
+                      <div style={{ width: 1, background: "#edf2f7" }}></div>
+                      <div style={{ flex: 1, textAlign: "center" }}>
+                        <div style={{ fontSize: 12, color: "#718096", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Recent Velocity</div>
+                        <div style={{ fontSize: 24, fontWeight: 900, color: "#10b981" }}>{Math.round(childInsights.metrics.recent_accuracy * 100)}%</div>
+                      </div>
+                      <div style={{ width: 1, background: "#edf2f7" }}></div>
+                      <div style={{ flex: 1, textAlign: "center" }}>
+                        <div style={{ fontSize: 12, color: "#718096", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Total Engagements</div>
+                        <div style={{ fontSize: 24, fontWeight: 900, color: "#1e1b4b" }}>{childInsights.metrics.total_trials}</div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="stats-grid" style={{ marginBottom: 24 }}>
             <div className="stat-card">
               <div className="stat-value">{childProgress.total_sessions}</div>
               <div className="stat-label">Sessions</div>
@@ -1041,34 +1159,131 @@ export default function TherapistConsole() {
             </div>
           </div>
 
+          {/* Phase 10: Clinical Intelligence Dashboard */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", gap: 20, marginBottom: 24 }}>
+            {/* Domain Radar Pulse */}
+            <div className="card-clinical" style={{ background: "white", padding: 24, borderRadius: 20, boxShadow: "0 8px 30px rgba(0,0,0,0.04)", border: "1px solid #edf2f7" }}>
+              <h4 style={{ margin: "0 0 16px 0", fontSize: 15, color: "#1a202c", fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
+                {TherapistStickers.analytics} Diagnostic Domain Pulse
+              </h4>
+              <ClinicalRadar domains={getGroupedStats(childProgress.game_breakdown)} size={320} />
+              <div style={{ marginTop: 12, fontSize: 12, color: "#718096", textAlign: "center", fontStyle: "italic" }}>
+                Holistic view of current therapeutic performance across domains.
+              </div>
+            </div>
+
+            {/* Longitudinal Trend Chart */}
+            <div className="card-clinical" style={{ background: "white", padding: 24, borderRadius: 20, boxShadow: "0 8px 30px rgba(0,0,0,0.04)", border: "1px solid #edf2f7" }}>
+              <h4 style={{ margin: "0 0 16px 0", fontSize: 15, color: "#1a202c", fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
+                {TherapistStickers.calendar} Progress Trendline
+              </h4>
+              <div style={{ width: '100%', height: 320 }}>
+                <RechartsContainer width="100%" height="100%">
+                  <LineChart data={[...(childProgress.recent_sessions || [])].reverse()}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                    <XAxis dataKey="date" hide />
+                    <YAxis domain={[0, 100]} hide />
+                    <Tooltip 
+                      formatter={(val) => [`${Math.round(val * 100)}%`, "Accuracy"]}
+                      contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="accuracy" 
+                      stroke="#6366F1" 
+                      strokeWidth={4} 
+                      dot={{ r: 6, fill: "#6366F1", strokeWidth: 2, stroke: "#fff" }}
+                      activeDot={{ r: 8, strokeWidth: 0 }}
+                    />
+                  </LineChart>
+                </RechartsContainer>
+              </div>
+              <div style={{ marginTop: 12, fontSize: 12, color: "#718096", textAlign: "center", fontStyle: "italic" }}>
+                Accuracy progression across last {childProgress.recent_sessions?.length} sessions.
+              </div>
+            </div>
+          </div>
+
+          {/* Domain Breakdown - Detailed */}
+          <div style={{ marginBottom: 24 }}>
+            <h4 style={{ margin: "0 0 16px 0", fontSize: 16, color: "#2d3748", fontWeight: 700 }}>Domain Metrics Breakdown</h4>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 16 }}>
+              {Object.entries(getGroupedStats(childProgress.game_breakdown)).map(([key, domain]) => (
+                <div key={key} style={{ 
+                  padding: "16px", 
+                  background: "white", 
+                  borderRadius: "14px", 
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.03)",
+                  border: "1px solid #edf2f7",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 12
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <span style={{ fontSize: 24 }}>{domain.icon}</span>
+                    <span style={{ fontWeight: 700, fontSize: 14, color: "#4a5568" }}>{domain.label}</span>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+                    <div>
+                      <div style={{ fontSize: 22, fontWeight: 800, color: "#2d3748" }}>{Math.round(domain.accuracy * 100)}%</div>
+                      <div style={{ fontSize: 11, color: "#a0aec0", fontWeight: 600 }}>{domain.trials} TRIALS</div>
+                    </div>
+                    <div style={{ width: 40, height: 40 }}>
+                      <ProgressRing
+                        value={Math.round(domain.accuracy * 100)}
+                        size={40}
+                        strokeWidth={4}
+                        color={domain.accuracy >= 0.8 ? "#48bb78" : domain.accuracy >= 0.5 ? "#f6ad55" : "#f56565"}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {childProgress.game_breakdown?.length > 0 && (
-            <div className="table-wrapper" style={{ marginTop: 12 }}>
-              <table className="data-table">
+            <div className="table-wrapper" style={{ marginTop: 24 }}>
+              <h4 style={{ margin: "0 0 16px 0", fontSize: 16, color: "#2d3748", fontWeight: 700, display: "flex", alignItems: "center", gap: 10 }}>
+                {TherapistStickers.games} Detailed Strategy Analysis
+              </h4>
+              <table className="data-table clinical">
                 <thead>
                   <tr>
-                    <th>Game</th>
-                    <th>Sessions</th>
+                    <th>Therapeutic Activity</th>
+                    <th>Mastery</th>
                     <th>Trials</th>
-                    <th>Correct</th>
                     <th>Accuracy</th>
-                    <th>Avg RT</th>
+                    <th>Avg Speed</th>
+                    <th>Clinical Observations</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {childProgress.game_breakdown.map((g, i) => (
-                    <tr key={i}>
-                      <td>{g.game.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}</td>
-                      <td>{g.sessions}</td>
-                      <td>{g.total_trials}</td>
-                      <td>{g.correct}</td>
-                      <td>
-                        <span className={`accuracy-badge ${g.accuracy >= 0.8 ? "acc-high" : g.accuracy >= 0.5 ? "acc-mid" : "acc-low"}`}>
-                          {(g.accuracy * 100).toFixed(0)}%
-                        </span>
-                      </td>
-                      <td>{g.avg_response_time_ms ? `${g.avg_response_time_ms}ms` : "—"}</td>
-                    </tr>
-                  ))}
+                  {childProgress.game_breakdown.map((g, i) => {
+                    const acc = g.accuracy || 0;
+                    const status = acc >= 0.9 ? "Mastered" : acc >= 0.7 ? "Progressing" : "Improving";
+                    const statusColor = acc >= 0.9 ? "#10b981" : acc >= 0.7 ? "#3b82f6" : "#ef4444";
+                    return (
+                      <tr key={i}>
+                        <td style={{ fontWeight: 700 }}>{g.game.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}</td>
+                        <td style={{ color: statusColor, fontWeight: 800, fontSize: 12, textTransform: "uppercase" }}>
+                          {status}
+                        </td>
+                        <td style={{ fontWeight: 600 }}>{g.total_trials}</td>
+                        <td>
+                          <span className={`accuracy-badge ${acc >= 0.8 ? "acc-high" : acc >= 0.5 ? "acc-mid" : "acc-low"}`}>
+                            {(acc * 100).toFixed(0)}%
+                          </span>
+                        </td>
+                        <td>{g.avg_response_time_ms ? `${(g.avg_response_time_ms / 1000).toFixed(2)}s` : "—"}</td>
+                        <td style={{ fontSize: 13, color: "#718096", maxWidth: 200 }}>
+                          {acc > 0.8 
+                            ? "Shows strong consistency and rapid acquisition of targets." 
+                            : "Developing stability. Recommend sensory-rich reinforcement."}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
