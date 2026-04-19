@@ -203,3 +203,17 @@
     grid-template-columns: 1fr;
   }
 }
+
+.insight-loading {
+  animation: pulse-op 1.5s infinite;
+  opacity: 0.6;
+}
+
+.insight-loaded {
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes pulse-op {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.8; }
+}

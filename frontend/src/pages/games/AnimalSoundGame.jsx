@@ -104,7 +104,8 @@ const ROUNDS = 12;
 export default function AnimalSoundGame({ isSession = false, level = "easy", onComplete }) {
   const navigate = useNavigate();
   const { childProfile } = useChild();
-  const [phase, setPhase] = useState(isSession ? "playing" : "idle");
+  const [phase, setPhase] = useState(isSession ? "playing" : "level_select");
+  const [activeLevel, setActiveLevel] = useState(level);
   const [queue, setQueue] = useState([]);
   const [current, setCurrent] = useState(null);
   const [choices, setChoices] = useState([]);
@@ -113,6 +114,8 @@ export default function AnimalSoundGame({ isSession = false, level = "easy", onC
   const [feedback, setFeedback] = useState(null);
   const [wrongId, setWrongId] = useState(null);
   const [streak, setStreak] = useState(0);
+  const startTimeRef = useRef(Date.now());
+  const [duration, setDuration] = useState(0);
 
   // Difficulty / Rounds configuration
   const roundsPerLevel = {
@@ -120,7 +123,7 @@ export default function AnimalSoundGame({ isSession = false, level = "easy", onC
     medium: 10,
     hard: 15
   };
-  const TOTAL_ROUNDS = roundsPerLevel[level] || 8;
+  const TOTAL_ROUNDS = roundsPerLevel[activeLevel] || 8;
 
   const presentAnimal = useCallback((animal) => {
     setCurrent(animal);
@@ -135,8 +138,9 @@ export default function AnimalSoundGame({ isSession = false, level = "easy", onC
     return q.slice(0, TOTAL_ROUNDS);
   }, [TOTAL_ROUNDS]);
 
-  const startGame = useCallback(() => {
-    const q = buildQueue();
+  const startGame = useCallback((lvl = activeLevel) => {
+    setActiveLevel(lvl);
+    const q = buildQueue(lvl);
     setScore(0);
     setRound(1);
     setStreak(0);
@@ -144,13 +148,16 @@ export default function AnimalSoundGame({ isSession = false, level = "easy", onC
     setWrongId(null);
     setQueue(q.slice(1));
     presentAnimal(q[0]);
+    startTimeRef.current = Date.now();
     setPhase("playing");
-  }, [buildQueue, presentAnimal]);
+  }, [activeLevel, buildQueue, presentAnimal]);
 
+  const initialized = useRef(false);
   // Auto-start in session
   useEffect(() => {
-    if (isSession) {
-      startGame();
+    if (isSession && !initialized.current) {
+      initialized.current = true;
+      startGame(level);
     }
   }, [isSession, level, startGame]);
 
@@ -174,6 +181,7 @@ export default function AnimalSoundGame({ isSession = false, level = "easy", onC
       setFeedback(null);
       setWrongId(null);
       if (queue.length === 0) {
+        setDuration(Math.floor((Date.now() - startTimeRef.current) / 1000));
         setPhase("over");
         if (isSession && onComplete) {
           onComplete({
@@ -225,20 +233,47 @@ export default function AnimalSoundGame({ isSession = false, level = "easy", onC
 
       <div style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"20px 16px", gap:22 }}>
 
-        {/* Idle */}
-        {phase === "idle" && !isSession && (
-          <div style={{ textAlign:"center", display:"flex", flexDirection:"column", alignItems:"center", gap:20 }}>
+        {/* Level Select */}
+        {phase === "level_select" && !isSession && (
+          <div style={{
+            display: "flex", flexDirection: "column",
+            alignItems: "center", justifyContent: "center",
+            gap: 20, padding: 24, zIndex: 10, width: "100%"
+          }}>
             <Sticker3D animate={true}>
-              <div style={{ fontSize:80, filter:"drop-shadow(0 8px 20px rgba(16,185,129,0.3))" }}>🔊</div>
+              <div style={{ fontSize: 60, filter: "drop-shadow(0 10px 24px rgba(16,185,129,0.35))" }}>🔊</div>
             </Sticker3D>
-            <div style={{ fontSize:34, fontWeight:900, color:"#10B981" }}>Animal Sounds!</div>
-            <div style={{ fontSize:17, color:"#666", maxWidth:290, lineHeight:1.5 }}>Listen to the sound and tap the right animal!</div>
-            <div style={{ display:"flex", gap:12, fontSize:38 }}>
-              {["🐶","🐱","🐮","🐥","🦁"].map(e => <span key={e}>{e}</span>)}
+            <div style={{ fontSize: 32, fontWeight: 900, color: "#10B981", textShadow: "0 4px 14px rgba(255,255,255,0.5)" }}>Animal Sounds!</div>
+            <div style={{ fontSize: 16, color: "#444", marginBottom: 10 }}>Choose your difficulty:</div>
+            
+            <div style={{ display: "flex", flexDirection: "column", gap: 14, width: "100%", maxWidth: 360 }}>
+              {[ 
+                { id: "easy", label: "Easy", desc: "6 Sounds", colors: ["#6BCB77", "#4CAF50"] },
+                { id: "medium", label: "Medium", desc: "10 Sounds", colors: ["#FF8C42", "#E57322"] },
+                { id: "hard", label: "Hard", desc: "15 Sounds", colors: ["#FF6B6B", "#E05252"] }
+              ].map((lv, i) => (
+                <button
+                  key={lv.id}
+                  onClick={() => startGame(lv.id)}
+                  style={{
+                    width: "100%", padding: "16px 24px", borderRadius: 24,
+                    background: `linear-gradient(135deg,${lv.colors[0]},${lv.colors[1]})`,
+                    border: "none", cursor: "pointer", color: "white",
+                    display: "flex", alignItems: "center", justifyContent: "space-between",
+                    boxShadow: `0 8px 24px ${lv.colors[0]}44`,
+                    fontSize: 18, fontWeight: 800,
+                  }}
+                >
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 4 }}>
+                    <div style={{ fontSize: 20, fontWeight: 900 }}>{lv.label}</div>
+                    <div style={{ fontSize: 14, opacity: 0.9 }}>{lv.desc}</div>
+                  </div>
+                  <div style={{ fontSize: 32 }}>
+                    {["🟢", "🟡", "🔴"][i]}
+                  </div>
+                </button>
+              ))}
             </div>
-            <button onClick={startGame} style={{ background:"linear-gradient(135deg,#10B981,#06B6D4)", color:"white", border:"none", borderRadius:50, padding:"18px 52px", fontSize:26, fontWeight:900, cursor:"pointer", boxShadow:"0 8px 28px rgba(16,185,129,0.35)" }}>
-              ▶ Play!
-            </button>
           </div>
         )}
 
@@ -306,9 +341,9 @@ export default function AnimalSoundGame({ isSession = false, level = "easy", onC
             gameName="Animal Sounds"
             score={score}
             total={TOTAL_ROUNDS}
-            duration={0}
+            duration={duration}
             skills={["Fine Motor", "Auditory Processing", "Visual Recognition"]}
-            onAction={isSession ? onComplete : () => setPhase("idle")}
+            onAction={isSession ? onComplete : () => setPhase("level_select")}
             actionLabel={isSession ? "Next Journey Task" : "Play Again"}
           />
         )}

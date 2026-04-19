@@ -59,11 +59,14 @@ export default function BubblePopGame({ isSession = false, level = "easy", onCom
   const [bubbles, setBubbles] = useState([]);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(60);
-  const [phase, setPhase] = useState(isSession ? "playing" : "idle");
+  const [phase, setPhase] = useState(isSession ? "playing" : "level_select");
+  const [activeLevel, setActiveLevel] = useState(level);
   const [poppedSet, setPoppedSet] = useState(new Set());
   const areaRef = useRef(null);
   const spawnRef = useRef(null);
   const countRef = useRef(null);
+  const startTimeRef = useRef(Date.now());
+  const [duration, setDuration] = useState(0);
   // Track score in a ref so timer callback always has the latest value
   const scoreRef = useRef(0);
 
@@ -72,7 +75,7 @@ export default function BubblePopGame({ isSession = false, level = "easy", onCom
     medium: { time: 45, spawnInterval: 650, minDur: 3.5, maxDur: 7.0 },
     hard:   { time: 30, spawnInterval: 450, minDur: 2.5, maxDur: 5.0 }
   };
-  const currentSettings = settings[level] || settings.easy;
+  const currentSettings = settings[activeLevel] || settings.easy;
 
   const spawnBubble = () => {
     if (!areaRef.current) return;
@@ -86,20 +89,22 @@ export default function BubblePopGame({ isSession = false, level = "easy", onCom
     setBubbles(prev => [...prev.slice(-28), { id, size, left, dur, color, icon }]);
   };
 
-  const startGame = () => {
+  const startGame = (selectedLevel = activeLevel) => {
+    setActiveLevel(selectedLevel);
     _uid = 0;
     scoreRef.current = 0;
     setScore(0);
     setBubbles([]);
     setPoppedSet(new Set());
-    setTimeLeft(currentSettings.time);
+    setTimeLeft(settings[selectedLevel]?.time || settings.easy.time);
+    startTimeRef.current = Date.now();
     setPhase("playing");
   };
 
   // Auto-start when used in therapy session
   useEffect(() => {
     if (isSession) {
-      startGame();
+      startGame(level);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSession, level]);
@@ -119,6 +124,7 @@ export default function BubblePopGame({ isSession = false, level = "easy", onCom
     countRef.current = setInterval(() => {
       setTimeLeft(t => {
         if (t <= 1) {
+          setDuration(Math.floor((Date.now() - startTimeRef.current) / 1000));
           setPhase("over");
           clearInterval(countRef.current);
           clearInterval(spawnRef.current);
@@ -219,27 +225,47 @@ export default function BubblePopGame({ isSession = false, level = "easy", onCom
           </div>
         ))}
 
-        {/* Idle screen */}
-        {phase === "idle" && (
+        {/* Level Select */}
+        {phase === "level_select" && (
           <div style={{
             position: "absolute", inset: 0,
             display: "flex", flexDirection: "column",
             alignItems: "center", justifyContent: "center",
-            gap: 22, padding: 24
+            gap: 20, padding: 24, zIndex: 10,
+            background: "linear-gradient(170deg,#87CEEB 0%,#98E4FF 45%,#B8F4FF 100%)"
           }}>
-            <div style={{ fontSize: 100, filter: "drop-shadow(0 10px 24px rgba(77,150,255,0.35))" }}>🫧</div>
-            <div style={{ fontSize: 38, fontWeight: 900, color: "#4D96FF", textShadow: "0 4px 14px rgba(77,150,255,0.28)" }}>Bubble Pop!</div>
-            <div style={{ fontSize: 18, color: "#555", textAlign: "center", maxWidth: 280, lineHeight: 1.5 }}>
-              Tap the bubbles before they fly away!
+            <div style={{ fontSize: 60, filter: "drop-shadow(0 10px 24px rgba(77,150,255,0.35))" }}>🫧</div>
+            <div style={{ fontSize: 32, fontWeight: 900, color: "#4D96FF", textShadow: "0 4px 14px rgba(255,255,255,0.5)" }}>Bubble Pop!</div>
+            <div style={{ fontSize: 16, color: "#444", marginBottom: 10 }}>Choose your challenge:</div>
+            
+            <div style={{ display: "flex", flexDirection: "column", gap: 14, width: "100%", maxWidth: 360 }}>
+              {[ 
+                { id: "easy", label: "Easy", desc: "Slower bubbles", colors: ["#6BCB77", "#4CAF50"] },
+                { id: "medium", label: "Medium", desc: "Standard speed", colors: ["#FF8C42", "#E57322"] },
+                { id: "hard", label: "Hard", desc: "Fast bubbles!", colors: ["#FF6B6B", "#E05252"] }
+              ].map((lv, i) => (
+                <button
+                  key={lv.id}
+                  onClick={() => startGame(lv.id)}
+                  style={{
+                    width: "100%", padding: "16px 24px", borderRadius: 24,
+                    background: `linear-gradient(135deg,${lv.colors[0]},${lv.colors[1]})`,
+                    border: "none", cursor: "pointer", color: "white",
+                    display: "flex", alignItems: "center", justifyContent: "space-between",
+                    boxShadow: `0 8px 24px ${lv.colors[0]}44`,
+                    fontSize: 18, fontWeight: 800,
+                  }}
+                >
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 4 }}>
+                    <div style={{ fontSize: 20, fontWeight: 900 }}>{lv.label}</div>
+                    <div style={{ fontSize: 14, opacity: 0.9 }}>{lv.desc} · {settings[lv.id]?.time}s</div>
+                  </div>
+                  <div style={{ fontSize: 32 }}>
+                    {["🟢", "🟡", "🔴"][i]}
+                  </div>
+                </button>
+              ))}
             </div>
-            <button onClick={startGame} style={{
-              background: "linear-gradient(135deg,#4D96FF,#6BCB77)",
-              color: "white", border: "none", borderRadius: 50,
-              padding: "18px 56px", fontSize: 28, fontWeight: 900,
-              cursor: "pointer", boxShadow: "0 8px 28px rgba(77,150,255,0.4)", marginTop: 8
-            }}>
-              ▶ Play!
-            </button>
           </div>
         )}
 
@@ -249,9 +275,9 @@ export default function BubblePopGame({ isSession = false, level = "easy", onCom
             gameName="Bubble Pop"
             score={score}
             total={50}
-            duration={currentSettings.time}
+            duration={duration}
             skills={["Fine Motor", "Focus", "Visual Tracking"]}
-            onAction={isSession ? onComplete : () => setPhase("idle")}
+            onAction={isSession ? onComplete : () => setPhase("level_select")}
             actionLabel={isSession ? "Continue Journey" : "Play Again"}
           />
         )}

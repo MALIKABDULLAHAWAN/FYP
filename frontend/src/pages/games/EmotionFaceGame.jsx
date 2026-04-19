@@ -72,7 +72,8 @@ const ROUNDS = 12;
 export default function EmotionFaceGame({ isSession = false, level = "easy", onComplete }) {
   const navigate = useNavigate();
   const { childProfile } = useChild();
-  const [phase, setPhase] = useState(isSession ? "playing" : "idle");
+  const [phase, setPhase] = useState(isSession ? "playing" : "level_select");
+  const [activeLevel, setActiveLevel] = useState(level);
   const [queue, setQueue] = useState([]);
   const [current, setCurrent] = useState(null);
   const [choices, setChoices] = useState([]);
@@ -81,6 +82,8 @@ export default function EmotionFaceGame({ isSession = false, level = "easy", onC
   const [feedback, setFeedback] = useState(null); 
   const [wrongId, setWrongId] = useState(null);
   const [streak, setStreak] = useState(0);
+  const startTimeRef = useRef(Date.now());
+  const [duration, setDuration] = useState(0);
 
   // Difficulty settings
   const settings = {
@@ -89,37 +92,47 @@ export default function EmotionFaceGame({ isSession = false, level = "easy", onC
     hard: { choiceCount: 6, rounds: 16 }
   };
 
-  const currentSettings = settings[level] || settings.easy;
+  const currentSettings = settings[activeLevel] || settings.easy;
 
-  const buildQueue = useCallback(() => {
+  const buildQueue = useCallback((lvlSettings) => {
     const base = shuffle([...EMOTIONS]);
     const q = [];
-    while (q.length < currentSettings.rounds) q.push(...base);
-    return shuffle(q).slice(0, currentSettings.rounds);
-  }, [currentSettings.rounds]);
+    while (q.length < lvlSettings.rounds) q.push(...base);
+    return shuffle(q).slice(0, lvlSettings.rounds);
+  }, []);
 
-  const presentItem = useCallback((item) => {
+  const presentItem = useCallback((item, choiceCount) => {
     setCurrent(item);
-    setChoices(getChoices(item, EMOTIONS, currentSettings.choiceCount));
+    setChoices(getChoices(item, EMOTIONS, choiceCount));
     setTimeout(() => speak(item.name), 300);
-  }, [currentSettings.choiceCount]);
+  }, []);
 
-  const startGame = useCallback(() => {
-    const q = buildQueue();
+  const startGame = useCallback((lvl = activeLevel) => {
+    setActiveLevel(lvl);
+    const s = {
+      easy: { choiceCount: 3, rounds: 8 },
+      medium: { choiceCount: 4, rounds: 12 },
+      hard: { choiceCount: 6, rounds: 16 }
+    };
+    const lvlSettings = s[lvl] || s.easy;
+    const q = buildQueue(lvlSettings);
     setScore(0);
     setRound(1);
     setStreak(0);
     setFeedback(null);
     setWrongId(null);
     setQueue(q.slice(1));
-    presentItem(q[0]);
+    presentItem(q[0], lvlSettings.choiceCount);
+    startTimeRef.current = Date.now();
     setPhase("playing");
-  }, [buildQueue, presentItem]);
+  }, [activeLevel, buildQueue, presentItem]);
 
   // Auto-start in session
+  const initialized = useRef(false);
   useEffect(() => {
-    if (isSession) {
-      startGame();
+    if (isSession && !initialized.current) {
+      initialized.current = true;
+      startGame(level);
     }
   }, [isSession, level, startGame]);
 
@@ -144,6 +157,7 @@ export default function EmotionFaceGame({ isSession = false, level = "easy", onC
       setFeedback(null);
       setWrongId(null);
       if (queue.length === 0) {
+        setDuration(Math.floor((Date.now() - startTimeRef.current) / 1000));
         setPhase("over");
         
         if (isSession && onComplete) {
@@ -152,7 +166,7 @@ export default function EmotionFaceGame({ isSession = false, level = "easy", onC
       } else {
         setRound(r => r + 1);
         setQueue(q => {
-          presentItem(q[0]);
+          presentItem(q[0], currentSettings.choiceCount);
           return q.slice(1);
         });
         setPhase("playing");
@@ -183,7 +197,7 @@ export default function EmotionFaceGame({ isSession = false, level = "easy", onC
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 18px", background:"rgba(255,255,255,0.88)", backdropFilter:"blur(12px)", borderBottom:"2px solid rgba(236,72,153,0.12)", flexShrink:0 }}>
           <button onClick={() => navigate("/games")} style={{ background:"#FF6B6B", color:"white", border:"none", borderRadius:"50%", width:44, height:44, fontSize:22, cursor:"pointer", lineHeight:1 }}>←</button>
           <div style={{ display:"flex", alignItems:"center", gap:16 }}>
-            {phase !== "idle" && <div style={{ fontSize:15, fontWeight:700, color:"#888" }}>{round}/{currentSettings.rounds}</div>}
+            {phase !== "level_select" && <div style={{ fontSize:15, fontWeight:700, color:"#888" }}>{round}/{currentSettings.rounds}</div>}
             <div style={{ fontSize:24, fontWeight:900, color:"#EC4899" }}>⭐ {score}</div>
             {streak >= 2 && <div key={streak} style={{ fontSize:14, fontWeight:800, color:"#FF8C42", animation:"streak-pop 0.3s ease" }}>🔥×{streak}</div>}
           </div>
@@ -192,18 +206,45 @@ export default function EmotionFaceGame({ isSession = false, level = "easy", onC
 
       <div style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"20px 16px", gap:22 }}>
 
-        {/* Idle */}
-        {phase === "idle" && (
-          <div style={{ textAlign:"center", display:"flex", flexDirection:"column", alignItems:"center", gap:20 }}>
-            <div className="face-idle" style={{ fontSize:90 }}>😊</div>
-            <div style={{ fontSize:34, fontWeight:900, color:"#EC4899" }}>Emotion Match!</div>
-            <div style={{ fontSize:17, color:"#666", maxWidth:280, lineHeight:1.5 }}>Listen and tap the right face!</div>
-            <div style={{ display:"flex", gap:10, fontSize:36 }}>
-              {["😊","😢","😠","😮","😴"].map(e => <span key={e}>{e}</span>)}
+        {/* Level Select */}
+        {phase === "level_select" && (
+          <div style={{
+            display: "flex", flexDirection: "column",
+            alignItems: "center", justifyContent: "center",
+            gap: 20, padding: 24, zIndex: 10, width: "100%"
+          }}>
+            <div style={{ fontSize: 60, filter: "drop-shadow(0 10px 24px rgba(236,72,153,0.35))" }}>😊</div>
+            <div style={{ fontSize: 32, fontWeight: 900, color: "#EC4899", textShadow: "0 4px 14px rgba(255,255,255,0.5)" }}>Emotion Match!</div>
+            <div style={{ fontSize: 16, color: "#444", marginBottom: 10 }}>Choose your difficulty:</div>
+            
+            <div style={{ display: "flex", flexDirection: "column", gap: 14, width: "100%", maxWidth: 360 }}>
+              {[ 
+                { id: "easy", label: "Easy", desc: "3 Choices, 8 Items", colors: ["#6BCB77", "#4CAF50"] },
+                { id: "medium", label: "Medium", desc: "4 Choices, 12 Items", colors: ["#FF8C42", "#E57322"] },
+                { id: "hard", label: "Hard", desc: "6 Choices, 16 Items", colors: ["#FF6B6B", "#E05252"] }
+              ].map((lv, i) => (
+                <button
+                  key={lv.id}
+                  onClick={() => startGame(lv.id)}
+                  style={{
+                    width: "100%", padding: "16px 24px", borderRadius: 24,
+                    background: `linear-gradient(135deg,${lv.colors[0]},${lv.colors[1]})`,
+                    border: "none", cursor: "pointer", color: "white",
+                    display: "flex", alignItems: "center", justifyContent: "space-between",
+                    boxShadow: `0 8px 24px ${lv.colors[0]}44`,
+                    fontSize: 18, fontWeight: 800,
+                  }}
+                >
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 4 }}>
+                    <div style={{ fontSize: 20, fontWeight: 900 }}>{lv.label}</div>
+                    <div style={{ fontSize: 14, opacity: 0.9 }}>{lv.desc}</div>
+                  </div>
+                  <div style={{ fontSize: 32 }}>
+                    {["🟢", "🟡", "🔴"][i]}
+                  </div>
+                </button>
+              ))}
             </div>
-            <button onClick={startGame} style={{ background:"linear-gradient(135deg,#EC4899,#8B5CF6)", color:"white", border:"none", borderRadius:50, padding:"18px 52px", fontSize:26, fontWeight:900, cursor:"pointer", boxShadow:"0 8px 28px rgba(236,72,153,0.35)" }}>
-              ▶ Play!
-            </button>
           </div>
         )}
 
@@ -269,9 +310,9 @@ export default function EmotionFaceGame({ isSession = false, level = "easy", onC
             gameName="Emotion Match"
             score={score}
             total={currentSettings.rounds}
-            duration={0}
+            duration={duration}
             skills={["Social-Emotional", "Facial Pattern Recon", "Visual Matching"]}
-            onAction={isSession ? onComplete : () => setPhase("idle")}
+            onAction={isSession ? onComplete : () => setPhase("level_select")}
             actionLabel={isSession ? "Next Activity" : "Play Again"}
           />
         )}

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { getAiEncouragement } from '../api/games';
 import { 
   ResponsiveContainer, 
   BarChart, 
@@ -25,7 +26,27 @@ export default function StandaloneGameReport({
   onAction,
   actionLabel = "Bak to Games"
 }) {
-  const percentage = Math.round(accuracy * 100);
+  const percentage = Math.min(100, Math.round(accuracy * 100));
+  const [insight, setInsight] = useState("Buddy is analyzing your fantastic performance... ✨");
+  
+  useEffect(() => {
+    let mounted = true;
+    const ctx = `The child just completed ${gameName} in ${duration} seconds. They scored ${score} points. Accuracy: ${percentage}%. Write a short, single-sentence fun encouraging message from Buddy the AI companion highlighting their speed or score. Use an emoji.`;
+    
+    getAiEncouragement(ctx)
+      .then(data => {
+        if (mounted && data?.message) {
+          setInsight(data.message);
+        } else if (mounted && data?.error) {
+           setInsight("Great job! Buddy is very proud of your effort! 🌟");
+        }
+      })
+      .catch(() => {
+        if (mounted) setInsight("Great job! Buddy is very proud of your effort! 🌟");
+      });
+      
+    return () => { mounted = false; };
+  }, [gameName, duration, score, percentage]);
   
   // Dynamic skill breakdown data
   const chartData = skills.map((s, i) => ({
@@ -77,7 +98,7 @@ export default function StandaloneGameReport({
             <div className="analysis-stat-row">
               <div className="stat-pill">
                 <span className="stat-label">Points</span>
-                <span className="stat-val">{score} / {total}</span>
+                <span className="stat-val">{score}</span>
               </div>
               <div className="stat-pill">
                 <span className="stat-label">Time</span>
@@ -90,10 +111,8 @@ export default function StandaloneGameReport({
                 <UiIcon name="ai" size={16} title="" />
                 <span>Buddy's Observation</span>
               </div>
-              <p>
-                {percentage >= 80 
-                  ? "Incredible focus! You hit those targets with precision. Your hand-eye coordination is sharpening rapidly."
-                  : "Great effort! I noticed you were very careful with your choices. Let's practice a bit more to get even faster!"}
+              <p className={insight.includes("analyzing") ? "insight-loading" : "insight-loaded"}>
+                {insight}
               </p>
             </div>
           </div>

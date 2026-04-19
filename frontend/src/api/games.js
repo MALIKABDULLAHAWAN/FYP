@@ -77,3 +77,11 @@ export function getRandomGameImages(gameType, count = 8, difficulty = null) {
   if (difficulty) params.set("difficulty", difficulty);
   return apiFetch(`${BASE}/images/random?${params.toString()}`);
 }
+
+export function getAiEncouragement(context) {
+  // Use absolute path since it exists on the backend already
+  return apiFetch('/api/v1/therapy/ai/encouragement', {
+    method: 'POST',
+    body: { context },
+  });
+}

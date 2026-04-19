@@ -409,10 +409,16 @@ class GameStandaloneResultView(APIView):
             "accuracy": data.get("accuracy", 0),
         }
         
+        # Get assigned therapist securely
+        assignment = child.assigned_therapists.filter(is_primary=True).first()
+        if not assignment:
+            assignment = child.assigned_therapists.first()
+        assigned_therapist = assignment.therapist if assignment else request.user
+
         session = GameSession.objects.create(
             child=child,
             game=game,
-            therapist=child.assigned_therapist or request.user, # Fallback to requester
+            therapist=assigned_therapist,
             started_at=timezone.now(),
             duration_seconds=data.get("duration_seconds", 0),
             performance_metrics=metrics,

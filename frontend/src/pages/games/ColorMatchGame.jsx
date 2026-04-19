@@ -74,10 +74,13 @@ export default function ColorMatchGame({ isSession = false, level = "easy", onCo
   const [current, setCurrent] = useState(null);
   const [score, setScore] = useState(0);
   const [round, setRound] = useState(0);
-  const [phase, setPhase] = useState(isSession ? "playing" : "idle");
+  const [phase, setPhase] = useState(isSession ? "playing" : "level_select");
+  const [activeLevel, setActiveLevel] = useState(level);
   const [feedback, setFeedback] = useState(null);
   const [wrongBucket, setWrongBucket] = useState(null);
   const [streak, setStreak] = useState(0);
+  const startTimeRef = useRef(Date.now());
+  const [duration, setDuration] = useState(0);
 
   const currentSettings = useMemo(() => {
     const s = {
@@ -85,21 +88,29 @@ export default function ColorMatchGame({ isSession = false, level = "easy", onCo
       medium: { bucketCount: 4, rounds: 12 },
       hard:   { bucketCount: 4, rounds: 20 }
     };
-    return s[level] || s.easy;
-  }, [level]);
+    return s[activeLevel] || s.easy;
+  }, [activeLevel]);
 
   const activeBuckets = useMemo(() =>
     COLOR_BUCKETS.slice(0, currentSettings.bucketCount)
   , [currentSettings.bucketCount]);
 
-  const buildQueue = useCallback(() => {
-    const validColors = activeBuckets.map(b => b.id);
+  const buildQueue = useCallback((lvlSettings) => {
+    const activeB = COLOR_BUCKETS.slice(0, lvlSettings.bucketCount);
+    const validColors = activeB.map(b => b.id);
     const validItems = ITEMS.filter(item => validColors.includes(item.color));
-    return shuffle(validItems).slice(0, currentSettings.rounds);
-  }, [activeBuckets, currentSettings.rounds]);
+    return shuffle(validItems).slice(0, lvlSettings.rounds);
+  }, []);
 
-  const startGame = useCallback(() => {
-    const q = buildQueue();
+  const startGame = useCallback((lvl = activeLevel) => {
+    setActiveLevel(lvl);
+    const s = {
+      easy:   { bucketCount: 3, rounds: 8  },
+      medium: { bucketCount: 4, rounds: 12 },
+      hard:   { bucketCount: 4, rounds: 20 }
+    };
+    const lvlSettings = s[lvl] || s.easy;
+    const q = buildQueue(lvlSettings);
     setQueue(q.slice(1));
     setCurrent(q[0]);
     setScore(0);
@@ -107,17 +118,17 @@ export default function ColorMatchGame({ isSession = false, level = "easy", onCo
     setStreak(0);
     setFeedback(null);
     setWrongBucket(null);
+    startTimeRef.current = Date.now();
     setPhase("playing");
-  }, [buildQueue]);
+  }, [activeLevel, buildQueue]);
 
-  // Auto-start when used inside a therapy session
   const initialized = useRef(false);
   useEffect(() => {
     if (isSession && !initialized.current) {
       initialized.current = true;
-      startGame();
+      startGame(level);
     }
-  }, [isSession, startGame]);
+  }, [isSession, level, startGame]);
 
   const handleBucket = (bucketId) => {
     if (phase !== "playing" || !current) return;
@@ -139,6 +150,7 @@ export default function ColorMatchGame({ isSession = false, level = "easy", onCo
       setFeedback(null);
       setWrongBucket(null);
       if (queue.length === 0) {
+        setDuration(Math.floor((Date.now() - startTimeRef.current) / 1000));
         setPhase("over");
       } else {
         setCurrent(queue[0]);
@@ -196,25 +208,45 @@ export default function ColorMatchGame({ isSession = false, level = "easy", onCo
         padding: "24px 20px", gap: 28
       }}>
 
-        {/* Idle screen (standalone only) */}
-        {phase === "idle" && (
-          <div style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
-            <div style={{ fontSize: 80 }}>🎨</div>
-            <div style={{ fontSize: 34, fontWeight: 900, color: "#6366F1" }}>Color Match!</div>
-            <div style={{ fontSize: 17, color: "#666", maxWidth: 280, lineHeight: 1.5 }}>
-              Match each item to its color bucket!
+        {/* Level Select */}
+        {phase === "level_select" && (
+          <div style={{
+            display: "flex", flexDirection: "column",
+            alignItems: "center", justifyContent: "center",
+            gap: 20, padding: 24, zIndex: 10, width: "100%"
+          }}>
+            <div style={{ fontSize: 60, filter: "drop-shadow(0 10px 24px rgba(99,102,241,0.35))" }}>🎨</div>
+            <div style={{ fontSize: 32, fontWeight: 900, color: "#6366F1", textShadow: "0 4px 14px rgba(255,255,255,0.5)" }}>Color Match!</div>
+            <div style={{ fontSize: 16, color: "#444", marginBottom: 10 }}>Choose your difficulty:</div>
+            
+            <div style={{ display: "flex", flexDirection: "column", gap: 14, width: "100%", maxWidth: 360 }}>
+              {[ 
+                { id: "easy", label: "Easy", desc: "3 Colors, 8 Items", colors: ["#6BCB77", "#4CAF50"] },
+                { id: "medium", label: "Medium", desc: "4 Colors, 12 Items", colors: ["#FF8C42", "#E57322"] },
+                { id: "hard", label: "Hard", desc: "4 Colors, 20 Items", colors: ["#FF6B6B", "#E05252"] }
+              ].map((lv, i) => (
+                <button
+                  key={lv.id}
+                  onClick={() => startGame(lv.id)}
+                  style={{
+                    width: "100%", padding: "16px 24px", borderRadius: 24,
+                    background: `linear-gradient(135deg,${lv.colors[0]},${lv.colors[1]})`,
+                    border: "none", cursor: "pointer", color: "white",
+                    display: "flex", alignItems: "center", justifyContent: "space-between",
+                    boxShadow: `0 8px 24px ${lv.colors[0]}44`,
+                    fontSize: 18, fontWeight: 800,
+                  }}
+                >
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 4 }}>
+                    <div style={{ fontSize: 20, fontWeight: 900 }}>{lv.label}</div>
+                    <div style={{ fontSize: 14, opacity: 0.9 }}>{lv.desc}</div>
+                  </div>
+                  <div style={{ fontSize: 32 }}>
+                    {["🟢", "🟡", "🔴"][i]}
+                  </div>
+                </button>
+              ))}
             </div>
-            <div style={{ display: "flex", gap: 10, justifyContent: "center", fontSize: 36 }}>
-              {activeBuckets.map(b => <span key={b.id}>{b.label}</span>)}
-            </div>
-            <button onClick={startGame} style={{
-              background: "linear-gradient(135deg,#6366F1,#EC4899)", color: "white",
-              border: "none", borderRadius: 50, padding: "18px 52px",
-              fontSize: 26, fontWeight: 900, cursor: "pointer",
-              boxShadow: "0 8px 28px rgba(99,102,241,0.35)", marginTop: 8
-            }}>
-              ▶ Play!
-            </button>
           </div>
         )}
 
@@ -294,9 +326,9 @@ export default function ColorMatchGame({ isSession = false, level = "easy", onCo
             gameName="Color Match"
             score={score}
             total={currentSettings.rounds}
-            duration={0}
+            duration={duration}
             skills={["Visual Perception", "Categorization", "Color Recognition"]}
-            onAction={isSession ? onComplete : () => setPhase("idle")}
+            onAction={isSession ? onComplete : () => setPhase("level_select")}
             actionLabel={isSession ? "Continue Journey" : "Play Again"}
           />
         )}

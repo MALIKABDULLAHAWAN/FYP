@@ -77,45 +77,58 @@ function playWrong() {
 export default function ShapeSortGame({ isSession = false, level = "easy", onComplete }) {
   const navigate = useNavigate();
   const { childProfile } = useChild();
-  const [phase, setPhase] = useState(isSession ? "playing" : "idle");
+  const [phase, setPhase] = useState(isSession ? "playing" : "level_select");
+  const [activeLevel, setActiveLevel] = useState(level);
   const [queue, setQueue] = useState([]);
   const [current, setCurrent] = useState(null);
   const [score, setScore] = useState(0);
   const [round, setRound] = useState(0);
   const [feedback, setFeedback] = useState(null);
   const [wrongId, setWrongId] = useState(null);
+  const startTimeRef = useRef(Date.now());
+  const [duration, setDuration] = useState(0);
 
   const settings = {
     easy:   { bucketCount: 3, rounds: 8  },
     medium: { bucketCount: 4, rounds: 12 },
     hard:   { bucketCount: 5, rounds: 15 }
   };
-  const currentSettings = settings[level] || settings.easy;
+  const currentSettings = settings[activeLevel] || settings.easy;
 
-  const buildQueue = useCallback(() => {
-    const buckets = SHAPES.slice(0, currentSettings.bucketCount);
+  const buildQueue = useCallback((lvlSettings) => {
+    const buckets = SHAPES.slice(0, lvlSettings.bucketCount);
     const items = [];
-    for (let i = 0; i < currentSettings.rounds; i++) {
+    for (let i = 0; i < lvlSettings.rounds; i++) {
       items.push(buckets[i % buckets.length]);
     }
     return shuffle(items);
-  }, [currentSettings.bucketCount, currentSettings.rounds]);
+  }, []);
 
-  const startGame = useCallback(() => {
-    const q = buildQueue();
+  const startGame = useCallback((lvl = activeLevel) => {
+    setActiveLevel(lvl);
+    const s = {
+      easy:   { bucketCount: 3, rounds: 8  },
+      medium: { bucketCount: 4, rounds: 12 },
+      hard:   { bucketCount: 5, rounds: 15 }
+    };
+    const lvlSettings = s[lvl] || s.easy;
+    const q = buildQueue(lvlSettings);
     setCurrent(q[0]);
     setQueue(q.slice(1));
     setScore(0);
     setRound(1);
     setFeedback(null);
     setWrongId(null);
+    startTimeRef.current = Date.now();
     setPhase("playing");
-  }, [buildQueue]);
+  }, [activeLevel, buildQueue]);
 
   // Auto-start when used inside a therapy session
+  const initialized = useRef(false);
   useEffect(() => {
-    if (isSession) {
-      startGame();
+    if (isSession && !initialized.current) {
+      initialized.current = true;
+      startGame(level);
     }
   }, [isSession, level, startGame]);
 
@@ -137,6 +150,7 @@ export default function ShapeSortGame({ isSession = false, level = "easy", onCom
       setFeedback(null);
       setWrongId(null);
       if (queue.length === 0) {
+        setDuration(Math.floor((Date.now() - startTimeRef.current) / 1000));
         setPhase("over");
       } else {
         setCurrent(queue[0]);
@@ -185,24 +199,44 @@ export default function ShapeSortGame({ isSession = false, level = "easy", onCom
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "20px 16px", gap: 24 }}>
 
-        {phase === "idle" && (
-          <div style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
-            <div style={{ display: "flex", gap: 16 }}>
-              <CircleShape   size={60} color="#4D96FF" />
-              <SquareShape   size={60} color="#FF6B6B" />
-              <TriangleShape size={60} color="#6BCB77" />
-              <StarShape     size={60} color="#FFD93D" />
+        {phase === "level_select" && (
+          <div style={{
+            display: "flex", flexDirection: "column",
+            alignItems: "center", justifyContent: "center",
+            gap: 20, padding: 24, zIndex: 10, width: "100%"
+          }}>
+            <div style={{ fontSize: 60, filter: "drop-shadow(0 10px 24px rgba(139,92,246,0.35))" }}>🔷</div>
+            <div style={{ fontSize: 32, fontWeight: 900, color: "#8B5CF6", textShadow: "0 4px 14px rgba(255,255,255,0.5)" }}>Shape Sort!</div>
+            <div style={{ fontSize: 16, color: "#444", marginBottom: 10 }}>Choose your difficulty:</div>
+            
+            <div style={{ display: "flex", flexDirection: "column", gap: 14, width: "100%", maxWidth: 360 }}>
+              {[ 
+                { id: "easy", label: "Easy", desc: "3 Shapes, 8 Items", colors: ["#6BCB77", "#4CAF50"] },
+                { id: "medium", label: "Medium", desc: "4 Shapes, 12 Items", colors: ["#FF8C42", "#E57322"] },
+                { id: "hard", label: "Hard", desc: "5 Shapes, 15 Items", colors: ["#FF6B6B", "#E05252"] }
+              ].map((lv, i) => (
+                <button
+                  key={lv.id}
+                  onClick={() => startGame(lv.id)}
+                  style={{
+                    width: "100%", padding: "16px 24px", borderRadius: 24,
+                    background: `linear-gradient(135deg,${lv.colors[0]},${lv.colors[1]})`,
+                    border: "none", cursor: "pointer", color: "white",
+                    display: "flex", alignItems: "center", justifyContent: "space-between",
+                    boxShadow: `0 8px 24px ${lv.colors[0]}44`,
+                    fontSize: 18, fontWeight: 800,
+                  }}
+                >
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 4 }}>
+                    <div style={{ fontSize: 20, fontWeight: 900 }}>{lv.label}</div>
+                    <div style={{ fontSize: 14, opacity: 0.9 }}>{lv.desc}</div>
+                  </div>
+                  <div style={{ fontSize: 32 }}>
+                    {["🟢", "🟡", "🔴"][i]}
+                  </div>
+                </button>
+              ))}
             </div>
-            <div style={{ fontSize: 34, fontWeight: 900, color: "#8B5CF6" }}>Shape Sort!</div>
-            <div style={{ fontSize: 17, color: "#666", maxWidth: 280, lineHeight: 1.5 }}>Sort each shape into the right bucket!</div>
-            <button onClick={startGame} style={{
-              background: "linear-gradient(135deg,#8B5CF6,#EC4899)", color: "white",
-              border: "none", borderRadius: 50, padding: "18px 52px",
-              fontSize: 26, fontWeight: 900, cursor: "pointer",
-              boxShadow: "0 8px 28px rgba(139,92,246,0.35)"
-            }}>
-              ▶ Play!
-            </button>
           </div>
         )}
 
@@ -263,9 +297,9 @@ export default function ShapeSortGame({ isSession = false, level = "easy", onCom
             gameName="Shape Sort"
             score={score}
             total={currentSettings.rounds}
-            duration={0}
+            duration={duration}
             skills={["Fine Motor", "Geometry", "Visual Matching"]}
-            onAction={isSession ? onComplete : () => setPhase("idle")}
+            onAction={isSession ? onComplete : () => setPhase("level_select")}
             actionLabel={isSession ? "Continue Journey" : "Play Again"}
           />
         )}

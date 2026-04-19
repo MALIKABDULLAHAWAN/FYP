@@ -31,7 +31,7 @@ export default function GameConclusionFlow({
         game_name: gameName,
         score,
         total_trials: total,
-        accuracy: total > 0 ? score / total : 0,
+        accuracy: total > 0 ? Math.min(1, score / total) : 0,
         duration_seconds: duration,
         skills_tested: skills,
         type: 'standalone_adventure',
@@ -64,7 +64,7 @@ export default function GameConclusionFlow({
             gameName={gameName}
             score={score}
             total={total}
-            accuracy={total > 0 ? score / total : 0}
+            accuracy={total > 0 ? Math.min(1, score / total) : 0}
             duration={duration}
             skills={skills}
             onAction={onAction}
