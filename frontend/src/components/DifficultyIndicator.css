@@ -1,0 +1,201 @@
+/**
+ * DifficultyIndicator Component Styles
+ * 
+ * Provides visual styling for difficulty level indicators
+ * with responsive sizing and accessibility support
+ */
+
+.difficulty-indicator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Quicksand', 'Segoe UI', 'Roboto', sans-serif;
+}
+
+/* Size variants */
+.difficulty-indicator.difficulty-small {
+  gap: 8px;
+}
+
+.difficulty-indicator.difficulty-large {
+  gap: 16px;
+}
+
+/* Badge styling */
+.difficulty-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 200ms ease-in-out, box-shadow 200ms ease-in-out;
+}
+
+.difficulty-indicator.difficulty-small .difficulty-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+}
+
+.difficulty-indicator.difficulty-large .difficulty-badge {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+}
+
+.difficulty-badge:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Icon styling */
+.difficulty-icon {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.difficulty-indicator.difficulty-small .difficulty-icon {
+  font-size: 18px;
+}
+
+.difficulty-indicator.difficulty-large .difficulty-icon {
+  font-size: 32px;
+}
+
+/* Label styling */
+.difficulty-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.difficulty-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.2;
+}
+
+.difficulty-indicator.difficulty-small .difficulty-text {
+  font-size: 14px;
+}
+
+.difficulty-indicator.difficulty-large .difficulty-text {
+  font-size: 18px;
+}
+
+.difficulty-age-range {
+  font-size: 12px;
+  color: #666;
+  font-weight: 400;
+}
+
+.difficulty-indicator.difficulty-small .difficulty-age-range {
+  font-size: 11px;
+}
+
+.difficulty-indicator.difficulty-large .difficulty-age-range {
+  font-size: 14px;
+}
+
+/* Description styling */
+.difficulty-description {
+  margin-top: 8px;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #4A90E2;
+}
+
+.difficulty-description p {
+  margin: 0;
+  font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+}
+
+/* Selector styling (for interactive mode) */
+.difficulty-selector {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.difficulty-option {
+  padding: 8px 16px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 200ms ease-in-out;
+  min-width: 60px;
+  text-align: center;
+}
+
+.difficulty-option:hover {
+  border-color: #4A90E2;
+  background-color: #f0f7ff;
+}
+
+.difficulty-option.active {
+  background-color: #4A90E2;
+  color: white;
+  border-color: #4A90E2;
+}
+
+.difficulty-option:focus {
+  outline: 3px solid #4A90E2;
+  outline-offset: 2px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .difficulty-indicator {
+    gap: 10px;
+  }
+
+  .difficulty-badge {
+    width: 40px;
+    height: 40px;
+  }
+
+  .difficulty-icon {
+    font-size: 20px;
+  }
+
+  .difficulty-text {
+    font-size: 14px;
+  }
+
+  .difficulty-age-range {
+    font-size: 11px;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .difficulty-badge,
+  .difficulty-option {
+    transition: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: more) {
+  .difficulty-badge {
+    border: 2px solid #000;
+  }
+
+  .difficulty-text {
+    font-weight: 700;
+  }
+
+  .difficulty-option {
+    border-width: 3px;
+  }
+}

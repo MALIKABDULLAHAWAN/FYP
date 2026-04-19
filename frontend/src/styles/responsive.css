@@ -1,0 +1,326 @@
+/**
+ * DHYAN App Responsive Styles
+ * 
+ * Comprehensive mobile-first responsive design
+ */
+
+/* Base responsive container */
+.dhyan-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* Mobile-first grid system */
+.dhyan-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr;
+}
+
+/* Tablet */
+@media (min-width: 640px) {
+  .dhyan-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .dhyan-container {
+    padding: 0 24px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .dhyan-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .dhyan-grid-lg {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Large desktop */
+@media (min-width: 1280px) {
+  .dhyan-container {
+    padding: 0 32px;
+  }
+}
+
+/* Memory Game Responsive */
+@media (max-width: 640px) {
+  .memory-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+    max-width: 100% !important;
+  }
+  
+  .memory-card {
+    height: 80px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .memory-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* Game cards responsive */
+.game-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+@media (max-width: 640px) {
+  .game-card {
+    padding: 16px;
+  }
+  
+  .game-card h3 {
+    font-size: 16px;
+  }
+  
+  .game-card p {
+    font-size: 14px;
+  }
+}
+
+/* Therapist Console Responsive */
+@media (max-width: 768px) {
+  .therapist-console {
+    padding: 16px;
+  }
+  
+  .therapist-stats {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .child-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Button responsive sizing */
+.btn-responsive {
+  padding: 12px 20px;
+  font-size: 14px;
+}
+
+@media (min-width: 640px) {
+  .btn-responsive {
+    padding: 14px 24px;
+    font-size: 16px;
+  }
+}
+
+/* Typography responsive scaling */
+.dhyan-h1 {
+  font-size: 1.75rem;
+  line-height: 1.2;
+}
+
+.dhyan-h2 {
+  font-size: 1.5rem;
+  line-height: 1.3;
+}
+
+.dhyan-h3 {
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+
+@media (min-width: 640px) {
+  .dhyan-h1 {
+    font-size: 2.25rem;
+  }
+  
+  .dhyan-h2 {
+    font-size: 1.875rem;
+  }
+  
+  .dhyan-h3 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Navigation responsive */
+@media (max-width: 768px) {
+  .nav-desktop {
+    display: none;
+  }
+  
+  .nav-mobile {
+    display: flex;
+  }
+  
+  .nav-items {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+@media (min-width: 769px) {
+  .nav-mobile {
+    display: none;
+  }
+  
+  .nav-desktop {
+    display: flex;
+  }
+}
+
+/* Touch-friendly targets for mobile */
+@media (max-width: 768px) {
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  button,
+  .btn {
+    min-height: 44px;
+    padding: 12px 20px;
+  }
+  
+  .memory-card {
+    min-height: 80px;
+  }
+  
+  input,
+  select,
+  textarea {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+}
+
+/* Card flip responsive */
+@media (max-width: 640px) {
+  .memory-card-inner {
+    font-size: 12px;
+  }
+  
+  .memory-card-front,
+  .memory-card-back {
+    border-radius: 8px;
+  }
+}
+
+/* Modal/Overlay responsive */
+@media (max-width: 640px) {
+  .modal-content {
+    width: 95%;
+    max-width: none;
+    margin: 16px;
+    padding: 20px;
+  }
+  
+  .achievement-display {
+    width: 90%;
+    padding: 24px;
+  }
+  
+  .achievement-name {
+    font-size: 22px;
+  }
+}
+
+/* Safe area insets for notched phones */
+@supports (padding: max(0px)) {
+  .safe-area-top {
+    padding-top: max(16px, env(safe-area-inset-top));
+  }
+  
+  .safe-area-bottom {
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+  
+  .safe-area-left {
+    padding-left: max(16px, env(safe-area-inset-left));
+  }
+  
+  .safe-area-right {
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .memory-card-inner {
+    transition: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .memory-card {
+    border: 3px solid currentColor;
+  }
+  
+  .btn {
+    border: 2px solid currentColor;
+  }
+}
+
+/* Dark mode support (future-ready) */
+@media (prefers-color-scheme: dark) {
+  /* Dark mode styles ready for implementation */
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .memory-grid {
+    break-inside: avoid;
+  }
+}
+
+/* Loading states responsive */
+@media (max-width: 640px) {
+  .skeleton-card {
+    height: 120px;
+  }
+  
+  .loading-spinner {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* Toast/Notification responsive */
+@media (max-width: 640px) {
+  .toast-container {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+  }
+  
+  .toast {
+    width: 100%;
+  }
+}
+
+/* Accessibility: Focus visible */
+@media (hover: hover) and (pointer: fine) {
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+  
+  :focus-visible {
+    outline: 3px solid #667eea;
+    outline-offset: 2px;
+  }
+}

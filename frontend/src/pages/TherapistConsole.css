@@ -1,0 +1,530 @@
+/**
+ * TherapistConsole Styles - Professional Design
+ */
+
+@import '../styles/design-tokens.css';
+
+.therapist-console-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* Header */
+.therapist-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-lg);
+  flex-wrap: wrap;
+}
+
+.therapist-title-section {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  flex: 1;
+  min-width: 200px;
+}
+
+.therapist-title {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+  line-height: var(--leading-tight);
+}
+
+.therapist-subtitle {
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  margin: var(--space-2) 0 0 0;
+  line-height: var(--leading-normal);
+}
+
+/* Tab Navigation */
+.therapist-tabs {
+  display: flex;
+  gap: var(--space-2);
+  border-bottom: 1px solid var(--color-border-light);
+  padding-bottom: var(--space-3);
+  overflow-x: auto;
+  margin-bottom: var(--space-6);
+}
+
+.therapist-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-lg);
+  background-color: transparent;
+  border: none;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--duration-fast);
+  white-space: nowrap;
+}
+
+.therapist-tab:hover {
+  background-color: var(--color-gray-100);
+  color: var(--color-text-primary);
+}
+
+.therapist-tab-active {
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-700);
+}
+
+/* Stats Grid */
+.therapist-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.therapist-stat-card {
+  background-color: var(--color-background-primary);
+  border-radius: var(--border-radius-large);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-small);
+  transition: all var(--transition-normal);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border: 2px solid transparent;
+}
+
+.therapist-stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-large);
+}
+
+.therapist-stat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--border-radius-large);
+  margin-bottom: var(--spacing-md);
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.therapist-stat-value {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary-blue);
+  margin: 0 0 var(--spacing-xs) 0;
+  line-height: var(--line-height-tight);
+}
+
+.therapist-stat-label {
+  font-size: var(--font-size-small);
+  color: var(--color-secondary-neutral);
+  margin: 0;
+  line-height: var(--line-height-normal);
+}
+
+/* Children Grid */
+.children-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.child-card {
+  background-color: var(--color-background-primary);
+  border-radius: var(--border-radius-large);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-small);
+  transition: all var(--transition-normal);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.child-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-large);
+  border-color: var(--color-primary-blue);
+}
+
+.child-card-active {
+  background-color: var(--color-background-accent);
+  border-color: var(--color-primary-blue);
+}
+
+.child-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--border-radius-large);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-blue),
+    var(--color-primary-green)
+  );
+  color: white;
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-bold);
+  flex-shrink: 0;
+}
+
+.child-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.child-name {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary-blue);
+  margin: 0 0 var(--spacing-xs) 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.child-meta {
+  font-size: var(--font-size-small);
+  color: var(--color-secondary-neutral);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.child-diagnosis {
+  font-size: var(--font-size-small);
+  color: var(--color-secondary-neutral);
+  margin: var(--spacing-xs) 0 0 0;
+  line-height: var(--line-height-normal);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Empty State */
+.empty-state {
+  padding: var(--spacing-xl);
+  text-align: center;
+  background-color: var(--color-background-secondary);
+  border-radius: var(--border-radius-large);
+  border: 2px dashed var(--color-background-accent);
+}
+
+.empty-state-icon {
+  font-size: 48px;
+  margin-bottom: var(--spacing-lg);
+  opacity: 0.5;
+}
+
+.empty-state-title {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary-blue);
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
+.empty-state-desc {
+  font-size: var(--font-size-body);
+  color: var(--color-secondary-neutral);
+  margin: 0 0 var(--spacing-lg) 0;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Form Styles */
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.form-row {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.form-group {
+  flex: 1;
+  min-width: 200px;
+}
+
+.form-label {
+  display: block;
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary-blue);
+  margin-bottom: var(--spacing-sm);
+}
+
+.input {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 2px solid var(--color-background-secondary);
+  border-radius: var(--border-radius-medium);
+  font-family: inherit;
+  font-size: var(--font-size-body);
+  transition: all var(--transition-normal);
+}
+
+.input:hover {
+  border-color: var(--color-primary-blue);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-primary-blue);
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+/* Table Styles */
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: var(--border-radius-large);
+  box-shadow: var(--shadow-small);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-small);
+}
+
+.data-table thead {
+  background-color: var(--color-background-secondary);
+}
+
+.data-table th {
+  padding: var(--spacing-md);
+  text-align: left;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary-blue);
+  border-bottom: 2px solid var(--color-background-accent);
+}
+
+.data-table td {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--color-background-secondary);
+}
+
+.data-table tbody tr:hover {
+  background-color: var(--color-background-secondary);
+}
+
+/* Status Badge */
+.status-badge {
+  display: inline-block;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-medium);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-semibold);
+  text-transform: capitalize;
+}
+
+.status-completed {
+  background-color: rgba(46, 204, 113, 0.2);
+  color: #229954;
+}
+
+.status-in_progress {
+  background-color: rgba(241, 196, 15, 0.2);
+  color: #c05621;
+}
+
+.status-abandoned {
+  background-color: rgba(231, 76, 60, 0.2);
+  color: #c53030;
+}
+
+/* Accuracy Badge */
+.accuracy-badge {
+  display: inline-block;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-medium);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-semibold);
+}
+
+.acc-high {
+  background-color: rgba(46, 204, 113, 0.2);
+  color: #229954;
+}
+
+.acc-mid {
+  background-color: rgba(241, 196, 15, 0.2);
+  color: #c05621;
+}
+
+.acc-low {
+  background-color: rgba(231, 76, 60, 0.2);
+  color: #c53030;
+}
+
+/* Reduced Motion */
+.reduced-motion .therapist-stat-card:hover,
+.reduced-motion .child-card:hover {
+  transform: none;
+}
+
+/* Mobile Responsive */
+@media (max-width: 640px) {
+  .therapist-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .therapist-title-section {
+    flex-direction: column;
+  }
+
+  .therapist-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .therapist-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .children-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .child-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .data-table {
+    font-size: var(--font-size-small);
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: var(--spacing-sm);
+  }
+}
+
+/* Tablet Responsive */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .therapist-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .children-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* High Contrast Mode */
+.high-contrast-mode .therapist-stat-card,
+.high-contrast-mode .child-card {
+  border: 2px solid #000;
+}
+
+.high-contrast-mode .therapist-tab.active {
+  border: 2px solid white;
+}
+
+/* ========================================
+   CUTE ANIMATED BACKGROUND
+   ======================================== */
+
+.therapist-console-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ffeef8 0%, #f0f9ff 25%, #fff9e6 50%, #f0fff4 75%, #fef0ff 100%);
+  background-size: 400% 400%;
+  animation: therapistGradientShift 15s ease infinite;
+  position: relative;
+  overflow-x: hidden;
+  padding: 24px;
+}
+
+@keyframes therapistGradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Floating decorative elements */
+.therapist-floating-decoration {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+  font-size: 35px;
+  opacity: 0.1;
+  animation: therapistFloatAround 20s ease-in-out infinite;
+}
+
+.therapist-floating-decoration.cloud1 { top: 10%; left: 5%; animation-delay: 0s; }
+.therapist-floating-decoration.cloud2 { top: 30%; right: 10%; animation-delay: 5s; }
+.therapist-floating-decoration.star1 { top: 60%; left: 8%; animation-delay: 2s; }
+.therapist-floating-decoration.star2 { top: 20%; right: 15%; animation-delay: 7s; }
+.therapist-floating-decoration.heart1 { top: 70%; right: 5%; animation-delay: 4s; }
+.therapist-floating-decoration.heart2 { top: 40%; left: 15%; animation-delay: 9s; }
+
+@keyframes therapistFloatAround {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(20px, -20px) rotate(5deg); }
+  50% { transform: translate(0, -40px) rotate(0deg); }
+  75% { transform: translate(-20px, -20px) rotate(-5deg); }
+}
+
+/* Cute overlay */
+.therapist-cute-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(255, 182, 193, 0.25) 0%, transparent 40%),
+    radial-gradient(circle at 80% 20%, rgba(135, 206, 235, 0.25) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(255, 218, 185, 0.2) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Dot pattern */
+.therapist-dot-pattern {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(circle, rgba(255, 182, 193, 0.15) 2px, transparent 2px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Glass cards for therapist console */
+.therapist-glass-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+/* Content wrapper */
+.therapist-console-container {
+  position: relative;
+  z-index: 1;
+}

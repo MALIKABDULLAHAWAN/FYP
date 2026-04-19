@@ -1,0 +1,390 @@
+/* ========================================
+   AI AGENTS STYLES
+   ======================================== */
+
+/* Floating AI Button Animations */
+@keyframes aiFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes aiGlow {
+  from { box-shadow: 0 8px 25px rgba(77, 150, 255, 0.4), 0 0 20px rgba(77, 150, 255, 0.2); }
+  to { box-shadow: 0 8px 35px rgba(77, 150, 255, 0.6), 0 0 30px rgba(77, 150, 255, 0.3); }
+}
+
+@keyframes thinkingBounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* AI Agent Panel */
+.ai-agent-panel {
+  animation: panelSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes panelSlideIn {
+  0% { transform: translateY(20px) scale(0.95); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* AI Agent Selector Tabs */
+.ai-agent-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.ai-agent-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.ai-agent-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: none;
+  background: #f0f0f0;
+  color: #666;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: var(--font-fun);
+  white-space: nowrap;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.ai-agent-tab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.ai-agent-tab.active {
+  color: white;
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Agent Specific Colors */
+.ai-agent-tab[data-agent="gameHelper"].active {
+  background: linear-gradient(135deg, #4ECDC4, #44A08D);
+}
+
+.ai-agent-tab[data-agent="storyTeller"].active {
+  background: linear-gradient(135deg, #9B59B6, #8E44AD);
+}
+
+.ai-agent-tab[data-agent="mathTutor"].active {
+  background: linear-gradient(135deg, #FF6B6B, #EE5A6F);
+}
+
+.ai-agent-tab[data-agent="therapyAssistant"].active {
+  background: linear-gradient(135deg, #84FAB0, #8FD3F4);
+}
+
+.ai-agent-tab[data-agent="creativityCoach"].active {
+  background: linear-gradient(135deg, #FFD93D, #F6AD55);
+}
+
+.ai-agent-tab[data-agent="knowledgeExplorer"].active {
+  background: linear-gradient(135deg, #4D96FF, #6BCB77);
+}
+
+/* AI Message Bubbles */
+.ai-message {
+  padding: 12px 16px;
+  border-radius: 18px;
+  font-size: 14px;
+  line-height: 1.5;
+  font-family: var(--font-fun);
+  max-width: 80%;
+  word-wrap: break-word;
+  animation: messagePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes messagePop {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.ai-message.user {
+  background: linear-gradient(135deg, #4ECDC4, #44A08D);
+  color: white;
+  border-radius: 18px 18px 4px 18px;
+  align-self: flex-end;
+  box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+}
+
+.ai-message.assistant {
+  background: #f8f9fa;
+  color: #2c3e50;
+  border-radius: 18px 18px 18px 4px;
+  align-self: flex-start;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* AI Typing Indicator */
+.ai-typing {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 16px 20px;
+}
+
+.ai-typing-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: typingBounce 1.4s ease-in-out infinite;
+}
+
+.ai-typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.ai-typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typingBounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* AI Input Area */
+.ai-input-container {
+  display: flex;
+  gap: 8px;
+  padding: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.ai-input {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 24px;
+  border: 2px solid #e9ecef;
+  font-size: 14px;
+  font-family: var(--font-fun);
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.ai-input:focus {
+  border-color: #4ECDC4;
+  box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.2);
+}
+
+.ai-send-btn {
+  padding: 12px 20px;
+  border-radius: 24px;
+  border: none;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ai-send-btn:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.ai-send-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* AI Agent Showcase Cards */
+.ai-agent-showcase {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+  padding: 20px;
+}
+
+.ai-agent-card {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  text-align: center;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.ai-agent-card::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border-radius: 23px;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.ai-agent-card:hover {
+  transform: translateY(-8px) scale(1.02);
+}
+
+.ai-agent-card:hover::before {
+  opacity: 1;
+}
+
+.ai-agent-card.active::before {
+  opacity: 1;
+}
+
+.ai-agent-card.active {
+  transform: scale(1.05);
+}
+
+.ai-agent-avatar {
+  font-size: 48px;
+  margin-bottom: 12px;
+  display: block;
+  animation: agentFloat 3s ease-in-out infinite;
+}
+
+@keyframes agentFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(5deg); }
+}
+
+.ai-agent-name {
+  font-family: var(--font-fun);
+  font-weight: 700;
+  font-size: 14px;
+  color: #2c3e50;
+  margin-bottom: 4px;
+}
+
+.ai-agent-role {
+  font-size: 11px;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Agent-specific gradients */
+.ai-agent-card[data-agent="gameHelper"]::before {
+  background: linear-gradient(135deg, #4ECDC4, #44A08D);
+}
+
+.ai-agent-card[data-agent="storyTeller"]::before {
+  background: linear-gradient(135deg, #9B59B6, #8E44AD);
+}
+
+.ai-agent-card[data-agent="mathTutor"]::before {
+  background: linear-gradient(135deg, #FF6B6B, #EE5A6F);
+}
+
+.ai-agent-card[data-agent="therapyAssistant"]::before {
+  background: linear-gradient(135deg, #84FAB0, #8FD3F4);
+}
+
+.ai-agent-card[data-agent="creativityCoach"]::before {
+  background: linear-gradient(135deg, #FFD93D, #F6AD55);
+}
+
+.ai-agent-card[data-agent="knowledgeExplorer"]::before {
+  background: linear-gradient(135deg, #4D96FF, #6BCB77);
+}
+
+/* AI Quick Actions */
+.ai-quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.ai-quick-action {
+  padding: 8px 14px;
+  border-radius: 16px;
+  border: none;
+  background: #f0f0f0;
+  color: #666;
+  font-size: 12px;
+  font-family: var(--font-fun);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.ai-quick-action:hover {
+  background: #e0e0e0;
+  transform: translateY(-2px);
+}
+
+/* AI Status Indicator */
+.ai-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.ai-status.online {
+  background: #d4edda;
+  color: #155724;
+}
+
+.ai-status.offline {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.ai-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: statusPulse 2s ease-in-out infinite;
+}
+
+.ai-status.online .ai-status-dot {
+  background: #28a745;
+}
+
+.ai-status.offline .ai-status-dot {
+  background: #dc3545;
+  animation: none;
+}
+
+@keyframes statusPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .ai-agent-panel {
+    width: calc(100% - 40px) !important;
+    right: 20px !important;
+    left: 20px !important;
+  }
+  
+  .ai-agent-showcase {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

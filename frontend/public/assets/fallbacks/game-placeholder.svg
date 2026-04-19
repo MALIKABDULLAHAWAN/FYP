@@ -1,0 +1,8 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="200" fill="#F8F9FA"/>
+  <circle cx="100" cy="100" r="40" fill="#4A90E2"/>
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" x="88" y="88">
+    <path d="M12 2L13.09 8.26L21 9L13.09 15.74L12 22L10.91 15.74L3 9L10.91 8.26L12 2Z" fill="white"/>
+  </svg>
+  <text x="100" y="160" text-anchor="middle" fill="#666" font-family="Arial, sans-serif" font-size="14">Therapeutic Game</text>
+</svg>

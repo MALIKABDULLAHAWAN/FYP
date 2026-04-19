@@ -1,0 +1,23 @@
+Django==5.0.8
+psycopg[binary]==3.2.1
+python-dotenv==1.0.1
+gunicorn==22.0.0
+djangorestframework==3.15.2
+djangorestframework-simplejwt==5.3.1
+django-cors-headers
+gtts==2.3.2
+whitenoise==6.7.0
+groq==0.4.2
+Pillow==10.1.0
+requests>=2.31.0
+
+# Voice Assistant Dependencies
+SpeechRecognition==3.10.0
+torch==2.0.1
+torchaudio==2.0.2
+pydub==0.25.1
+speechbrain==0.5.16
+yt-dlp==2024.4.9
+Flask==3.0.3
+pyaudio==0.2.14
+numpy==1.26.4
