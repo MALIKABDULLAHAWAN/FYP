@@ -574,8 +574,8 @@ export default function TherapistConsole() {
                 </div>
                 {!stats.is_deep_dive && (
                   <div style={{ background: "rgba(16, 185, 129, 0.2)", padding: "10px 18px", borderRadius: "14px", border: "1px solid rgba(16, 185, 129, 0.3)" }}>
-                    <div style={{ fontSize: 10, fontWeight: 800, color: "#34d399", marginBottom: 2, textTransform: "uppercase" }}>AI Accuracy</div>
-                    <div style={{ fontSize: 20, fontWeight: 900, color: "#10b981" }}>99.2%</div>
+                    <div style={{ fontSize: 10, fontWeight: 800, color: "#34d399", marginBottom: 2, textTransform: "uppercase" }}>AI Mastery Index</div>
+                    <div style={{ fontSize: 20, fontWeight: 900, color: "#10b981" }}>{stats.ai_mastery_index || 0}%</div>
                   </div>
                 )}
               </div>
@@ -1194,50 +1194,66 @@ export default function TherapistConsole() {
           {(childInsights || loadingInsights) && (
             <div style={{ 
               marginBottom: 24, 
-              padding: "24px", 
-              background: "white",
+              padding: "28px", 
+              background: "linear-gradient(135deg, #fafbff 0%, #f0f4ff 100%)",
               borderRadius: "20px",
-              border: "1px solid #edf2f7",
+              border: "1px solid #e0e7ff",
               borderLeft: "6px solid #6366F1",
-              boxShadow: "0 10px 30px rgba(0,0,0,0.02)",
+              boxShadow: "0 10px 40px rgba(99,102,241,0.06)",
               position: "relative"
             }}>
-              <h4 style={{ margin: "0 0 12px 0", fontSize: 13, textTransform: "uppercase", letterSpacing: 1.5, color: "#6366F1", fontWeight: 800, display: "flex", alignItems: "center", gap: 10 }}>
-                {TherapistStickers.analytics} Clinical Intelligence Summary
+              <h4 style={{ margin: "0 0 16px 0", fontSize: 13, textTransform: "uppercase", letterSpacing: 1.5, color: "#6366F1", fontWeight: 800, display: "flex", alignItems: "center", gap: 10 }}>
+                {TherapistStickers.analytics} Buddy's Clinical Intelligence Report
               </h4>
               {loadingInsights ? (
-                <div style={{ height: 40, display: "flex", alignItems: "center", gap: 10 }}>
-                  <span className="spinner" style={{ width: 16, height: 16 }}></span>
-                  <span style={{ fontSize: 14, color: "#718096", fontWeight: 500 }}>Analyzing clinical patterns across history...</span>
+                <div style={{ padding: "20px 0", display: "flex", alignItems: "center", gap: 12 }}>
+                  <span className="spinner" style={{ width: 18, height: 18 }}></span>
+                  <span style={{ fontSize: 14, color: "#718096", fontWeight: 500 }}>Buddy is analyzing all sessions — managed, standalone, and pattern data...</span>
                 </div>
               ) : (
-                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                  <p style={{ margin: 0, fontSize: 16, lineHeight: 1.7, color: "#1e1b4b", fontWeight: 500, whiteSpace: "pre-wrap" }}>
-                    {childInsights?.insight || "Diagnostic data is being processed for clinical recommendations."}
-                  </p>
-                  
+                <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
                   {childInsights?.metrics && (
-                    <div style={{ 
-                      display: "flex", 
-                      gap: 20, 
-                      marginTop: 20, 
-                      paddingTop: 20, 
-                      borderTop: "1px solid #edf2f7" 
-                    }}>
-                      <div style={{ flex: 1, textAlign: "center" }}>
-                        <div style={{ fontSize: 12, color: "#718096", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Historical Mastery</div>
-                        <div style={{ fontSize: 24, fontWeight: 900, color: "#6366F1" }}>{Math.round(childInsights.metrics.overall_accuracy * 100)}%</div>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
+                      {[
+                        { label: "Historical Mastery", value: `${Math.round(childInsights.metrics.overall_accuracy * 100)}%`, color: "#6366F1" },
+                        { label: "Recent Velocity", value: `${Math.round(childInsights.metrics.recent_accuracy * 100)}%`, color: "#10b981" },
+                        { label: "Total Engagements", value: childInsights.metrics.total_trials, color: "#1e1b4b" },
+                      ].map((tile, i) => (
+                        <div key={i} style={{ background: "white", borderRadius: 16, padding: "14px 16px", textAlign: "center", border: "1px solid #edf2f7", boxShadow: "0 4px 12px rgba(0,0,0,0.03)" }}>
+                          <div style={{ fontSize: 10, color: "#718096", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6, fontWeight: 700 }}>{tile.label}</div>
+                          <div style={{ fontSize: 26, fontWeight: 900, color: tile.color }}>{tile.value}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {childInsights?.standalone && Object.keys(childInsights.standalone).length > 0 && (
+                    <div style={{ background: "white", borderRadius: 14, padding: 16, border: "1px solid #edf2f7" }}>
+                      <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: 1, color: "#6366F1", marginBottom: 12 }}>Standalone Game Breakdown</div>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                        {Object.entries(childInsights.standalone).map(([game, data], i) => (
+                          <div key={i} style={{ flex: "1 1 140px", background: "#f8faff", borderRadius: 10, padding: "10px 12px", border: "1px solid #e0e7ff" }}>
+                            <div style={{ fontSize: 12, fontWeight: 700, color: "#312e81", marginBottom: 4 }}>{game}</div>
+                            <div style={{ fontSize: 11, color: "#64748b" }}>{data.sessions} sessions · <span style={{ fontWeight: 700, color: data.accuracy >= 0.8 ? "#10b981" : data.accuracy >= 0.5 ? "#f59e0b" : "#ef4444" }}>{Math.round(data.accuracy * 100)}%</span></div>
+                          </div>
+                        ))}
                       </div>
-                      <div style={{ width: 1, background: "#edf2f7" }}></div>
-                      <div style={{ flex: 1, textAlign: "center" }}>
-                        <div style={{ fontSize: 12, color: "#718096", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Recent Velocity</div>
-                        <div style={{ fontSize: 24, fontWeight: 900, color: "#10b981" }}>{Math.round(childInsights.metrics.recent_accuracy * 100)}%</div>
-                      </div>
-                      <div style={{ width: 1, background: "#edf2f7" }}></div>
-                      <div style={{ flex: 1, textAlign: "center" }}>
-                        <div style={{ fontSize: 12, color: "#718096", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Total Engagements</div>
-                        <div style={{ fontSize: 24, fontWeight: 900, color: "#1e1b4b" }}>{childInsights.metrics.total_trials}</div>
-                      </div>
+                    </div>
+                  )}
+
+                  <div style={{ background: "white", borderRadius: 14, padding: "20px 24px", border: "1px solid #e0e7ff" }}>
+                    <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: 1, color: "#6366F1", marginBottom: 12 }}>Clinical Analysis</div>
+                    <div style={{ fontSize: 14, lineHeight: 1.85, color: "#1e293b", whiteSpace: "pre-wrap" }}>
+                      {childInsights?.insight || "No data yet. Play some games to unlock Buddy's full analysis!"}
+                    </div>
+                  </div>
+
+                  {childInsights?.recent_observations?.length > 0 && (
+                    <div style={{ background: "#fffbeb", borderRadius: 14, padding: 16, border: "1px solid #fde68a" }}>
+                      <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: 1, color: "#92400e", marginBottom: 10 }}>📝 Recent Session Notes</div>
+                      {childInsights.recent_observations.map((obs, i) => (
+                        <div key={i} style={{ fontSize: 12, color: "#78350f", marginBottom: 6, paddingLeft: 10, borderLeft: "3px solid #f59e0b", lineHeight: 1.5 }}>{obs}</div>
+                      ))}
                     </div>
                   )}
                 </div>
@@ -1386,10 +1402,8 @@ export default function TherapistConsole() {
                           </span>
                         </td>
                         <td>{g.avg_response_time_ms ? `${(g.avg_response_time_ms / 1000).toFixed(2)}s` : "—"}</td>
-                        <td style={{ fontSize: 13, color: "#718096", maxWidth: 200 }}>
-                          {acc > 0.8 
-                            ? "Shows strong consistency and rapid acquisition of targets." 
-                            : "Developing stability. Recommend sensory-rich reinforcement."}
+                        <td style={{ fontSize: 13, color: "#718096", maxWidth: 220, lineHeight: 1.4 }}>
+                          {g.observation || "Developing stable response patterns."}
                         </td>
                       </tr>
                     );
@@ -1478,7 +1492,15 @@ export default function TherapistConsole() {
                     >
                       <td>{s.session_date}</td>
                       <td>{s.child_name}</td>
-                      <td>{(s.game_types || []).map((g) => g.replace(/_/g, " ")).join(", ") || s.title}</td>
+                      <td>
+                        {s.type === "standalone"
+                          ? <span style={{ fontWeight: 600 }}>{s.title}</span>
+                          : <span>{(s.game_types || []).map((g) => g.replace(/_/g, " ")).join(", ") || s.title}</span>
+                        }
+                        {s.type === "standalone" && (
+                          <span style={{ marginLeft: 6, fontSize: 9, fontWeight: 800, background: "#eef2ff", color: "#6366f1", padding: "2px 6px", borderRadius: 6 }}>SOLO</span>
+                        )}
+                      </td>
                       <td><span className={`status-badge status-${s.status}`}>{s.status}</span></td>
                       <td>{s.correct}/{s.total_trials}</td>
                       <td>

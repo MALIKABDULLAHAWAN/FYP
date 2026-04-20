@@ -186,30 +186,68 @@ class DashboardStatsView(APIView):
             try:
                 from therapy.ai_services.unified_ai_service import get_ai_service
                 ai_service = get_ai_service()
-                
-                deep_dive_instruction = "Provide a comprehensive, multi-paragraph deep dive clinical audit. Identify potential risks, highlight strong performers, and suggest 3 specific therapeutic interventions based on this data."
-                brief_instruction = "Provide a one-sentence clinical high-level summary and one recommendation."
-                
-                prompt = f"""
-                Analyze the following weekly performance for a therapist's fleet of children:
-                - Active Children: {total_children}
-                
-                THIS WEEK:
-                - Sessions: {recent_sessions}
-                - Trials: {recent_trials}
-                - Accuracy: {round(weekly_accuracy * 100, 1)}%
-                
-                TRENDS (vs Last Week):
-                - Accuracy Trend: {'+' if accuracy_trend > 0 else ''}{accuracy_trend}%
-                - Session Vol Trend: {'+' if session_trend > 0 else ''}{session_trend} sessions
-                
-                {deep_dive_instruction if is_deep_dive else brief_instruction}
-                Tone: professional, data-driven, companion-like.
-                """
+                from therapy.models import GameSession
+
+                # Build mastery bucket data
+                all_fleet_gs = GameSession.objects.filter(child__in=fleet_children).order_by("-created_at")
+                game_type_counts = {}
+                high_performers = 0
+                low_performers = 0
+                for gs in all_fleet_gs[:100]:  # sample last 100 sessions for performance
+                    m = gs.performance_metrics or {}
+                    acc = m.get("accuracy", 0)
+                    gtype = gs.game.game_type if gs.game_id else "unknown"
+                    if gtype not in game_type_counts:
+                        game_type_counts[gtype] = {"sessions": 0, "accuracy_sum": 0}
+                    game_type_counts[gtype]["sessions"] += 1
+                    game_type_counts[gtype]["accuracy_sum"] += acc
+                    if acc >= 0.8: high_performers += 1
+                    elif acc < 0.5: low_performers += 1
+
+                game_breakdown_str = "\n".join(
+                    f"  - {k.replace('_',' ').title()}: {v['sessions']} sessions, avg accuracy {round(v['accuracy_sum']/v['sessions']*100)}%"
+                    for k, v in game_type_counts.items() if v['sessions'] > 0
+                ) or "  No standalone game data this week."
+
+                brief_instruction = "Provide a 2-sentence clinical high-level summary and one specific recommendation."
+                deep_dive_instruction = """Provide a STRUCTURED Clinical Audit with:
+1. Fleet Overview (trajectory assessment)
+2. High Performers (who/what is working well)
+3. Risk Flags (concerning patterns or low performers)
+4. Intervention Priorities (3 specific actions for this week)"""
+
+                prompt = f"""You are Buddy, a clinical AI analyst for a children's therapeutic platform.
+
+Generate a fleet-level clinical audit for a therapist managing {total_children} children.
+
+=== THIS WEEK'S METRICS ===
+- Total Sessions: {recent_sessions}
+- Total Trials: {recent_trials}
+- Fleet Accuracy: {round(weekly_accuracy * 100, 1)}%
+- High-accuracy sessions (≥80%): {high_performers}
+- Low-accuracy sessions (<50%): {low_performers}
+
+=== TREND vs LAST WEEK ===
+- Accuracy Change: {'+' if accuracy_trend > 0 else ''}{accuracy_trend}%
+- Session Volume Change: {'+' if session_trend > 0 else ''}{session_trend} sessions
+
+=== GAME ACTIVITY BREAKDOWN ===
+{game_breakdown_str}
+
+{deep_dive_instruction if is_deep_dive else brief_instruction}
+Tone: Professional, clinical, data-driven. Write for a medical team."""
+
                 ai_response = ai_service.generate_response(prompt, agent_key="clinical_analyst")
                 fleet_insight = ai_response.text
-            except:
-                fleet_insight = "Clinical patterns show stable progression across the fleet. Accuracy is holding steady at " + str(round(weekly_accuracy * 100)) + "%. ✨"
+            except Exception as e:
+                print(f"Fleet AI error: {e}")
+                fleet_insight = f"Fleet accuracy this week: {round(weekly_accuracy * 100, 1)}%. {'Positive' if accuracy_trend >= 0 else 'Declining'} trend detected ({'+' if accuracy_trend >= 0 else ''}{accuracy_trend}%). {recent_sessions} sessions recorded across {total_children} children."
+
+        # Calculate AI Mastery Index (Real data for the 99.2% mock)
+        # Based on accuracy, session volume, and growth
+        base_mastery = weekly_accuracy * 100
+        vol_bonus = min(recent_sessions * 0.5, 5.0) # More sessions = higher confidence
+        ai_mastery_index = round(min(base_mastery + vol_bonus, 99.8), 1)
 
         return Response({
             "total_children": total_children,
@@ -223,7 +261,8 @@ class DashboardStatsView(APIView):
             "accuracy_trend": accuracy_trend,
             "session_trend": session_trend,
             "fleet_insight": fleet_insight,
-            "is_deep_dive": is_deep_dive
+            "is_deep_dive": is_deep_dive,
+            "ai_mastery_index": ai_mastery_index
         })
 
 
@@ -312,12 +351,24 @@ class ChildProgressView(APIView):
 
             gt_accuracy = (gt_correct / gt_total) if gt_total else 0.0
 
+            # Calculate actual avg speed from GameSessions if available
+            speeds = [gs.performance_metrics.get("avg_response_time_ms") for gs in gt_game_sessions if gs.performance_metrics.get("avg_response_time_ms")]
+            gt_avg_speed = sum(speeds) / len(speeds) if speeds else 0
+
+            # Pull real latest observation
+            latest_session = gt_game_sessions.order_by("-created_at").first()
+            gt_observation = (latest_session.observations or {}).get("buddy_observation") if latest_session else None
+            if not gt_observation and gt_total > 0:
+                gt_observation = "Mastery is developing. Patterns suggest consistent target acquisition." if gt_accuracy > 0.8 else "Stability is increasing. Recommend sensory reinforcement."
+
             game_stats.append({
                 "game": gt,
                 "total_trials": gt_total,
                 "correct": gt_correct,
                 "accuracy": round(gt_accuracy, 3),
                 "sessions": sessions.filter(trials__trial_type=gt).distinct().count() + gt_game_sessions.count(),
+                "avg_response_time_ms": gt_avg_speed,
+                "observation": gt_observation
             })
 
         # Recent sessions timeline (Combined)
@@ -469,13 +520,13 @@ class SessionHistoryView(APIView):
                 "type": "managed",
                 "created_at": s.created_at.isoformat(),
                 "duration_seconds": int((s.ended_at - s.started_at).total_seconds()) if s.ended_at and s.started_at else 0,
-                "therapeutic_goals": [], # TherapySession doesn't have a direct field, can be inferred from trials
+                "therapeutic_goals": [],
                 "observations": s.notes,
                 "buddy_observation": s.notes[:100] if s.notes else "Standard clinical managed session."
             })
 
-        # Process Game Sessions
-        for gs in game_sessions[:limit]:
+        # Process Game Sessions (standalone) — fetch all, not capped by limit yet
+        for gs in game_sessions:
             metrics = gs.performance_metrics or {}
             result.append({
                 "id": f"standalone-{gs.id}",
@@ -497,6 +548,6 @@ class SessionHistoryView(APIView):
                 "buddy_observation": (gs.observations or {}).get("buddy_observation") or "Clinical pattern suggests steady engagement."
             })
 
-        # Final Sort and Limit
+        # Final Sort and Limit — interleaved by time so standalone games appear
         result.sort(key=lambda x: x["created_at"], reverse=True)
         return Response(result[:limit])

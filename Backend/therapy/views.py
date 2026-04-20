@@ -388,19 +388,54 @@ class GameStandaloneResultView(APIView):
         except ChildProfile.DoesNotExist:
             return Response({"detail": "Child not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Find a matching game image/config
+        # Map game_name to a canonical game_type
+        GAME_TYPE_MAP = {
+            # Standalone mini-games
+            "bubble pop": "matching",
+            "bubble_pop": "matching",
+            "color match": "matching",
+            "color_match": "matching",
+            "matching game": "matching",
+            "shape sort": "problem_solving",
+            "shape_sort": "problem_solving",
+            "emotion face": "object_discovery",
+            "emotion_face": "object_discovery",
+            "emotion match": "object_discovery",
+            "emotion_match": "object_discovery",
+            "animal sounds": "speech_prompt",
+            "animal_sounds": "speech_prompt",
+            "animal sound": "speech_prompt",
+            "memory match": "memory_match",
+            "memory_match": "memory_match",
+            "object discovery": "object_discovery",
+            "problem solving": "problem_solving",
+            "speech therapy": "speech_prompt",
+            "story adventure": "speech_prompt",
+            # Additional games
+            "scene description": "speech_prompt",
+            "scene_description": "speech_prompt",
+            "gaze & emotion": "emotion_gesture",
+            "gaze emotion": "emotion_gesture",
+            "gaze_emotion": "emotion_gesture",
+            "emotion & gesture quest": "emotion_gesture",
+            "emotion gesture quest": "emotion_gesture",
+            "emotion_gesture_quest": "emotion_gesture",
+        }
+        normalized_name = game_name.lower().strip()
+        canonical_type = GAME_TYPE_MAP.get(normalized_name, "matching")
+
+        # Find or create a matching GameImage with the CORRECT game_type
         from therapy.models import GameImage, GameSession
         game = GameImage.objects.filter(name__icontains=game_name).first()
         if not game:
-            # Fallback to any generic game or create placeholder if necessary
-            game = GameImage.objects.filter(game_type="matching").first()
-            if not game:
-                # Last resort placeholder
-                game = GameImage.objects.create(
-                    name=game_name,
-                    game_type="matching",
-                    is_active=True
-                )
+            # Try finding by game_type before creating
+            game = GameImage.objects.filter(game_type=canonical_type, is_active=True).first()
+        if not game:
+            game = GameImage.objects.create(
+                name=game_name,
+                game_type=canonical_type,
+                is_active=True
+            )
 
         # Create and finalize the session
         metrics = {

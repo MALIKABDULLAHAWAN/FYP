@@ -85,3 +85,21 @@ export function getAiEncouragement(context) {
     body: { context },
   });
 }
+
+// ── Standalone Game Session Recording ──
+// Directly posts the final session data from standalone games to the backend.
+export function recordStandaloneSession({ childId, gameName, score, totalTrials, accuracy, durationSeconds, skillsTested = [] }) {
+  return apiFetch('/api/v1/therapy/game-sessions/record', {
+    method: 'POST',
+    body: {
+      child_id: childId,
+      game_name: gameName,
+      score,
+      total_trials: totalTrials,
+      accuracy,
+      duration_seconds: durationSeconds || 0,
+      skills_tested: skillsTested,
+      status: 'completed',
+    },
+  });
+}
