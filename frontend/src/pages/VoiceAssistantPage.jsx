@@ -3,6 +3,24 @@ import { useAuth } from "../hooks/useAuth";
 import { apiFetch } from "../api/client";
 import "./VoiceAssistantPage.css";
 
+// Get API base URL for audio files
+const getApiBase = () => {
+  const runtimeEnv =
+    (typeof globalThis !== "undefined" && globalThis.__VITE_ENV__) ||
+    (typeof window !== "undefined" && window.__VITE_ENV__) ||
+    {};
+
+  return (
+    runtimeEnv.VITE_API_BASE ||
+    runtimeEnv.VITE_API_URL ||
+    runtimeEnv.VITE_API_BASE_URL ||
+    import.meta.env.VITE_API_BASE ||
+    import.meta.env.VITE_API_URL ||
+    import.meta.env.VITE_API_BASE_URL ||
+    "http://127.0.0.1:8000"
+  ).replace(/\/+$/, "");
+};
+
 function VoiceAssistantPage() {
   const { user } = useAuth();
   const [currentMessage, setCurrentMessage] = useState("Welcome! I'm Aura, your personal voice assistant. Click the microphone to start talking!");
@@ -109,7 +127,9 @@ function VoiceAssistantPage() {
       }
       
       setIsSpeaking(true);
-      audioRef.current = new Audio(`http://localhost:8000${audioUrl}`);
+      // Use the API base URL for audio files
+      const fullAudioUrl = audioUrl.startsWith('http') ? audioUrl : `${getApiBase()}${audioUrl}`;
+      audioRef.current = new Audio(fullAudioUrl);
       
       audioRef.current.onended = () => {
         setIsSpeaking(false);
