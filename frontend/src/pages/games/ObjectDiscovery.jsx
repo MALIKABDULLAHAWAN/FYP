@@ -56,9 +56,10 @@ const SpringBtn = ({ children, onClick, disabled, style }) => (
   </motion.button>
 );
 
-export default function ObjectDiscovery({ isSession = false, level = "easy", onComplete }) {
+export default function ObjectDiscovery({ isSession = false, level: initialLevel = "easy", onComplete }) {
   const navigate = useNavigate();
   const { childProfile } = useChild();
+  const [level, setLevel] = useState(initialLevel);
   const [phase, setPhase] = useState(isSession ? "playing" : "idle"); 
   const [catIdx, setCatIdx] = useState(0);
   const [items, setItems] = useState([]);
@@ -171,7 +172,30 @@ export default function ObjectDiscovery({ isSession = false, level = "easy", onC
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
             <div style={{ fontSize: 100, marginBottom: 20 }}>🦁</div>
             <h1 style={{ fontSize: 44, fontWeight: 900, color: "#2d3748", marginBottom: 20 }}>Ready to Explore?</h1>
-            <p style={{ fontSize: 18, color: "#718096", marginBottom: 40 }}>Find all the things that belong together!</p>
+            <p style={{ fontSize: 18, color: "#718096", marginBottom: 24 }}>Find all the things that belong together!</p>
+            
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginBottom: 32 }}>
+              {['easy', 'medium', 'hard'].map(lvl => (
+                <button
+                  key={lvl}
+                  onClick={() => setLevel(lvl)}
+                  style={{
+                    padding: '10px 24px',
+                    borderRadius: 16,
+                    border: '2px solid',
+                    borderColor: level === lvl ? '#FF8C42' : '#E2E8F0',
+                    background: level === lvl ? '#FFF0E8' : 'white',
+                    color: level === lvl ? '#FF8C42' : '#64748B',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    textTransform: 'capitalize'
+                  }}
+                >
+                  {lvl}
+                </button>
+              ))}
+            </div>
+
             <SpringBtn onClick={startGame} style={{
               background: "linear-gradient(135deg, #FF8C42, #FB923C)",
               color: "white", padding: "20px 60px", borderRadius: "50px",

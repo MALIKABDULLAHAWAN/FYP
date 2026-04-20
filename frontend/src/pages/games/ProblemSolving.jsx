@@ -80,9 +80,10 @@ function playWin() {
 
 const ROUNDS_PER_GAME = 10;
 
-export default function ProblemSolving({ isSession = false, level = "easy", onComplete }) {
+export default function ProblemSolving({ isSession = false, level: initialLevel = "easy", onComplete }) {
   const navigate = useNavigate();
   const { childProfile } = useChild();
+  const [level, setLevel] = useState(initialLevel);
   const [phase, setPhase] = useState(isSession ? "playing" : "idle");
   const [queue, setQueue] = useState([]);
   const [current, setCurrent] = useState(null);
@@ -191,12 +192,29 @@ export default function ProblemSolving({ isSession = false, level = "easy", onCo
             <div style={{ fontSize:80 }}>🧩</div>
             <div style={{ fontSize:34, fontWeight:900, color:"#6366F1" }}>What Comes Next?</div>
             <div style={{ fontSize:17, color:"#666", maxWidth:290, lineHeight:1.5 }}>Look at the pattern and find the missing piece!</div>
-            {/* Demo pattern */}
-            <div style={{ display:"flex", gap:10, fontSize:38, background:"white", borderRadius:20, padding:"12px 20px", boxShadow:"0 4px 16px rgba(99,102,241,0.15)" }}>
-              {["🔴","🔵","🔴","🔵","❓"].map((s, i) => (
-                <span key={i} style={{ animation: s === "❓" ? "question-pulse 1.5s ease-in-out infinite" : "none" }}>{s}</span>
+            
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'center', margin: '16px 0' }}>
+              {['easy', 'medium', 'hard'].map(lvl => (
+                <button
+                  key={lvl}
+                  onClick={() => setLevel(lvl)}
+                  style={{
+                    padding: '10px 24px',
+                    borderRadius: 16,
+                    border: '2px solid',
+                    borderColor: level === lvl ? '#6366F1' : '#E2E8F0',
+                    background: level === lvl ? '#F0F8FF' : 'white',
+                    color: level === lvl ? '#6366F1' : '#64748B',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    textTransform: 'capitalize'
+                  }}
+                >
+                  {lvl}
+                </button>
               ))}
             </div>
+
             <button onClick={startGame} style={{ background:"linear-gradient(135deg,#6366F1,#8B5CF6)", color:"white", border:"none", borderRadius:50, padding:"18px 52px", fontSize:26, fontWeight:900, cursor:"pointer", boxShadow:"0 8px 28px rgba(99,102,241,0.35)" }}>
               ▶ Play!
             </button>

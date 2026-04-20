@@ -169,7 +169,14 @@ export default function StoryAdventure({ isSession = false, level = "easy", onCo
             <h2 style={{ fontFamily: "var(--font-fun)", color: "var(--cute-purple)", fontSize: "32px", marginBottom: "16px" }}>
               Choose Your Adventure!
             </h2>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", justifyContent: "center", marginTop: 32 }}>
+            <div style={{ display: "flex", justifyContent: "center", margin: "24px 0" }}>
+              <DifficultyIndicator 
+                difficulty={difficulty} 
+                interactive={true} 
+                onDifficultyChange={setDifficulty} 
+              />
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", justifyContent: "center", marginTop: 12 }}>
               {THEMES.map(t => (
                 <button key={t.id} onClick={() => handleStart(t.id)} className="btn btn-outline" style={{ display: "flex", flexDirection: "column", gap: 8, padding: 24, borderRadius: 24 }}>
                   <span style={{ fontSize: 40 }}>{t.icon === 'rocket' ? '🚀' : t.icon === 'tree' ? '🌳' : t.icon === 'water' ? '🌊' : '🏰'}</span>
