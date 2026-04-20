@@ -3,19 +3,92 @@ import { useNavigate } from "react-router-dom";
 import { useChild } from "../../hooks/useChild";
 import UiIcon from "../../components/ui/UiIcon";
 import GameConclusionFlow from "../../components/GameConclusionFlow";
-import { generateContent, continueStory } from "../../services/aiServiceEnhanced";
+import { generateContent, continueStory } from "../../services/storyService";
 import { AmbientParticles, FloatingOrbs } from "../../components/AmbientEffects";
 
-// Themes defined at module level so they're always available
+// Themes with multi-language support
 const THEMES = [
-  { id: "space",   label: "Space Explorer",  emoji: "🚀", color: "#4D96FF", bg: "linear-gradient(135deg, #0f0c29, #302b63, #24243e)" },
-  { id: "forest",  label: "Magical Forest",  emoji: "🌳", color: "#48bb78", bg: "linear-gradient(135deg, #134e5e, #71b280)" },
-  { id: "ocean",   label: "Deep Sea Diver",  emoji: "🌊", color: "#0BC5EA", bg: "linear-gradient(135deg, #005c97, #363795)" },
-  { id: "castle",  label: "Dragon Castle",   emoji: "🏰", color: "#ED64A6", bg: "linear-gradient(135deg, #4b1248, #f10711)" },
+  { 
+    id: "space",   
+    label: { en: "Space Explorer", ur: "خلا کا مہم جو" },
+    emoji: "🚀", 
+    color: "#4D96FF", 
+    bg: "linear-gradient(135deg, #0f0c29, #302b63, #24243e)" 
+  },
+  { 
+    id: "forest",  
+    label: { en: "Magical Forest", ur: "جادوئی جنگل" },
+    emoji: "🌳", 
+    color: "#48bb78", 
+    bg: "linear-gradient(135deg, #134e5e, #71b280)" 
+  },
+  { 
+    id: "ocean",   
+    label: { en: "Deep Sea Diver", ur: "گہرے سمندر میں غوطہ خور" },
+    emoji: "🌊", 
+    color: "#0BC5EA", 
+    bg: "linear-gradient(135deg, #005c97, #363795)" 
+  },
+  { 
+    id: "castle",  
+    label: { en: "Dragon Castle", ur: "ڈریگن کا قلعہ" },
+    emoji: "🏰", 
+    color: "#ED64A6", 
+    bg: "linear-gradient(135deg, #4b1248, #f10711)" 
+  },
 ];
+
+// Language-specific UI text
+const UI_TEXT = {
+  en: {
+    title: "AI Story Adventures",
+    chooseAdventure: "Choose Your Adventure!",
+    pickWorld: "Pick a world and let the story begin ✨",
+    weavingStory: "Weaving your story… ✨",
+    chapterOf: "Chapter",
+    of: "of",
+    chaptersLeft: "chapters left",
+    finalChapter: "Final chapter!",
+    whatHappensNext: "What happens next?",
+    storyWeaverThinking: "Story Weaver is thinking…",
+    storyMagicFlickered: "The story magic flickered! Try a different path.",
+    tryAgain: "Try again",
+    storyAdventure: "Story Adventure",
+    creativity: "Creativity",
+    language: "Language",
+    decisionMaking: "Decision Making",
+  },
+  ur: {
+    title: "AI کہانی کی مہم جوئی",
+    chooseAdventure: "اپنی مہم جوئی منتخب کریں!",
+    pickWorld: "ایک دنیا منتخب کریں اور کہانی شروع کریں ✨",
+    weavingStory: "آپ کی کہانی بن رہی ہے… ✨",
+    chapterOf: "باب",
+    of: "میں سے",
+    chaptersLeft: "باب باقی ہیں",
+    finalChapter: "آخری باب!",
+    whatHappensNext: "اگلا کیا ہوتا ہے؟",
+    storyWeaverThinking: "کہانی بننے والا سوچ رہا ہے…",
+    storyMagicFlickered: "کہانی کا جادو ختم ہو گیا! کوئی اور راستہ آزمائیں۔",
+    tryAgain: "دوبارہ کوشش کریں",
+    storyAdventure: "کہانی کی مہم جوئی",
+    creativity: "تخلیقی صلاحیت",
+    language: "زبان",
+    decisionMaking: "فیصلہ کرنے کی صلاحیت",
+  }
+};
 
 const MAX_TURNS_SESSION = 5;
 const MAX_TURNS_FREE    = 7;
+
+// Get saved language or default to English
+function getSavedLanguage() {
+  return localStorage.getItem("dhyan_story_language") || "en";
+}
+
+function setSavedLanguage(lang) {
+  localStorage.setItem("dhyan_story_language", lang);
+}
 
 export default function StoryAdventure({ isSession = false, level = "easy", onComplete }) {
   const navigate = useNavigate();
@@ -31,16 +104,28 @@ export default function StoryAdventure({ isSession = false, level = "easy", onCo
   const [selectedTheme,  setSelectedTheme]  = useState(null);
   const [startTime]                         = useState(Date.now());
   const [endTime,        setEndTime]        = useState(null);
+  const [language,       setLanguage]       = useState(getSavedLanguage());
 
   const storyEndRef  = useRef(null);
   const initialized  = useRef(false);
 
   const maxTurns = isSession ? MAX_TURNS_SESSION : MAX_TURNS_FREE;
+  const t = UI_TEXT[language] || UI_TEXT.en;
 
   // Auto-scroll to latest story node
   useEffect(() => {
     storyEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [storyNodes]);
+
+  // Load voices when component mounts
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      // Voices may not be loaded immediately
+      window.speechSynthesis.onvoiceschanged = () => {
+        // Voices are now loaded
+      };
+    }
+  }, [language]);
 
   // Auto-start for session mode
   useEffect(() => {
@@ -56,12 +141,52 @@ export default function StoryAdventure({ isSession = false, level = "easy", onCo
     try {
       const synth = window.speechSynthesis;
       synth.cancel();
-      const utterance = new SpeechSynthesisUtterance(text.replace(/[^\w\s!?.,']/g, ""));
-      utterance.rate  = 0.95;
+      
+      // For Urdu, preserve all characters. For English, clean special characters
+      let cleanText = text;
+      if (language === "ur") {
+        // Keep Urdu text intact, only remove some problematic characters
+        cleanText = text.replace(/[^\w\s!?.,'":;\-()]/g, "");
+      } else {
+        cleanText = text.replace(/[^\w\s!?.,']/g, "");
+      }
+      
+      const utterance = new SpeechSynthesisUtterance(cleanText);
+      utterance.rate = 0.95;
       utterance.pitch = 1.1;
+      
+      // Set language
+      if (language === "ur") {
+        utterance.lang = "ur-PK";
+      } else {
+        utterance.lang = "en-US";
+      }
+
+      // Try to find a voice that matches language preference
+      const voices = synth.getVoices();
+      
+      if (language === "ur") {
+        // For Urdu, try to find Urdu voice first
+        const urduVoice = voices.find(v => v.lang.startsWith("ur"));
+        if (urduVoice) {
+          utterance.voice = urduVoice;
+        } else {
+          // Fallback to any available voice
+          if (voices.length > 0) {
+            utterance.voice = voices[0];
+          }
+        }
+      } else {
+        // For English
+        const englishVoice = voices.find(v => v.lang.startsWith("en"));
+        if (englishVoice) {
+          utterance.voice = englishVoice;
+        }
+      }
+
       synth.speak(utterance);
     } catch (e) {
-      // Speech synthesis not available — silent fail
+      console.warn("Speech synthesis error:", e);
     }
   };
 
@@ -77,23 +202,23 @@ export default function StoryAdventure({ isSession = false, level = "easy", onCo
     try {
       const age = childProfile?.age || 7;
       const difficultyNum = level === "hard" ? 3 : level === "medium" ? 2 : 1;
-      const result = await generateContent("story", theme.id, age, "short", difficultyNum);
+      const result = await generateContent("story", theme.id, age, "short", difficultyNum, language);
 
       const content =
         typeof result === "string"
           ? result
-          : result?.content || result?.title || `Once upon a time in a ${theme.label}…`;
+          : result?.content || result?.title || `Once upon a time in a ${getThemeLabel(theme, language)}…`;
 
       const choices = Array.isArray(result?.choices) && result.choices.length > 0
         ? result.choices
-        : defaultChoices(theme.id);
+        : defaultChoices(theme.id, language);
 
       setStoryNodes([{ text: content, type: "narrative" }]);
       setCurrentChoices(choices);
       setTurns(1);
       speak(content);
     } catch (_) {
-      setError("Couldn't start the adventure. Tap a theme to try again!");
+      setError(t.storyMagicFlickered);
       setStarted(false);
       setPhase("idle");
     } finally {
@@ -120,14 +245,15 @@ export default function StoryAdventure({ isSession = false, level = "easy", onCo
           .map(n => n.text)
           .join("\n\n");
 
-        const result = await continueStory(storyContext, choice.label, "story_weaver", 0);
-        const narrative = result?.narrative || result || "And so the adventure came to a wonderful end! You were the hero all along. 🌟";
+        const result = await continueStory(storyContext, choice.label, "story_weaver", 0, language);
+        const narrative = result?.narrative || result || (language === "ur" ? "اور یوں مہم جوئی کا خوبصورت اختتام ہوا! تم ہی ہیرو تھے۔ 🌟" : "And so the adventure came to a wonderful end! You were the hero all along. 🌟");
 
         setStoryNodes(prev => [...prev, { text: narrative, type: "narrative" }]);
         speak(narrative);
       } catch (_) {
+        const endMessage = language === "ur" ? "اور یوں مہم جوئی کا خوبصورت اختتام ہوا! تم ہی ہیرو تھے۔ 🌟" : "And so the adventure came to a wonderful end! You were the hero all along. 🌟";
         setStoryNodes(prev => [...prev, {
-          text: "And so the adventure came to a wonderful end! You were the hero all along. 🌟",
+          text: endMessage,
           type: "narrative"
         }]);
       } finally {
@@ -145,22 +271,22 @@ export default function StoryAdventure({ isSession = false, level = "easy", onCo
         .join("\n\n");
 
       const turnsLeft = maxTurns - nextTurn;
-      const result = await continueStory(storyContext, choice.label, "story_weaver", turnsLeft);
+      const result = await continueStory(storyContext, choice.label, "story_weaver", turnsLeft, language);
 
-      const narrative = result?.narrative || result || "The adventure continues…";
+      const narrative = result?.narrative || result || (language === "ur" ? "مہم جوئی جاری ہے…" : "The adventure continues…");
       const nextChoices =
         Array.isArray(result?.choices) && result.choices.length > 0
           ? result.choices
-          : defaultChoices(selectedTheme?.id || "forest");
+          : defaultChoices(selectedTheme?.id || "forest", language);
 
       setStoryNodes(prev => [...prev, { text: narrative, type: "narrative" }]);
       setCurrentChoices(nextChoices);
       setTurns(nextTurn);
       speak(narrative);
     } catch (_) {
-      setError("The story magic flickered! Try a different path.");
+      setError(t.storyMagicFlickered);
       // Restore choices so the player isn't stuck
-      setCurrentChoices(defaultChoices(selectedTheme?.id || "forest"));
+      setCurrentChoices(defaultChoices(selectedTheme?.id || "forest", language));
     } finally {
       setLoading(false);
     }
@@ -181,6 +307,11 @@ export default function StoryAdventure({ isSession = false, level = "easy", onCo
     setTurns(0);
     setSelectedTheme(null);
     setError("");
+  };
+
+  const handleLanguageChange = (newLang) => {
+    setLanguage(newLang);
+    setSavedLanguage(newLang);
   };
 
   // ─── Render ────────────────────────────────────────────────────────────────
@@ -204,11 +335,30 @@ export default function StoryAdventure({ isSession = false, level = "easy", onCo
         <div className="game-header" style={{ position: "relative", zIndex: 10 }}>
           <div className="game-title-section">
             <div className="game-title">
-              <UiIcon name="book" size={36} title="AI Story Adventures" />
-              <span>AI Story Adventures</span>
+              <UiIcon name="book" size={36} title={t.title} />
+              <span>{t.title}</span>
             </div>
           </div>
-          <div className="game-header-actions">
+          <div className="game-header-actions" style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+            {phase === "idle" && (
+              <select
+                value={language}
+                onChange={(e) => handleLanguageChange(e.target.value)}
+                style={{
+                  padding: "8px 12px",
+                  borderRadius: "8px",
+                  border: "2px solid #6366F1",
+                  background: "white",
+                  color: "#1a1a2e",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  fontSize: "14px"
+                }}
+              >
+                <option value="en">English</option>
+                <option value="ur">اردو</option>
+              </select>
+            )}
             <button
               className="btn btn-sm btn-outline"
               onClick={() => { window.speechSynthesis?.cancel(); navigate("/games"); }}
@@ -231,16 +381,16 @@ export default function StoryAdventure({ isSession = false, level = "easy", onCo
             style={{ textAlign: "center", padding: "40px 20px" }}
           >
             <h2 style={{ fontFamily: "var(--font-fun)", color: "var(--cute-purple)", fontSize: "32px", marginBottom: "8px" }}>
-              Choose Your Adventure!
+              {t.chooseAdventure}
             </h2>
             <p style={{ color: "#666", marginBottom: "32px" }}>
-              Pick a world and let the story begin ✨
+              {t.pickWorld}
             </p>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", justifyContent: "center" }}>
-              {THEMES.map(t => (
+              {THEMES.map(theme => (
                 <button
-                  key={t.id}
-                  onClick={() => handleStart(t)}
+                  key={theme.id}
+                  onClick={() => handleStart(theme)}
                   disabled={loading}
                   className="btn btn-outline"
                   style={{
@@ -250,23 +400,23 @@ export default function StoryAdventure({ isSession = false, level = "easy", onCo
                     gap: 8,
                     padding: "24px 32px",
                     borderRadius: 24,
-                    borderColor: t.color,
-                    color: t.color,
+                    borderColor: theme.color,
+                    color: theme.color,
                     fontWeight: 700,
                     fontSize: "15px",
                     transition: "transform 0.15s, box-shadow 0.15s",
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.06)"; e.currentTarget.style.boxShadow = `0 8px 24px ${t.color}44`; }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.06)"; e.currentTarget.style.boxShadow = `0 8px 24px ${theme.color}44`; }}
                   onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = "none"; }}
                 >
-                  <span style={{ fontSize: 48 }}>{t.emoji}</span>
-                  <span>{t.label}</span>
+                  <span style={{ fontSize: 48 }}>{theme.emoji}</span>
+                  <span>{getThemeLabel(theme, language)}</span>
                 </button>
               ))}
             </div>
             {loading && (
               <p style={{ marginTop: 24, color: "#4F46E5", fontWeight: 700 }}>
-                Weaving your story… ✨
+                {t.weavingStory}
               </p>
             )}
             {error && <div className="alert alert-error" style={{ marginTop: 16 }}>{error}</div>}
@@ -292,7 +442,7 @@ export default function StoryAdventure({ isSession = false, level = "easy", onCo
                 <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "16px 24px" }}>
                   <ThinkingDots />
                   <span style={{ color: "#6366F1", fontWeight: 700, fontSize: "15px" }}>
-                    Story Weaver is thinking…
+                    {t.storyWeaverThinking}
                   </span>
                 </div>
               )}
@@ -311,10 +461,10 @@ export default function StoryAdventure({ isSession = false, level = "easy", onCo
                   <span>{error}</span>
                   <button
                     className="btn btn-sm"
-                    onClick={() => { setError(""); setCurrentChoices(defaultChoices(selectedTheme?.id || "forest")); }}
+                    onClick={() => { setError(""); setCurrentChoices(defaultChoices(selectedTheme?.id || "forest", language)); }}
                     style={{ whiteSpace: "nowrap" }}
                   >
-                    Try again
+                    {t.tryAgain}
                   </button>
                 </div>
               </div>
@@ -326,12 +476,12 @@ export default function StoryAdventure({ isSession = false, level = "easy", onCo
         {phase === "over" && (
           <GameConclusionFlow
             results={{
-              gameName: "Story Adventure",
+              gameName: t.storyAdventure,
               score: Math.round((turns / maxTurns) * 100),
               total_trials: maxTurns,
               accuracy: 1.0,
               duration: endTime ? (endTime - startTime) / 1000 : 0,
-              skills: ["Creativity", "Language", "Decision Making"],
+              skills: [t.creativity, t.language, t.decisionMaking],
               level: level === "hard" ? 3 : level === "medium" ? 2 : 1,
             }}
             onReplay={handleReplay}
@@ -347,14 +497,17 @@ export default function StoryAdventure({ isSession = false, level = "easy", onCo
 
 function TurnProgress({ current, max, theme }) {
   const pct = Math.min((current / max) * 100, 100);
+  const language = getSavedLanguage();
+  const t = UI_TEXT[language] || UI_TEXT.en;
+  
   return (
     <div style={{ marginBottom: 8 }}>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
         <span style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.85)" }}>
-          Chapter {current} of {max}
+          {t.chapterOf} {current} {t.of} {max}
         </span>
         <span style={{ fontSize: 13, color: "rgba(255,255,255,0.6)" }}>
-          {max - current > 0 ? `${max - current} chapters left` : "Final chapter!"}
+          {max - current > 0 ? `${max - current} ${t.chaptersLeft}` : t.finalChapter}
         </span>
       </div>
       <div style={{ height: 6, background: "rgba(255,255,255,0.2)", borderRadius: 99, overflow: "hidden" }}>
@@ -403,6 +556,9 @@ function StoryBubble({ node, isLatest }) {
 }
 
 function ChoicePanel({ choices, onChoice }) {
+  const language = getSavedLanguage();
+  const t = UI_TEXT[language] || UI_TEXT.en;
+  
   return (
     <div
       style={{
@@ -426,7 +582,7 @@ function ChoicePanel({ choices, onChoice }) {
         }}
       >
         <p style={{ textAlign: "center", marginBottom: 16, color: "#4F46E5", fontWeight: 800, fontSize: "15px" }}>
-          What happens next?
+          {t.whatHappensNext}
         </p>
         <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
           {choices.map((choice, i) => (
@@ -505,16 +661,44 @@ function ThinkingDots() {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function defaultChoices(themeId) {
+function getThemeLabel(theme, language) {
+  return typeof theme.label === "object" ? (theme.label[language] || theme.label.en) : theme.label;
+}
+
+function defaultChoices(themeId, language = "en") {
   const byTheme = {
-    space:  [{ label: "Fly to the nearest star",  icon: "⭐" }, { label: "Scan for alien life",    icon: "👽" }, { label: "Fix the rocket engine", icon: "🔧" }],
-    forest: [{ label: "Follow the glowing path",  icon: "✨" }, { label: "Talk to the wise owl",   icon: "🦉" }, { label: "Cross the magic bridge", icon: "🌉" }],
-    ocean:  [{ label: "Dive deeper into the dark", icon: "🔦" }, { label: "Follow the dolphin",    icon: "🐬" }, { label: "Open the treasure chest", icon: "🪙" }],
-    castle: [{ label: "Sneak past the dragon",    icon: "🐉" }, { label: "Find the secret door",   icon: "🚪" }, { label: "Call for the wizard",    icon: "🧙" }],
+    space: {
+      en: [{ label: "Fly to the nearest star",  icon: "⭐" }, { label: "Scan for alien life",    icon: "👽" }, { label: "Fix the rocket engine", icon: "🔧" }],
+      ur: [{ label: "قریب ترین ستارے کی طرف اڑیں",  icon: "⭐" }, { label: "بیگانہ زندگی کی تلاش کریں",    icon: "👽" }, { label: "راکٹ کا انجن ٹھیک کریں", icon: "🔧" }],
+    },
+    forest: {
+      en: [{ label: "Follow the glowing path",  icon: "✨" }, { label: "Talk to the wise owl",   icon: "🦉" }, { label: "Cross the magic bridge", icon: "🌉" }],
+      ur: [{ label: "روشن راستے کی پیروی کریں",  icon: "✨" }, { label: "عقلمند الو سے بات کریں",   icon: "🦉" }, { label: "جادوئی پل عبور کریں", icon: "🌉" }],
+    },
+    ocean: {
+      en: [{ label: "Dive deeper into the dark", icon: "🔦" }, { label: "Follow the dolphin",    icon: "🐬" }, { label: "Open the treasure chest", icon: "🪙" }],
+      ur: [{ label: "اندھیرے میں گہرائی میں غوطہ لگائیں", icon: "🔦" }, { label: "ڈالفن کی پیروی کریں",    icon: "🐬" }, { label: "خزانے کا صندوق کھولیں", icon: "🪙" }],
+    },
+    castle: {
+      en: [{ label: "Sneak past the dragon",    icon: "🐉" }, { label: "Find the secret door",   icon: "🚪" }, { label: "Call for the wizard",    icon: "🧙" }],
+      ur: [{ label: "ڈریگن کے پاس سے چھپ کر نکلیں",    icon: "🐉" }, { label: "خفیہ دروازہ تلاش کریں",   icon: "🚪" }, { label: "جادوگر کو بلائیں",    icon: "🧙" }],
+    },
   };
-  return byTheme[themeId] || [
-    { label: "Look around",   icon: "👀" },
-    { label: "Keep going",    icon: "🚶" },
-    { label: "Find a friend", icon: "🤝" },
-  ];
+  
+  const themeChoices = byTheme[themeId];
+  if (themeChoices) {
+    return themeChoices[language] || themeChoices.en;
+  }
+  
+  return language === "ur" 
+    ? [
+        { label: "ارد گرد دیکھیں",   icon: "👀" },
+        { label: "آگے بڑھتے رہیں",    icon: "🚶" },
+        { label: "کوئی دوست تلاش کریں", icon: "🤝" },
+      ]
+    : [
+        { label: "Look around",   icon: "👀" },
+        { label: "Keep going",    icon: "🚶" },
+        { label: "Find a friend", icon: "🤝" },
+      ];
 }

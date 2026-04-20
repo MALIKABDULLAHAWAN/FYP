@@ -31,6 +31,8 @@ export function useVoiceAPI() {
 
   const connectWS = useCallback(() => {
     if (wsRef.current?.readyState === WebSocket.OPEN) return;
+    // Don't retry if we've already exhausted retries
+    if (retryCountRef.current > MAX_RETRIES) return;
 
     const ws = new WebSocket(WS_URL);
     wsRef.current = ws;

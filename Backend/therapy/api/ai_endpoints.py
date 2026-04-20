@@ -30,6 +30,7 @@ def ai_chat(request):
         agent_key = data.get('agent', 'buddy')
         history = data.get('history', [])
         stream = data.get('stream', False)
+        language = data.get('language', 'en')
         
         if not message:
             return Response(
@@ -52,7 +53,8 @@ def ai_chat(request):
             message=message,
             agent_key=agent_key,
             history=history,
-            stream=stream
+            stream=stream,
+            language=language
         )
         
         if response.error and not response.text:
@@ -164,6 +166,7 @@ def continue_story(request):
         child_choice = data.get('child_choice')
         agent_key = data.get('agent', 'story_weaver')
         turns_left = data.get('turns_left', 5)
+        language = data.get('language', 'en')
         
         if not all([current_story, child_choice]):
             return Response(
@@ -176,7 +179,8 @@ def continue_story(request):
             current_story=current_story, 
             child_choice=child_choice, 
             agent_key=agent_key,
-            turns_left=turns_left
+            turns_left=turns_left,
+            language=language
         )
         
         return Response({'continuation': continuation})
@@ -265,6 +269,8 @@ def generate_content(request):
         theme = data.get('theme')
         age = data.get('age', 8)
         length = data.get('length', 'short')
+        difficulty = data.get('difficulty', 1)
+        language = data.get('language', 'en')
         
         if not content_type or not theme:
             return Response(
@@ -275,11 +281,11 @@ def generate_content(request):
         generator = AIContentGenerator()
         
         if content_type == 'story':
-            content = generator.generate_story(theme, age, length)
+            content = generator.generate_story(theme, age, length, language=language)
         elif content_type == 'poem':
-            content = generator.generate_poem(theme)
+            content = generator.generate_poem(theme, language=language)
         elif content_type == 'activity':
-            content = generator.generate_activity(theme, age)
+            content = generator.generate_activity(theme, age, language=language)
         else:
             return Response(
                 {'error': f'Unknown content_type: {content_type}'},

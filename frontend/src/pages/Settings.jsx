@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useToast } from "../hooks/useToast";
 import UiIcon from "../components/ui/UiIcon";
 import "../styles/professional.css";
 
 export default function Settings() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const toast = useToast();
 
   const [settings, setSettings] = useState({
-    theme: "auto",
     language: "en",
     notifications: {
       email: true,
@@ -30,338 +31,355 @@ export default function Settings() {
     },
   });
 
-  const [loading, setLoading] = useState(false);
-  const [activeSection, setActiveSection] = useState("general");
+  const [saving, setSaving] = useState(false);
+  const [activeSection, setActiveSection] = useState("notifications");
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
-  // Load saved settings from localStorage
   useEffect(() => {
     const saved = localStorage.getItem("dhyan_settings");
     if (saved) {
       try {
-        const savedSettings = JSON.parse(saved);
-        setSettings(prev => ({
-          ...prev,
-          ...savedSettings
-        }));
-      } catch {
-        // ignore parse errors
-      }
+        setSettings((prev) => ({ ...prev, ...JSON.parse(saved) }));
+      } catch {}
     }
   }, []);
 
-  const saveSettings = () => {
-    setLoading(true);
+  function saveSettings() {
+    setSaving(true);
     setTimeout(() => {
       localStorage.setItem("dhyan_settings", JSON.stringify(settings));
-      toast.success("Settings saved successfully!");
-      setLoading(false);
-    }, 500);
-  };
+      toast.success("Settings saved!");
+      setSaving(false);
+    }, 400);
+  }
 
-  const updateSetting = (section, key, value) => {
+  function updateSetting(section, key, value) {
     setSettings((prev) => ({
       ...prev,
-      [section]: {
-        ...prev[section],
-        [key]: value,
-      },
+      [section]: { ...prev[section], [key]: value },
     }));
-  };
+  }
+
+  function handleLogout() {
+    logout();
+    navigate("/");
+  }
 
   const sections = [
-    { id: "general", icon: "settings", title: "General" },
-    { id: "notifications", icon: "bell", title: "Notifications" },
-    { id: "accessibility", icon: "accessibility", title: "Accessibility" },
-    { id: "privacy", icon: "lock", title: "Privacy" },
-    { id: "account", icon: "profile", title: "Account" },
+    { id: "notifications", icon: "bell", label: "Notifications" },
+    { id: "accessibility", icon: "accessibility", label: "Accessibility" },
+    { id: "privacy", icon: "lock", label: "Privacy" },
+    { id: "account", icon: "profile", label: "Account" },
   ];
 
   return (
-    <div className="page-wrapper">
-      <div className="page-header">
-        <div className="page-title-with-icon">
-          <UiIcon name="settings" size={32} title="" /> 
-          <h1 className="page-title">Settings</h1>
-        </div>
-        <p className="page-subtitle">Customize your DHYAN experience</p>
+    <div className="container" style={{ maxWidth: 860, margin: "0 auto", padding: "32px 16px" }}>
+      {/* Header */}
+      <div style={{ marginBottom: 28 }}>
+        <h1 style={{ fontSize: 26, fontWeight: 700, color: "var(--text)", margin: 0 }}>
+          Settings
+        </h1>
+        <p style={{ color: "var(--text-secondary)", marginTop: 4, fontSize: 14 }}>
+          Customize your DHYAN experience
+        </p>
       </div>
 
-      <div className="settings-grid">
+      <div style={{ display: "grid", gridTemplateColumns: "200px 1fr", gap: 20, alignItems: "start" }}>
         {/* Sidebar */}
-        <div className="card settings-sidebar">
-          <nav className="settings-nav">
-            {sections.map((section) => (
+        <div className="panel" style={{ padding: 12 }}>
+          <nav style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            {sections.map((s) => (
               <button
-                key={section.id}
-                onClick={() => setActiveSection(section.id)}
-                className={`btn btn-lg w-full justify-start ${activeSection === section.id ? 'btn-primary' : 'btn-outline'}`}
+                key={s.id}
+                onClick={() => setActiveSection(s.id)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  padding: "10px 14px",
+                  borderRadius: "var(--radius)",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: 14,
+                  fontWeight: activeSection === s.id ? 700 : 500,
+                  background: activeSection === s.id ? "var(--primary-bg)" : "transparent",
+                  color: activeSection === s.id ? "var(--primary-light)" : "var(--text-secondary)",
+                  textAlign: "left",
+                  width: "100%",
+                  transition: "background 0.15s",
+                }}
               >
-                <UiIcon name={section.icon} size={18} title="" />
-                {section.title}
+                <UiIcon name={s.icon} size={17} title="" />
+                {s.label}
               </button>
             ))}
           </nav>
         </div>
 
         {/* Content */}
-        <div className="card settings-content">
-          {activeSection === "general" && (
-            <div>
-              <h2 className="card-title">
-                <UiIcon name="settings" size={24} title="" /> General Settings
-              </h2>
-
-              <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-                <div>
-                  <label className="form-label">
-                    Theme
-                  </label>
-                  <div className="theme-grid">
-                    {["light", "dark", "auto"].map((theme) => (
-                      <button
-                        key={theme}
-                        onClick={() => setSettings((p) => ({ ...p, theme }))}
-                        className={`btn btn-lg theme-btn ${settings.theme === theme ? 'btn-primary' : 'btn-outline'}`}
-                      >
-                        <UiIcon 
-                          name={theme === "light" ? "sun" : theme === "dark" ? "moon" : "refresh"} 
-                          size={20} 
-                          title="" 
-                        />
-                        <span className="theme-label">{theme}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="form-label">
-                    Language
-                  </label>
-                  <select
-                    value={settings.language}
-                    onChange={(e) => setSettings((p) => ({ ...p, language: e.target.value }))}
-                    className="form-input"
-                  >
-                    <option value="en">English</option>
-                    <option value="es">Español</option>
-                    <option value="fr">Français</option>
-                    <option value="de">Deutsch</option>
-                    <option value="hi">Hindi</option>
-                    <option value="ur">Urdu</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          )}
-
+        <div className="panel" style={{ padding: "24px 28px" }}>
+          {/* ── Notifications ── */}
           {activeSection === "notifications" && (
-            <div>
-              <h2 className="card-title">
-                <UiIcon name="bell" size={24} title="" /> Notification Preferences
-              </h2>
-
-              <div className="settings-list">
-                {[
-                  { key: "email", icon: "mail", label: "Email Notifications", desc: "Receive updates via email" },
-                  { key: "push", icon: "bell", label: "Push Notifications", desc: "Browser notifications" },
-                  { key: "achievements", icon: "trophy", label: "Achievement Alerts", desc: "Notify when achievements unlocked" },
-                  { key: "sessionReminders", icon: "timer", label: "Session Reminders", desc: "Remind about upcoming sessions" },
-                  { key: "weeklyReports", icon: "chart", label: "Weekly Reports", desc: "Weekly progress summary" },
-                ].map((item) => (
-                  <div
-                    key={item.key}
-                    className="setting-item"
-                  >
-                    <div className="setting-item-info">
-                      <UiIcon name={item.icon} size={24} title="" />
-                      <div>
-                        <div className="setting-item-label">{item.label}</div>
-                        <div className="setting-item-desc">{item.desc}</div>
-                      </div>
-                    </div>
-                    <ToggleSwitch
-                      checked={settings.notifications[item.key]}
-                      onChange={(v) => updateSetting("notifications", item.key, v)}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
+            <Section title="Notifications" icon="bell">
+              {[
+                { key: "email", icon: "mail", label: "Email Notifications", desc: "Receive updates via email" },
+                { key: "push", icon: "bell", label: "Push Notifications", desc: "Browser notifications" },
+                { key: "achievements", icon: "trophy", label: "Achievement Alerts", desc: "Notify when achievements are unlocked" },
+                { key: "sessionReminders", icon: "timer", label: "Session Reminders", desc: "Remind about upcoming sessions" },
+                { key: "weeklyReports", icon: "chart", label: "Weekly Reports", desc: "Weekly progress summary" },
+              ].map((item) => (
+                <SettingRow
+                  key={item.key}
+                  icon={item.icon}
+                  label={item.label}
+                  desc={item.desc}
+                >
+                  <Toggle
+                    checked={settings.notifications[item.key]}
+                    onChange={(v) => updateSetting("notifications", item.key, v)}
+                  />
+                </SettingRow>
+              ))}
+            </Section>
           )}
 
+          {/* ── Accessibility ── */}
           {activeSection === "accessibility" && (
-            <div>
-              <h2 className="card-title">
-                <UiIcon name="accessibility" size={24} title="" /> Accessibility
-              </h2>
-
-              <div className="settings-list">
-                {[
-                  { key: "highContrast", icon: "palette", label: "High Contrast", desc: "Increase contrast for better visibility" },
-                  { key: "largeText", icon: "search", label: "Large Text", desc: "Increase text size throughout" },
-                  { key: "reduceMotion", icon: "refresh", label: "Reduce Motion", desc: "Minimize animations" },
-                  { key: "soundEffects", icon: "volume", label: "Sound Effects", desc: "Play sounds for interactions" },
-                ].map((item) => (
-                  <div
-                    key={item.key}
-                    className="setting-item"
-                  >
-                    <div className="setting-item-info">
-                      <UiIcon name={item.icon} size={24} title="" />
-                      <div>
-                        <div className="setting-item-label">{item.label}</div>
-                        <div className="setting-item-desc">{item.desc}</div>
-                      </div>
-                    </div>
-                    <ToggleSwitch
-                      checked={settings.accessibility[item.key]}
-                      onChange={(v) => updateSetting("accessibility", item.key, v)}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
+            <Section title="Accessibility" icon="accessibility">
+              {[
+                { key: "highContrast", icon: "palette", label: "High Contrast", desc: "Increase contrast for better visibility" },
+                { key: "largeText", icon: "search", label: "Large Text", desc: "Increase text size throughout the app" },
+                { key: "reduceMotion", icon: "refresh", label: "Reduce Motion", desc: "Minimize animations" },
+                { key: "soundEffects", icon: "volume", label: "Sound Effects", desc: "Play sounds for interactions" },
+              ].map((item) => (
+                <SettingRow
+                  key={item.key}
+                  icon={item.icon}
+                  label={item.label}
+                  desc={item.desc}
+                >
+                  <Toggle
+                    checked={settings.accessibility[item.key]}
+                    onChange={(v) => updateSetting("accessibility", item.key, v)}
+                  />
+                </SettingRow>
+              ))}
+            </Section>
           )}
 
+          {/* ── Privacy ── */}
           {activeSection === "privacy" && (
-            <div>
-              <h2 className="card-title">
-                <UiIcon name="lock" size={24} title="" /> Privacy Settings
-              </h2>
-
-              <div className="settings-list">
-                {[
-                  { key: "shareProgress", icon: "upload", label: "Share Progress", desc: "Allow sharing progress with therapists" },
-                  { key: "allowAnalytics", icon: "chart", label: "Usage Analytics", desc: "Help improve DHYAN with anonymous data" },
-                ].map((item) => (
-                  <div
-                    key={item.key}
-                    className="setting-item"
-                  >
-                    <div className="setting-item-info">
-                      <UiIcon name={item.icon} size={24} title="" />
-                      <div>
-                        <div className="setting-item-label">{item.label}</div>
-                        <div className="setting-item-desc">{item.desc}</div>
-                      </div>
-                    </div>
-                    <ToggleSwitch
-                      checked={settings.privacy[item.key]}
-                      onChange={(v) => updateSetting("privacy", item.key, v)}
-                    />
-                  </div>
-                ))}
-
-                <div className="card card-danger mt-6">
-                  <div className="card-title text-danger">
-                    <UiIcon name="trash" size={20} title="" /> Data Management
-                  </div>
-                  <p className="card-text">
-                    You can download all your data or delete your account permanently.
-                  </p>
-                  <div className="button-row">
-                    <button className="btn btn-outline">
-                      <UiIcon name="download" size={16} title="" />
-                      Download My Data
-                    </button>
-                    <button className="btn btn-danger">
-                      <UiIcon name="trash" size={16} title="" />
-                      Delete Account
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Section title="Privacy" icon="lock">
+              {[
+                { key: "shareProgress", icon: "upload", label: "Share Progress", desc: "Allow sharing progress with therapists" },
+                { key: "allowAnalytics", icon: "chart", label: "Usage Analytics", desc: "Help improve DHYAN with anonymous data" },
+              ].map((item) => (
+                <SettingRow
+                  key={item.key}
+                  icon={item.icon}
+                  label={item.label}
+                  desc={item.desc}
+                >
+                  <Toggle
+                    checked={settings.privacy[item.key]}
+                    onChange={(v) => updateSetting("privacy", item.key, v)}
+                  />
+                </SettingRow>
+              ))}
+            </Section>
           )}
 
+          {/* ── Account ── */}
           {activeSection === "account" && (
-            <div>
-              <h2 className="card-title">
-                <UiIcon name="profile" size={24} title="" /> Account Information
-              </h2>
-
-              <div className="account-section">
-                <div className="account-card">
-                  <div className="account-avatar">
-                    {user?.full_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || "U"}
+            <Section title="Account" icon="profile">
+              {/* Info card */}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 16,
+                  padding: "16px 20px",
+                  background: "var(--card)",
+                  borderRadius: "var(--radius)",
+                  marginBottom: 20,
+                  border: "1px solid var(--border)",
+                }}
+              >
+                <div
+                  style={{
+                    width: 52,
+                    height: 52,
+                    borderRadius: "50%",
+                    background: "linear-gradient(135deg, var(--primary), #818cf8)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: 22,
+                    fontWeight: 700,
+                    color: "#fff",
+                    flexShrink: 0,
+                  }}
+                >
+                  {(user?.full_name || user?.email || "U").charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <div style={{ fontWeight: 700, color: "var(--text)", fontSize: 15 }}>
+                    {user?.full_name || "User"}
                   </div>
-                  <div className="account-info">
-                    <div className="account-name">{user?.full_name || "User"}</div>
-                    <div className="account-email">{user?.email}</div>
-                    <div className="account-status">
-                      <span className="status-dot active"></span>
-                      Active Account
-                    </div>
+                  <div style={{ fontSize: 13, color: "var(--text-secondary)" }}>{user?.email}</div>
+                  <div style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 2 }}>
+                    Role: {user?.roles?.join(", ") || "User"}
                   </div>
                 </div>
-
-                <div className="account-stats">
-                  <div className="stat-card">
-                    <div className="stat-label">Role</div>
-                    <div className="stat-value">{user?.role || "Child"}</div>
-                  </div>
-                  <div className="stat-card">
-                    <div className="stat-label">Member Since</div>
-                    <div className="stat-value">{new Date().toLocaleDateString()}</div>
-                  </div>
-                </div>
-
-                <button className="btn btn-primary btn-lg">
-                  <UiIcon name="lock-badge" size={18} title="" />
-                  Change Password
-                </button>
               </div>
-            </div>
+
+              {/* Logout */}
+              <div
+                style={{
+                  padding: "16px 20px",
+                  background: "var(--card)",
+                  borderRadius: "var(--radius)",
+                  border: "1px solid var(--border)",
+                }}
+              >
+                <div style={{ fontWeight: 600, color: "var(--text)", marginBottom: 4, fontSize: 14 }}>
+                  Sign Out
+                </div>
+                <div style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 14 }}>
+                  You will be returned to the login screen.
+                </div>
+                {!showLogoutConfirm ? (
+                  <button
+                    className="btn btn-outline"
+                    style={{ fontSize: 14, padding: "9px 20px", color: "var(--error)", borderColor: "var(--error)" }}
+                    onClick={() => setShowLogoutConfirm(true)}
+                  >
+                    Log Out
+                  </button>
+                ) : (
+                  <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                    <span style={{ fontSize: 13, color: "var(--text-secondary)" }}>Are you sure?</span>
+                    <button
+                      className="btn btn-danger"
+                      style={{ fontSize: 14, padding: "8px 18px" }}
+                      onClick={handleLogout}
+                    >
+                      Yes, log out
+                    </button>
+                    <button
+                      className="btn btn-outline"
+                      style={{ fontSize: 14, padding: "8px 18px" }}
+                      onClick={() => setShowLogoutConfirm(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
+              </div>
+            </Section>
           )}
 
-          {/* Save Button */}
-          <div className="settings-save-bar">
-            <button
-              onClick={saveSettings}
-              disabled={loading}
-              className="btn btn-primary btn-lg"
-            >
-              {loading ? "Saving..." : (
-                <>
-                  <UiIcon name="save" size={18} title="" />
-                  Save Changes
-                </>
-              )}
-            </button>
-          </div>
+          {/* Save bar — not shown on account tab */}
+          {activeSection !== "account" && (
+            <div style={{ marginTop: 28, paddingTop: 20, borderTop: "1px solid var(--border)" }}>
+              <button
+                onClick={saveSettings}
+                disabled={saving}
+                className="btn btn-primary"
+                style={{ padding: "10px 28px", fontSize: 14 }}
+              >
+                {saving ? "Saving..." : "Save Changes"}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-function ToggleSwitch({ checked, onChange }) {
+/* ── Small helpers ── */
+
+function Section({ title, icon, children }) {
+  return (
+    <div>
+      <h2
+        style={{
+          fontSize: 16,
+          fontWeight: 700,
+          color: "var(--text)",
+          marginTop: 0,
+          marginBottom: 20,
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+        }}
+      >
+        <UiIcon name={icon} size={20} title="" />
+        {title}
+      </h2>
+      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function SettingRow({ icon, label, desc, children }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "14px 16px",
+        borderRadius: "var(--radius)",
+        background: "var(--card)",
+        border: "1px solid var(--border)",
+        gap: 12,
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <UiIcon name={icon} size={20} title="" style={{ color: "var(--text-secondary)" }} />
+        <div>
+          <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text)" }}>{label}</div>
+          <div style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 2 }}>{desc}</div>
+        </div>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function Toggle({ checked, onChange }) {
   return (
     <button
       onClick={() => onChange(!checked)}
+      aria-checked={checked}
+      role="switch"
       style={{
-        width: 52,
-        height: 28,
-        borderRadius: 14,
+        width: 48,
+        height: 26,
+        borderRadius: 13,
         border: "none",
-        background: checked ? "var(--success)" : "var(--border)",
+        background: checked ? "var(--primary)" : "var(--border)",
         cursor: "pointer",
         position: "relative",
-        transition: "background 0.2s ease",
+        flexShrink: 0,
+        transition: "background 0.2s",
       }}
     >
       <div
         style={{
-          width: 22,
-          height: 22,
+          width: 20,
+          height: 20,
           borderRadius: "50%",
-          background: "white",
+          background: "#fff",
           position: "absolute",
           top: 3,
-          left: checked ? 27 : 3,
-          transition: "left 0.2s ease",
-          boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+          left: checked ? 25 : 3,
+          transition: "left 0.2s",
+          boxShadow: "0 1px 4px rgba(0,0,0,0.2)",
         }}
       />
     </button>

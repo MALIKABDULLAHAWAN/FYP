@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "therapy",
     "compliance",
     "audit",
+    "voice_assistant",
 ]
 
 MIDDLEWARE = [

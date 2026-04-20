@@ -42,8 +42,7 @@ const EmotionFaceGame = lazy(() => import("./pages/games/EmotionFaceGame"));
 const AnimalSoundGame = lazy(() => import("./pages/games/AnimalSoundGame"));
 const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 const Settings = lazy(() => import("./pages/Settings"));
-const Help = lazy(() => import("./pages/Help"));
-const VoiceAssistant = lazy(() => import("./pages/VoiceAssistant"));
+const VoiceAssistantPage = lazy(() => import("./pages/VoiceAssistantPage"));
 const StickerPack = lazy(() => import("./pages/StickerPack"));
 
 function ProtectedLayout({ children }) {
@@ -86,7 +85,7 @@ export default function App() {
 
                 {/* Protected routes with layout */}
                 <Route path="/dashboard" element={<ProtectedLayout><Dashboard /></ProtectedLayout>} />
-                <Route path="/voice-assistant" element={<ProtectedLayout><VoiceAssistant /></ProtectedLayout>} />
+                <Route path="/voice-assistant" element={<ProtectedLayout><VoiceAssistantPage /></ProtectedLayout>} />
                 <Route path="/therapist" element={<ProtectedLayout><TherapistConsole /></ProtectedLayout>} />
                 <Route path="/games" element={<ProtectedLayout><GameRouter /></ProtectedLayout>} />
                 <Route path="/games/ja" element={<ProtectedLayout><JaGame /></ProtectedLayout>} />
@@ -106,7 +105,6 @@ export default function App() {
                 <Route path="/sticker-pack" element={<ProtectedLayout><StickerPack /></ProtectedLayout>} />
                 <Route path="/profile" element={<ProtectedLayout><ProfilePage /></ProtectedLayout>} />
                 <Route path="/settings" element={<ProtectedLayout><Settings /></ProtectedLayout>} />
-                <Route path="/help" element={<ProtectedLayout><Help /></ProtectedLayout>} />
 
                 {/* Catch-all */}
                 <Route path="*" element={<Navigate to="/" replace />} />

@@ -5,6 +5,7 @@ import { useNotifications, NotificationBell, NotificationsPanel } from "./Notifi
 import { StickerLayer } from "./StickerLayer";
 import { MusicPlayer, MusicPlayerButton } from "./MusicPlayer";
 import FloatingVoiceAssistant from "./FloatingVoiceAssistant";
+import VoiceSettings from "./VoiceSettings";
 import UiIcon from "./ui/UiIcon";
 import "./Layout.css";
 import "../styles/professional.css";
@@ -18,7 +19,6 @@ const NAV_ITEMS = [
   { to: "/sticker-pack", label: "Sticker Album", icon: "star" },
   { to: "/profile", label: "My Profile", icon: "profile" },
   { to: "/settings", label: "Settings", icon: "settings" },
-  { to: "/help", label: "Help", icon: "help" },
 ];
 
 export default function Layout({ children }) {
@@ -27,6 +27,7 @@ export default function Layout({ children }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [musicOpen, setMusicOpen] = useState(false);
+  const [voiceSettingsOpen, setVoiceSettingsOpen] = useState(false);
   const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification, clearAll } = useNotifications();
 
   const handleLogout = () => {
@@ -129,6 +130,29 @@ export default function Layout({ children }) {
               />
             </div>
 
+            {/* Voice Settings Button */}
+            <button
+              onClick={() => setVoiceSettingsOpen(true)}
+              className="nav-voice-settings"
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '8px',
+                borderRadius: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#6366F1',
+                transition: 'background-color 0.2s'
+              }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = 'rgba(99, 102, 241, 0.1)'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+              title="Voice Settings"
+            >
+              <UiIcon name="volume-2" size={20} />
+            </button>
+
             <NavLink to="/profile" className="nav-user-profile">
               <span className="nav-user-icon">
                 <UiIcon name="wave" size={20} title="" />
@@ -167,6 +191,12 @@ export default function Layout({ children }) {
       ) : (
         <MusicPlayerButton onClick={() => setMusicOpen(true)} />
       )}
+
+      {/* Voice Settings Modal */}
+      <VoiceSettings 
+        isOpen={voiceSettingsOpen} 
+        onClose={() => setVoiceSettingsOpen(false)} 
+      />
     </div>
   );
 }

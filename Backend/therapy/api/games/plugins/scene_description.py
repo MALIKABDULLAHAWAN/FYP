@@ -1,103 +1,49 @@
 """
-Scene Description Game – Describe an Image with Multimodal Gemini Evaluation
+Scene Description Game - Describe an Image with Groq LLM Evaluation
 ABA Level 1-3: Receptive language, descriptive language, communication development.
 
 Flow:
   - System shows a scenario image to the child
   - Child types what they see
-  - Backend sends (image + child text + expected description + key elements) to Gemini (multimodal)
-  - Gemini returns STRICT JSON evaluation:
+  - Backend sends (child text + expected description + key elements) to Groq as LLM judge
+  - Groq returns STRICT JSON evaluation:
       clarity_score (0-10), completeness_score (0-10), overall_score (0-100),
       key_elements_found, strengths, areas_for_improvement, feedback
   - Difficulty adapts based on avg overall_score across completed trials
   - Stores full evaluation in SceneDescriptionResponse
-
-Each trial = one scenario image + child's description + LLM feedback.
 """
 
 from __future__ import annotations
 
 import json
-from typing import Any, Dict, Optional, Tuple, List
+import logging
+from typing import Any, Dict, List, Optional
 
 from django.conf import settings
-from django.core.files.storage import default_storage
 
 from therapy.models import SessionTrial, ScenarioImage, SceneDescriptionResponse
 from therapy.api.games.registry import register
 
-
-# ─────────────────────────────────────────────────────────────
-# Gemini (Multimodal) Utility
-# ─────────────────────────────────────────────────────────────
-
-def _get_gemini_client():
-    """
-    Uses Google GenAI Python SDK (google-genai).
-    Requires:
-      - pip install google-genai
-      - GEMINI_API_KEY in settings (or as env var GEMINI_API_KEY)
-    """
-    api_key = getattr(settings, "GEMINI_API_KEY", None)
-    if not api_key:
-        return None, None
-
-    try:
-        # Official SDK style (Gemini API) docs:
-        # from google import genai
-        # from google.genai import types
-        from google import genai
-        from google.genai import types
-        client = genai.Client(api_key=api_key)
-        return client, types
-    except Exception:
-        return None, None
+logger = logging.getLogger("therapy.scene_description")
 
 
-def _guess_mime_type(filename: str) -> str:
-    """
-    Best-effort MIME guess for image.
-    """
-    lower = (filename or "").lower()
-    if lower.endswith(".png"):
-        return "image/png"
-    if lower.endswith(".webp"):
-        return "image/webp"
-    if lower.endswith(".jpg") or lower.endswith(".jpeg"):
-        return "image/jpeg"
-    if lower.endswith(".avif"):
-        return "image/avif"
-    # default (most common)
-    return "image/jpeg"
-
-
-def _image_to_bytes(image_field) -> Tuple[bytes, str]:
-    """
-    Convert Django ImageField to raw bytes + mime_type.
-    Returns (b"", "") if image not available.
-    """
-    if not image_field:
-        return b"", ""
-    try:
-        with default_storage.open(image_field.name, "rb") as f:
-            content = f.read()
-        mime = _guess_mime_type(image_field.name)
-        return content, mime
-    except Exception:
-        return b"", ""
-
+# -----------------------------------------------------------------
+# Groq LLM Judge
+# -----------------------------------------------------------------
 
 def evaluate_scene_description(
     *,
-    image_bytes: bytes,
-    image_mime: str,
     child_response: str,
     expected_description: str,
     key_elements: List[str],
+    scenario_title: str = "",
     model_name: Optional[str] = None,
+    # kept for API compatibility (Groq is text-only, image bytes ignored)
+    image_bytes: bytes = b"",
+    image_mime: str = "",
 ) -> Dict[str, Any]:
     """
-    Evaluate child's description against the image + expected key points using multimodal Gemini.
+    Evaluate child's scene description using Groq as an LLM judge.
 
     Returns:
     {
@@ -111,99 +57,100 @@ def evaluate_scene_description(
       "error": None | str
     }
     """
-    client, types = _get_gemini_client()
-    if not client:
+    api_key = getattr(settings, "GROQ_API_KEY", None)
+    if not api_key:
         return {
             "llm_score": 50,
-            "feedback": "LLM evaluation not available (Gemini API key not configured).",
+            "feedback": "LLM evaluation not available (Groq API key not configured).",
             "clarity_score": 5,
             "completeness_score": 5,
             "key_elements_found": [],
             "strengths": "",
             "areas_for_improvement": "",
-            "error": "Gemini API key not configured",
+            "error": "Groq API key not configured",
         }
 
-    # Choose a multimodal-capable model.
-    # You can change this in settings.GEMINI_MODEL, or pass model_name.
-    model = model_name or getattr(settings, "GEMINI_MODEL", "gemini-3-flash-preview")
+    try:
+        from groq import Groq
+    except ImportError:
+        return {
+            "llm_score": 50,
+            "feedback": "Groq package not installed.",
+            "clarity_score": 5,
+            "completeness_score": 5,
+            "key_elements_found": [],
+            "strengths": "",
+            "areas_for_improvement": "",
+            "error": "groq package not installed",
+        }
 
+    model = model_name or getattr(settings, "AI_MODEL_DEFAULT", "llama-3.3-70b-versatile")
     elements_str = ", ".join(key_elements) if key_elements else "any relevant details"
+    scene_context = f'Scene title: "{scenario_title}"\n' if scenario_title else ""
 
-    # Prompt: ask for STRICT JSON only.
-    prompt = f"""
-You are an autism therapy evaluation assistant.
+    system_prompt = (
+        "You are an autism therapy evaluation assistant. "
+        "You evaluate children's image descriptions in a warm, encouraging way. "
+        "Always respond with STRICT JSON only — no markdown, no extra text."
+    )
 
-Task:
-A child described the image they saw. Evaluate their description in a supportive way.
-
-Expected key elements to include (if present in the image):
+    user_prompt = f"""{scene_context}
+Expected key elements in the image:
 {elements_str}
 
-Expected reference description (teacher/therapist reference):
-{expected_description}
+Reference description (therapist's expected answer):
+{expected_description or "Not provided — evaluate based on key elements and child language quality."}
 
 Child's response:
 "{child_response}"
 
-Return STRICT JSON ONLY (no markdown, no extra text). Use this exact structure:
+Return STRICT JSON ONLY using this exact structure:
 {{
   "clarity_score": <integer 0-10>,
   "completeness_score": <integer 0-10>,
   "overall_score": <integer 0-100>,
   "key_elements_found": [<strings from the expected key elements that the child mentioned>],
-  "feedback": "<encouraging, constructive feedback addressed to the child>",
-  "strengths": "<what the child did well>",
-  "areas_for_improvement": "<gentle suggestions to improve next time>"
+  "feedback": "<encouraging, constructive feedback addressed to the child, 1-2 sentences>",
+  "strengths": "<what the child did well, 1 sentence>",
+  "areas_for_improvement": "<gentle suggestion for next time, 1 sentence>"
 }}
 
 Rules:
 - Be encouraging and supportive for autistic children.
-- If image details are unclear, focus on the child’s language quality and partial matches.
-- Keep feedback short and child-friendly.
+- Score generously for partial matches and effort.
+- Keep all text fields short and child-friendly.
 """.strip()
 
-    import logging
     try:
-        parts = []
-
-        # Attach image as inline bytes if present
-        if image_bytes and image_mime:
-            img_part = types.Part.from_bytes(data=image_bytes, mime_type=image_mime)
-            parts.append(img_part)
-
-        parts.append(prompt)
-
-        # Ask Gemini to output JSON
-        config = None
-        try:
-            config = types.GenerateContentConfig(response_mime_type="application/json")
-        except Exception:
-            # Older versions may not expose GenerateContentConfig; fallback to prompt-only JSON enforcement.
-            config = None
-
-        resp = client.models.generate_content(
+        client = Groq(api_key=api_key)
+        completion = client.chat.completions.create(
             model=model,
-            contents=parts,
-            config=config,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            temperature=0.3,
+            max_tokens=512,
         )
 
-        raw_text = (resp.text or "").strip()
+        raw_text = (completion.choices[0].message.content or "").strip()
+        logger.info(f"Groq raw response: {raw_text}")
 
-        # Debug: log the raw Gemini response
-        logging.getLogger("therapy.scene_description").info(f"Gemini raw response: {raw_text}")
+        # Strip markdown fences if present
+        if raw_text.startswith("```"):
+            raw_text = raw_text.split("```")[1]
+            if raw_text.startswith("json"):
+                raw_text = raw_text[4:]
+            raw_text = raw_text.strip()
 
-        # Parse JSON (Gemini with response_mime_type should be JSON, but still defensive)
         try:
             result = json.loads(raw_text)
         except json.JSONDecodeError:
-            # Attempt to extract JSON substring
             start = raw_text.find("{")
             end = raw_text.rfind("}") + 1
             if start >= 0 and end > start:
                 result = json.loads(raw_text[start:end])
             else:
-                # Last resort: treat as feedback
                 result = {
                     "clarity_score": 5,
                     "completeness_score": 5,
@@ -214,31 +161,28 @@ Rules:
                     "areas_for_improvement": "",
                 }
 
-        # Debug: log the parsed result
-        logging.getLogger("therapy.scene_description").info(f"Gemini parsed result: {result}")
+        logger.info(f"Groq parsed result: {result}")
 
-        # Normalize fields + map overall_score -> llm_score
-        clarity = int(result.get("clarity_score", 5))
-        completeness = int(result.get("completeness_score", 5))
-        overall = int(result.get("overall_score", 50))
+        clarity = max(0, min(10, int(result.get("clarity_score", 5))))
+        completeness = max(0, min(10, int(result.get("completeness_score", 5))))
+        overall = max(0, min(100, int(result.get("overall_score", 50))))
 
-        out = {
+        return {
             "llm_score": overall,
-            "feedback": result.get("feedback", "Feedback provided."),
-            "clarity_score": max(0, min(10, clarity)),
-            "completeness_score": max(0, min(10, completeness)),
+            "feedback": result.get("feedback", "Great effort!"),
+            "clarity_score": clarity,
+            "completeness_score": completeness,
             "key_elements_found": result.get("key_elements_found", []) or [],
             "strengths": result.get("strengths", "") or "",
             "areas_for_improvement": result.get("areas_for_improvement", "") or "",
             "error": None,
         }
-        return out
 
     except Exception as e:
-        logging.getLogger("therapy.scene_description").error(f"Gemini evaluation error: {str(e)}")
+        logger.error(f"Groq evaluation error: {e}")
         return {
             "llm_score": 50,
-            "feedback": f"Evaluation error: {str(e)}",
+            "feedback": f"Evaluation error: {e}",
             "clarity_score": 5,
             "completeness_score": 5,
             "key_elements_found": [],
@@ -248,9 +192,9 @@ Rules:
         }
 
 
-# ─────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------
 # Game Plugin
-# ─────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------
 
 @register
 class SceneDescriptionGame:
@@ -259,10 +203,7 @@ class SceneDescriptionGame:
     game_name = "Scene Description"
 
     def compute_level(self, session_id: int) -> int:
-        """
-        Adapt difficulty based on previous completed trials.
-        Uses average LLM score.
-        """
+        """Adapt difficulty based on average LLM score of completed trials."""
         completed = SessionTrial.objects.filter(
             session_id=session_id,
             trial_type=self.trial_type,
@@ -295,9 +236,7 @@ class SceneDescriptionGame:
         return 1
 
     def build_trial(self, level: int, *, session_id: Optional[int] = None) -> Dict[str, Any]:
-        """
-        Select a random scenario image and adapt prompt complexity to level.
-        """
+        """Select a random scenario image and adapt prompt complexity to level."""
         if session_id:
             level = self.compute_level(session_id)
 
@@ -315,7 +254,6 @@ class SceneDescriptionGame:
         scenario = scenarios[0]
         image_url = scenario.image.url if scenario.image else None
 
-        # Tiered prompt complexity
         if level <= 1:
             prompt = "Look at this picture. Can you tell me what you see?"
             ai_hint = "Describe the main things \u2014 colors, objects, people, actions."
@@ -352,15 +290,12 @@ class SceneDescriptionGame:
         trial=None,
     ) -> Dict[str, Any]:
         """
-        Evaluate the child's description against the scenario image using multimodal Gemini.
+        Evaluate the child's description using Groq as LLM judge.
 
         submit = {
           "scenario_id": <id>,
           "child_response": "child's description text"
         }
-
-        If `trial` is passed (recommended), the full evaluation will be saved
-        to SceneDescriptionResponse linked to that trial.
         """
         scenario_id = submit.get("scenario_id")
         child_response = (submit.get("child_response") or "").strip()
@@ -393,14 +328,11 @@ class SceneDescriptionGame:
                 "areas_for_improvement": "",
             }
 
-        image_bytes, image_mime = _image_to_bytes(scenario.image) if scenario.image else (b"", "")
-
         eval_result = evaluate_scene_description(
-            image_bytes=image_bytes,
-            image_mime=image_mime,
             child_response=child_response,
             expected_description=getattr(scenario, "expected_description", "") or "",
             key_elements=getattr(scenario, "key_elements", None) or [],
+            scenario_title=getattr(scenario, "title", "") or "",
         )
 
         llm_score = int(eval_result.get("llm_score", 50))
@@ -410,7 +342,6 @@ class SceneDescriptionGame:
         if eval_result.get("error"):
             feedback = f"{feedback} [Note: {eval_result['error']}]"
 
-        # Save response
         if trial is not None:
             SceneDescriptionResponse.objects.create(
                 trial=trial,

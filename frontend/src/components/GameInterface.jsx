@@ -37,7 +37,7 @@ import {
   MagicalSparkles,
   FloatingOrbs
 } from './AmbientEffects';
-import { generateEncouragement, getPersonalizedHint } from '../services/aiServiceEnhanced';
+import { generateEncouragement, getPersonalizedHint } from '../services/gameAIService';
 import achievementSystem from '../services/AchievementSystem';
 
 // Styles

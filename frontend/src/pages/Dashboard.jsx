@@ -11,26 +11,19 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer as RechartsCo
 import ProgressRing from "../components/ProgressRing";
 import { AnimalStickers, FruitStickers, ShapeStickers, VehicleStickers, ObjectStickers, NumberStickers, PatternStickers } from "../components/Stickers";
 import {
-  AmbientParticles,
   ConfettiExplosion,
   SmoothButton,
   Sticker3D,
   SpringContainer,
-  FloatingEmoji,
-  MagicalSparkles,
   SuccessBurst,
-  FloatingOrbs,
-  BouncingStars,
   PulsingHeart
 } from "../components/AmbientEffects";
 import { MusicPlayer, MusicPlayerButton } from "../components/MusicPlayer";
-import AIAgentPanel, { AIAgentButton } from "../components/AIAgentPanel";
 import { CONTENT_LIBRARY } from '../data/contentLibrary';
 import missionService from '../services/MissionService';
 import AchievementDisplay from '../components/AchievementDisplay';
 import audioFeedback from '../services/AudioFeedback';
 import "../styles/professional.css";
-import "../styles/ai-agents.css";
 import "../styles/game-enhancements.css";
 import "./Dashboard.css";
 
@@ -244,8 +237,6 @@ export default function Dashboard() {
       <div className="floating-decoration star2">✨</div>
       <div className="floating-decoration heart1">💕</div>
       <div className="floating-decoration heart2">💖</div>
-      
-      <AmbientParticles />
       
       <div className="container page-content dashboard-container">
         <div className="hero-journey-card" style={{ 
@@ -844,8 +835,7 @@ export default function Dashboard() {
         </div>
       )}
       
-      {/* AI Agent Panel */}
-      <AIAgentPanel initialAgent="gameHelper" />
+      {/* AI Agent Panel removed */}
     </div>
     </div>
   );

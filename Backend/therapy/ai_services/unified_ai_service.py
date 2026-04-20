@@ -254,13 +254,63 @@ class UnifiedAIService:
         except Exception as e:
             print(f"Cache error: {e}")
     
+    def _get_urdu_system_prompt(self, agent_key: str, english_prompt: str) -> str:
+        """Get Urdu version of system prompt for an agent"""
+        urdu_prompts = {
+            "buddy": """آپ ڈھیان ہیں، 5-12 سال کے بچوں کے لیے ایک دوستانہ اور ذہین وائس اسسٹنٹ۔
+
+آپ کی شخصیت:
+- گرم، حوصلہ افزا، اور صبور
+- مزہ دار اور کھیل دل لیکن معلوماتی بھی
+- ہمیشہ معاون اور کبھی فیصلہ کن نہیں
+- سادہ، عمر کے لحاظ سے موزوں زبان میں بات کریں
+- بچوں کو مشغول رکھنے کے لیے Emojis اور اظہار خیال استعمال کریں
+
+آپ کی صلاحیتیں:
+- سائنس، فطرت، جانوروں، خلا، تاریخ، جغرافیہ کے بارے میں سوالات کے جوابات دیں
+- کہانیاں سنائیں اور تخیل کے منظرنامے بنائیں
+- تصورات کو سادہ، بصری طریقوں سے سمجھائیں
+- ہوم ورک میں مدد اور سیکھنے کی تجاویز دیں
+- مزہ دار بات چیت میں شامل ہوں
+- کامیابیوں کا جشن منائیں
+
+اہم مواد کی پابندیاں:
+- بالغ مواد، تشدد یا غیر مناسب موضوعات پر بات نہ کریں
+- ہتھیار، منشیات یا نقصان دہ سرگرمیوں کی معلومات نہ دیں
+- سیاسی یا مذہبی بحثوں میں شامل نہ ہوں
+- ذاتی معلومات شیئر نہ کریں""",
+            
+            "story_weaver": """آپ کہانی بننے والے ہیں، بچوں کے لیے جادوئی اور دلچسپ کہانیاں بناتے ہیں۔
+آپ کی کہانیاں انٹرایکٹو، پیارے اور حیرت سے بھری ہوتی ہیں۔
+ہمیشہ JSON فارمیٹ میں جواب دیں۔""",
+            
+            "math_wizard": """آپ ریاضی کے جادوگر ہیں، بچوں کے لیے صبور اور حوصلہ افزا ریاضی کے استاد۔
+آپ ریاضی کے تصورات کو سادہ، بصری طریقوں سے سمجھاتے ہیں۔
+آپ مسائل کو مرحلہ وار حل کرتے ہیں اور ہر صحیح جواب پر جشن مناتے ہیں۔""",
+            
+            "cozy": """آپ کوزی ہیں، بچوں کے لیے ایک نرم اور معاون تھراپی ساتھی۔
+آپ بچوں کو اپنے احساسات کا اظہار کرنے میں مدد دیتے ہیں۔
+آپ صبور، غیر فیصلہ کن، اور محفوظ ماحول بناتے ہیں۔""",
+            
+            "artie": """آپ آرٹی ہیں، بچوں کی تخلیقی صلاحیت کو بیدار کرتے ہیں۔
+آپ ڈرائنگ، لکھنے، اور فن کی سرگرمیوں کی تجاویز دیتے ہیں۔
+آپ بچوں کی تخلیقی صلاحیت کو جشن دیتے ہیں اور انہیں سوچنے کے لیے حوصلہ دیتے ہیں۔""",
+            
+            "professor_paws": """آپ پروفیسر پاؤز ہیں، بچوں کے لیے ایک دوستانہ سائنس کی وضاحت کار۔
+آپ فطرت، خلا، جانوروں، اور چیزوں کے بارے میں سوالات کے جوابات دیتے ہیں۔
+آپ پیچیدہ تصورات کو سادہ اور دلچسپ بناتے ہیں۔"""
+        }
+        
+        return urdu_prompts.get(agent_key, english_prompt)
+    
     def generate_response(
         self, 
         message: str, 
         agent_key: str = "buddy",
         history: List[Dict] = None,
         use_cache: bool = True,
-        stream: bool = False
+        stream: bool = False,
+        language: str = "en"
     ) -> AIResponse:
         """
         Generate AI response
@@ -271,6 +321,7 @@ class UnifiedAIService:
             history: Conversation history
             use_cache: Whether to use caching
             stream: Whether to stream response
+            language: Language for response (en or ur)
             
         Returns:
             AIResponse object
@@ -303,7 +354,7 @@ class UnifiedAIService:
         
         # Check if AI is available
         if not self.is_available():
-            fallback = self._generate_fallback_response(message, agent)
+            fallback = self._generate_fallback_response(message, agent, language)
             return AIResponse(
                 text=fallback,
                 agent_key=agent_key,
@@ -312,8 +363,12 @@ class UnifiedAIService:
                 error="AI service not available, using fallback"
             )
         
-        # Build messages
-        messages = [{"role": "system", "content": agent.system_prompt}]
+        # Build messages with language-aware system prompt
+        system_prompt = agent.system_prompt
+        if language == "ur":
+            system_prompt = self._get_urdu_system_prompt(agent_key, system_prompt)
+        
+        messages = [{"role": "system", "content": system_prompt}]
         if history:
             messages.extend(history)
         messages.append({"role": "user", "content": message})
@@ -326,7 +381,7 @@ class UnifiedAIService:
                 
         except Exception as e:
             print(f"AI generation error: {e}")
-            fallback = self._generate_fallback_response(message, agent)
+            fallback = self._generate_fallback_response(message, agent, language)
             return AIResponse(
                 text=fallback,
                 agent_key=agent_key,
@@ -394,9 +449,9 @@ class UnifiedAIService:
         complete_text = "".join(full_text)
         self._set_cache(cache_key, complete_text)
     
-    def _generate_fallback_response(self, message: str, agent: AIAgent) -> str:
+    def _generate_fallback_response(self, message: str, agent: AIAgent, language: str = "en") -> str:
         """Generate fallback response when AI is unavailable"""
-        fallbacks = {
+        fallbacks_en = {
             "buddy": [
                 "I'd love to help you with that! Let me think... 🤔",
                 "Great question! Let's figure it out together! 💪",
@@ -441,7 +496,53 @@ class UnifiedAIService:
             ]
         }
         
-        agent_fallbacks = fallbacks.get(agent.key, fallbacks["buddy"])
+        fallbacks_ur = {
+            "buddy": [
+                "میں آپ کی مدد کرنا چاہتا ہوں! مجھے سوچنے دیں... 🤔",
+                "بہترین سوال! آئیے اسے ایک ساتھ حل کریں! 💪",
+                "آپ بہترین ہو رہے ہیں! کوشش جاری رکھیں! 🌟",
+                "یہ ایک مزہ دار چیلنج ہے! یہاں ایک اشارہ ہے! 💡"
+            ],
+            "story_weaver": [
+                "ایک بار کی بات ہے، ایک جادوئی ملک میں... ✨",
+                "میں آپ کو ایک بہادر ہیرو کی کہانی سناتا ہوں! 🦸",
+                "تصور کریں ایک ایسی دنیا جہاں جانور بات کر سکتے ہیں... 🐾",
+                "یہاں مہم جوئی اور دوستی کی کہانی ہے! 🌈"
+            ],
+            "math_wizard": [
+                "آئیے اس ریاضی کے مسئلے کو چھوٹے مراحل میں حل کریں! 1️⃣ 2️⃣ 3️⃣",
+                "ریاضی ایک پزل کی طرح ہے - ہمیں صرف صحیح ٹکڑے تلاش کرنے ہیں! 🧩",
+                "اپنے پسندیدہ کھلونوں کو گننے کی طرح سوچیں! 🧸",
+                "آپ ہر دن بہتر ہو رہے ہیں! 📈"
+            ],
+            "cozy": [
+                "آج آپ کیسا محسوس کر رہے ہیں؟ میں یہاں ہوں۔ 💙",
+                "آئیے ایک ساتھ گہری سانس لیں۔ اندر... اور باہر... 🧘",
+                "بڑے احساسات رکھنا ٹھیک ہے۔ وہ ہمیں انسان بناتے ہیں! 🤗",
+                "آپ محفوظ اور محبوب ہیں۔ سب کچھ ٹھیک ہو جائے گا۔ 🌸"
+            ],
+            "artie": [
+                "آئیے کچھ شاندار بنائیں! آپ کیا تصور کرتے ہیں؟ 🎨",
+                "کیا آپ ایک جادوئی مخلوق کو کھینچنا چاہتے ہیں؟ اسے رنگین بنائیں! 🌈",
+                "آپ کے خیالات شاندار ہیں! آئیے انہیں حقیقی بنائیں! ✨",
+                "تخلیقی صلاحیت جادو کی طرح ہے - یہ سب میں ہے! 🪄"
+            ],
+            "professor_paws": [
+                "کیا ایک دلچسپ سوال ہے! مجھے آپ کو سب کچھ بتانے دیں! 🔍",
+                "کیا آپ جانتے ہیں؟ دنیا حیرت انگیز حقائق سے بھری ہے! 🌍",
+                "سائنس جوابات کی تلاش کی طرح ہے! 🗝️",
+                "تجسس آپ کو ہر دن ذہین بناتا ہے! پوچھتے رہیں! 🧠"
+            ],
+            "voice_assistant": [
+                "میں آپ کی مدد کے لیے یہاں ہوں! آپ کیا جاننا چاہتے ہیں؟ 🎙️",
+                "یہ ایک دلچسپ سوال ہے! مجھے آپ کی مدد کرنے دیں! ✨",
+                "میں آپ کے لیے اس کے بارے میں سوچ رہا ہوں! 💭",
+                "میں آپ کے دن کو بہتر کیسے بنا سکتا ہوں؟ 😊"
+            ]
+        }
+        
+        fallbacks = fallbacks_ur if language == "ur" else fallbacks_en
+        agent_fallbacks = fallbacks.get(agent.key, fallbacks.get("buddy", ["I'm here to help! 🌟"]))
         import random
         return random.choice(agent_fallbacks)
     
@@ -498,26 +599,73 @@ Keep it simple and child-friendly."""
         current_story: str,
         child_choice: str,
         agent_key: str = "story_weaver",
-        turns_left: int = 5
+        turns_left: int = 5,
+        language: str = "en"
     ) -> Dict:
         """Continue a story based on child's choice with dynamic, contextual options."""
 
         if turns_left <= 0:
-            ending_instruction = (
-                "This is the FINAL chapter. Write a satisfying, uplifting conclusion "
-                "(3-5 sentences) that resolves the adventure. "
-                'Set "choices" to an empty array [].'
-            )
+            if language == "ur":
+                ending_instruction = (
+                    "یہ آخری باب ہے۔ ایک خوبصورت، حوصلہ افزا اختتام لکھیں "
+                    "(3-5 جملے) جو مہم جوئی کو حل کرے۔ "
+                    '"choices" کو خالی array [] میں سیٹ کریں۔'
+                )
+                language_instruction = "براہ کرم اپنا جواب اردو میں دیں۔"
+            else:
+                ending_instruction = (
+                    "This is the FINAL chapter. Write a satisfying, uplifting conclusion "
+                    "(3-5 sentences) that resolves the adventure. "
+                    'Set "choices" to an empty array [].'
+                )
+                language_instruction = "Please respond in English."
         else:
-            ending_instruction = (
-                f"There are {turns_left} chapter(s) left. "
-                "Write the next exciting part of the story (3-5 sentences). "
-                "Then provide exactly 3 short, distinct choices for what the child can do next. "
-                "Each choice must be specific to what just happened in the story — not generic. "
-                "Include a relevant emoji icon for each choice."
-            )
+            if language == "ur":
+                ending_instruction = (
+                    f"ابھی {turns_left} باب(وں) باقی ہیں۔ "
+                    "کہانی کا اگلا دلچسپ حصہ لکھیں (3-5 جملے)۔ "
+                    "پھر بالک کے لیے بالکل 3 مختلف انتخاب فراہم کریں۔ "
+                    "ہر انتخاب کہانی میں جو ابھی ہوا اس کے لیے مخصوص ہونا چاہیے۔ "
+                    "ہر انتخاب کے لیے ایک متعلقہ emoji شامل کریں۔"
+                )
+                language_instruction = "براہ کرم اپنا جواب اردو میں دیں۔"
+            else:
+                ending_instruction = (
+                    f"There are {turns_left} chapter(s) left. "
+                    "Write the next exciting part of the story (3-5 sentences). "
+                    "Then provide exactly 3 short, distinct choices for what the child can do next. "
+                    "Each choice must be specific to what just happened in the story — not generic. "
+                    "Include a relevant emoji icon for each choice."
+                )
+                language_instruction = "Please respond in English."
 
-        prompt = f"""You are a warm, imaginative storyteller for children aged 5-12.
+        if language == "ur":
+            prompt = f"""آپ 5-12 سال کے بچوں کے لیے ایک گرم، تخیل پر مبنی کہانی سنانے والے ہیں۔
+
+اب تک کی کہانی:
+{current_story}
+
+بچے کا عمل: "{child_choice}"
+
+سخت اصول — آپ کو یہ بالکل درست طریقے سے پیروی کرنی ہے:
+- صرف خالص کہانی کی نثر لکھیں۔ اپنی سوچ کی وضاحت نہ کریں۔
+- بچے کے انتخاب کا نام لے کر نہ بتائیں یا "چونکہ آپ نے منتخب کیا..." جیسی بات نہ کہیں۔
+- چوتھی دیوار کو توڑیں نہ یا گیم کا حوالہ دیں۔
+- بس کہانی کو جاری رکھیں جیسے یہ عمل قدرتی طور پر ہوا۔
+- {ending_instruction}
+- {language_instruction}
+
+آؤٹ پٹ فارمیٹ — صرف درست JSON کے ساتھ جواب دیں:
+{{
+  "narrative": "<خالص کہانی کی نثر، 3-5 جملے>",
+  "choices": [
+    {{"label": "<مختصر عمل کا جملہ>", "icon": "<ایک emoji>"}},
+    {{"label": "<مختصر عمل کا جملہ>", "icon": "<ایک emoji>"}},
+    {{"label": "<مختصر عمل کا جملہ>", "icon": "<ایک emoji>"}}
+  ]
+}}"""
+        else:
+            prompt = f"""You are a warm, imaginative storyteller for children aged 5-12.
 
 STORY SO FAR:
 {current_story}
@@ -530,6 +678,7 @@ STRICT RULES — you MUST follow these exactly:
 - Never break the fourth wall or reference the game.
 - Just continue the story as if the action happened naturally.
 - {ending_instruction}
+- {language_instruction}
 
 OUTPUT FORMAT — respond with ONLY valid JSON, nothing else before or after:
 {{
@@ -544,17 +693,30 @@ OUTPUT FORMAT — respond with ONLY valid JSON, nothing else before or after:
         response = self.generate_response(prompt, agent_key, use_cache=False)
 
         if response.error and not response.text:
-            return {
-                "narrative": (
-                    "The adventure takes an unexpected turn! Something magical happens "
-                    "just around the corner."
-                ),
-                "choices": [
-                    {"label": "Look around carefully", "icon": "👀"},
-                    {"label": "Call out for help",     "icon": "📣"},
-                    {"label": "Follow the light",      "icon": "✨"},
-                ],
-            }
+            if language == "ur":
+                return {
+                    "narrative": (
+                        "مہم جوئی ایک غیر متوقع موڑ لیتی ہے! کچھ جادوئی ہوتا ہے "
+                        "بالکل کونے میں۔"
+                    ),
+                    "choices": [
+                        {"label": "احتیاط سے ارد گرد دیکھیں", "icon": "👀"},
+                        {"label": "مدد کے لیے پکاریں",     "icon": "📣"},
+                        {"label": "روشنی کی پیروی کریں",      "icon": "✨"},
+                    ],
+                }
+            else:
+                return {
+                    "narrative": (
+                        "The adventure takes an unexpected turn! Something magical happens "
+                        "just around the corner."
+                    ),
+                    "choices": [
+                        {"label": "Look around carefully", "icon": "👀"},
+                        {"label": "Call out for help",     "icon": "📣"},
+                        {"label": "Follow the light",      "icon": "✨"},
+                    ],
+                }
 
         # Try to extract and parse JSON from the response
         try:
@@ -592,14 +754,24 @@ OUTPUT FORMAT — respond with ONLY valid JSON, nothing else before or after:
         raw = response.text.strip() if response.text else ""
         # Strip any partial JSON artifacts
         raw = re.sub(r'\{.*', '', raw, flags=re.DOTALL).strip() if raw else ""
-        return {
-            "narrative": raw or "The adventure continues in a surprising way!",
-            "choices": [
-                {"label": "Explore more",       "icon": "✨"},
-                {"label": "Talk to a friend",   "icon": "🗣️"},
-                {"label": "Find a secret path", "icon": "🔍"},
-            ],
-        }
+        if language == "ur":
+            return {
+                "narrative": raw or "کہانی ایک حیرت انگیز طریقے سے جاری رہتی ہے!",
+                "choices": [
+                    {"label": "مزید دریافت کریں",       "icon": "✨"},
+                    {"label": "کسی دوست سے بات کریں",   "icon": "🗣️"},
+                    {"label": "ایک خفیہ راستہ تلاش کریں", "icon": "🔍"},
+                ],
+            }
+        else:
+            return {
+                "narrative": raw or "The adventure continues in a surprising way!",
+                "choices": [
+                    {"label": "Explore more",       "icon": "✨"},
+                    {"label": "Talk to a friend",   "icon": "🗣️"},
+                    {"label": "Find a secret path", "icon": "🔍"},
+                ],
+            }
     
     def explain_concept(
         self,

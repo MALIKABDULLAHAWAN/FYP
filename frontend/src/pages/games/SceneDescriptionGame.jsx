@@ -7,7 +7,7 @@ import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useChild } from "../../hooks/useChild";
 import { useToast } from "../../hooks/useToast";
-import { startGameSession, nextGameTrial } from "../../api/games";
+import { startGameSession, nextGameTrial, endSession } from "../../api/games";
 import { apiFetch } from "../../api/client";
 import GameConclusionFlow from "../../components/GameConclusionFlow";
 import UiIcon from "../../components/ui/UiIcon";
@@ -398,16 +398,22 @@ export default function SceneDescriptionGame() {
             </div>
           )}
 
-          <GameConclusionFlow
-            gameName="Scene Description"
-            score={totalScore}
-            total={attemptCount * 10} // Scores are out of 10
-            duration={60 - timeLeft}
-            level={1}
-            skills={["Visual Perception", "Speech", "Observation"]}
-            onAction={isSession ? onComplete : () => setPhase("initial")}
-            actionLabel={isSession ? "Continue Journey" : "Play Again"}
-          />
+          <div style={{ display: "flex", gap: 12, marginTop: 16 }}>
+            <button
+              className="btn btn-primary"
+              style={{ flex: 1 }}
+              onClick={handleNext}
+            >
+              Next Scenario
+            </button>
+            <button
+              className="btn"
+              style={{ flex: 1 }}
+              onClick={handleExit}
+            >
+              Exit Game
+            </button>
+          </div>
         </div>
       )}
     </div>

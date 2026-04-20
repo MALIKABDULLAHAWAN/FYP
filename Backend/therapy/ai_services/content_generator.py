@@ -58,25 +58,60 @@ class AIContentGenerator:
             print(f"Groq API Error: {e}")
             return None
     
-    def generate_story(self, theme: str, age: int = 8, length: str = 'short') -> Dict:
+    def generate_story(self, theme: str, age: int = 8, length: str = 'short', language: str = 'en') -> Dict:
         """Generate an educational story opening chapter."""
-        cache_key = f"story_{theme}_{age}_{length}"
+        cache_key = f"story_{theme}_{age}_{length}_{language}"
         if cache_key in self.cache:
             return self.cache[cache_key]
 
-        theme_contexts = {
-            "space":   "outer space, rockets, planets, and alien worlds",
-            "forest":  "an enchanted forest full of talking animals and magic",
-            "ocean":   "the deep ocean with mermaids, sea creatures, and sunken treasure",
-            "castle":  "a medieval castle with dragons, knights, and wizards",
-            "jungle":  "a lush jungle with exotic animals and hidden temples",
-            "volcano": "a volcanic island with fire spirits and ancient mysteries",
-        }
-        context = theme_contexts.get(theme, f"a magical world of {theme}")
+        if language == 'ur':
+            theme_contexts = {
+                "space":   "بیرونی خلا، راکٹ، سیارے، اور بیگانہ دنیائیں",
+                "forest":  "ایک جادوئی جنگل جو بات کرنے والے جانوروں اور جادو سے بھرا ہوا ہے",
+                "ocean":   "گہرا سمندر جہاں پریوں، سمندری مخلوقات، اور ڈوبی ہوئی خزانہ ہے",
+                "castle":  "ایک درمیانی عمر کا قلعہ جہاں ڈریگن، شورویر، اور جادوگر ہیں",
+                "jungle":  "ایک سرسبز جنگل جہاں غیر معمولی جانور اور پوشیدہ مندر ہیں",
+                "volcano": "ایک آتش فشاں جزیرہ جہاں آگ کی روحیں اور پرانے راز ہیں",
+            }
+            context = theme_contexts.get(theme, f"{theme} کی جادوئی دنیا")
+            word_target = {"short": "4-6", "medium": "7-9", "long": "10-12"}.get(length, "4-6")
 
-        word_target = {"short": "4-6", "medium": "7-9", "long": "10-12"}.get(length, "4-6")
+            prompt = f"""آپ {age} سال کے بچوں کے لیے ایک گرم، تخیل پر مبنی کہانی سنانے والے ہیں۔
 
-        prompt = f"""You are a warm, imaginative storyteller for children aged {age}.
+{context} میں ایک مہم جوئی کی کہانی کا افتتاحی باب لکھیں۔
+
+ضروریات:
+- {word_target} جملے لکھیں جو منظر کو واضح طور پر بیان کریں
+- بچے کو ہیرو کے طور پر متعارف کرائیں ("تم ہو…")
+- {age} سال کے بچے کے لیے موزوں الفاظ استعمال کریں
+- انتخاب کے ایک دلچسپ لمحے پر ختم کریں
+- بالکل 3 مخصوص، مزہ دار انتخاب فراہم کریں
+  (انہیں منظر کے لیے مخصوص بنائیں، عام نہیں)
+- براہ کرم اپنا جواب اردو میں دیں۔
+
+آؤٹ پٹ فارمیٹ — صرف یہ JSON کے ساتھ جواب دیں:
+{{
+  "title": "<مختصر مہم جوئی کا عنوان>",
+  "content": "<افتتاحی باب کا متن>",
+  "choices": [
+    {{"label": "<مختصر عمل کا جملہ>", "icon": "<ایک emoji>"}},
+    {{"label": "<مختصر عمل کا جملہ>", "icon": "<ایک emoji>"}},
+    {{"label": "<مختصر عمل کا جملہ>", "icon": "<ایک emoji>"}}
+  ]
+}}"""
+        else:
+            theme_contexts = {
+                "space":   "outer space, rockets, planets, and alien worlds",
+                "forest":  "an enchanted forest full of talking animals and magic",
+                "ocean":   "the deep ocean with mermaids, sea creatures, and sunken treasure",
+                "castle":  "a medieval castle with dragons, knights, and wizards",
+                "jungle":  "a lush jungle with exotic animals and hidden temples",
+                "volcano": "a volcanic island with fire spirits and ancient mysteries",
+            }
+            context = theme_contexts.get(theme, f"a magical world of {theme}")
+            word_target = {"short": "4-6", "medium": "7-9", "long": "10-12"}.get(length, "4-6")
+
+            prompt = f"""You are a warm, imaginative storyteller for children aged {age}.
 
 Write the OPENING CHAPTER of an adventure story set in {context}.
 
@@ -87,6 +122,7 @@ Requirements:
 - End at an exciting moment of choice
 - Provide exactly 3 specific, fun choices for what the child can do next
   (make them specific to the scene, not generic)
+- Please respond in English.
 
 OUTPUT FORMAT — respond with ONLY this JSON (no markdown, no extra text):
 {{
@@ -113,7 +149,7 @@ OUTPUT FORMAT — respond with ONLY this JSON (no markdown, no extra text):
             except Exception:
                 pass
 
-        return self._fallback_story(theme, age)
+        return self._fallback_story(theme, age, language)
     
     def generate_poem(self, topic: str, style: str = 'rhyming') -> Dict:
         """Generate a poem for children"""
@@ -372,52 +408,93 @@ Format as JSON:
     
     # ============ FALLBACK CONTENT ============
     
-    def _fallback_story(self, theme: str, age: int) -> Dict:
-        fallbacks = {
-            "space":   {
-                "title": "Lost in the Stars",
-                "content": "You are an astronaut floating through the galaxy when your rocket starts beeping. A small green alien waves at you from a nearby asteroid. You have to decide what to do next!",
-                "choices": [
-                    {"label": "Wave back at the alien",  "icon": "👋"},
-                    {"label": "Check the rocket alarm",  "icon": "🔧"},
-                    {"label": "Fly closer to the asteroid", "icon": "🚀"},
-                ],
-            },
-            "forest":  {
-                "title": "The Enchanted Forest",
-                "content": "You step into a glowing forest where the trees whisper your name. A tiny fairy lands on your shoulder and says she needs your help to find the lost golden acorn. The path splits in three directions!",
-                "choices": [
-                    {"label": "Follow the sparkling trail", "icon": "✨"},
-                    {"label": "Ask the wise old tree",       "icon": "🌳"},
-                    {"label": "Listen for the acorn's glow", "icon": "🌟"},
-                ],
-            },
-            "ocean":   {
-                "title": "Secrets of the Deep",
-                "content": "You dive into the crystal-blue ocean and discover a hidden underwater city. A friendly dolphin swims up and nudges a glowing map into your hands. The map shows three paths to a sunken treasure!",
-                "choices": [
-                    {"label": "Follow the dolphin",          "icon": "🐬"},
-                    {"label": "Read the glowing map",        "icon": "🗺️"},
-                    {"label": "Swim toward the coral arch",  "icon": "🪸"},
-                ],
-            },
-            "castle":  {
-                "title": "The Dragon's Castle",
-                "content": "You arrive at a towering castle where a friendly dragon is crying — someone stole the magic crown! The dragon asks for your help. You spot three clues near the castle gate.",
-                "choices": [
-                    {"label": "Examine the muddy footprints", "icon": "👣"},
-                    {"label": "Ask the castle guard",          "icon": "⚔️"},
-                    {"label": "Search the tower window",       "icon": "🏰"},
-                ],
-            },
-        }
+    def _fallback_story(self, theme: str, age: int, language: str = 'en') -> Dict:
+        if language == 'ur':
+            fallbacks = {
+                "space":   {
+                    "title": "ستاروں میں کھو گیا",
+                    "content": "تم خلا میں ایک خلاباز ہو جب تمہارا راکٹ بیپ کرنا شروع کرتا ہے۔ ایک چھوٹا سبز بیگانہ قریبی سیارچے سے تمہاری طرف ہاتھ ہلاتا ہے۔ تمہیں فیصلہ کرنا ہے کہ اگلا کیا کریں!",
+                    "choices": [
+                        {"label": "بیگانے کو ہاتھ ہلاؤ",  "icon": "👋"},
+                        {"label": "راکٹ کی الرٹ چیک کریں",  "icon": "🔧"},
+                        {"label": "سیارچے کے قریب اڑو", "icon": "🚀"},
+                    ],
+                },
+                "forest":  {
+                    "title": "جادوئی جنگل",
+                    "content": "تم ایک روشن جنگل میں قدم رکھتے ہو جہاں درخت تمہارا نام پھسپھساتے ہیں۔ ایک چھوٹی پری تمہارے کندھے پر بیٹھتی ہے اور کہتی ہے کہ اسے کھوئے ہوئے سونے کے بلوط کو تلاش کرنے میں مدد چاہیے۔ راستہ تین سمتوں میں بٹتا ہے!",
+                    "choices": [
+                        {"label": "چمکتے ہوئے راستے کی پیروی کریں", "icon": "✨"},
+                        {"label": "عقلمند پرانے درخت سے پوچھیں",       "icon": "🌳"},
+                        {"label": "بلوط کی روشنی سنیں", "icon": "🌟"},
+                    ],
+                },
+                "ocean":   {
+                    "title": "گہرائیوں کے راز",
+                    "content": "تم نیلے سمندر میں غوطہ لگاتے ہو اور ایک پوشیدہ زیر آب شہر دریافت کرتے ہو۔ ایک دوست ڈالفن تمہارے پاس آتا ہے اور ایک روشن نقشہ تمہارے ہاتھوں میں دیتا ہے۔ نقشہ ڈوبی ہوئی خزانے تک تین راستے دکھاتا ہے!",
+                    "choices": [
+                        {"label": "ڈالفن کی پیروی کریں",          "icon": "🐬"},
+                        {"label": "روشن نقشہ پڑھیں",        "icon": "🗺️"},
+                        {"label": "مرجان کے محراب کی طرف تیریں",  "icon": "🪸"},
+                    ],
+                },
+                "castle":  {
+                    "title": "ڈریگن کا قلعہ",
+                    "content": "تم ایک بلند قلعے میں پہنچتے ہو جہاں ایک دوست ڈریگن رو رہا ہے — کسی نے جادوئی تاج چرا لیا! ڈریگن تمہاری مدد مانگتا ہے۔ تم قلعے کے دروازے کے قریب تین سراغ دیکھتے ہو۔",
+                    "choices": [
+                        {"label": "کیچڑ کے نقوش کو دیکھیں", "icon": "👣"},
+                        {"label": "قلعے کے محافظ سے پوچھیں",          "icon": "⚔️"},
+                        {"label": "برج کی کھڑکی تلاش کریں",       "icon": "🏰"},
+                    ],
+                },
+            }
+        else:
+            fallbacks = {
+                "space":   {
+                    "title": "Lost in the Stars",
+                    "content": "You are an astronaut floating through the galaxy when your rocket starts beeping. A small green alien waves at you from a nearby asteroid. You have to decide what to do next!",
+                    "choices": [
+                        {"label": "Wave back at the alien",  "icon": "👋"},
+                        {"label": "Check the rocket alarm",  "icon": "🔧"},
+                        {"label": "Fly closer to the asteroid", "icon": "🚀"},
+                    ],
+                },
+                "forest":  {
+                    "title": "The Enchanted Forest",
+                    "content": "You step into a glowing forest where the trees whisper your name. A tiny fairy lands on your shoulder and says she needs your help to find the lost golden acorn. The path splits in three directions!",
+                    "choices": [
+                        {"label": "Follow the sparkling trail", "icon": "✨"},
+                        {"label": "Ask the wise old tree",       "icon": "🌳"},
+                        {"label": "Listen for the acorn's glow", "icon": "🌟"},
+                    ],
+                },
+                "ocean":   {
+                    "title": "Secrets of the Deep",
+                    "content": "You dive into the crystal-blue ocean and discover a hidden underwater city. A friendly dolphin swims up and nudges a glowing map into your hands. The map shows three paths to a sunken treasure!",
+                    "choices": [
+                        {"label": "Follow the dolphin",          "icon": "🐬"},
+                        {"label": "Read the glowing map",        "icon": "🗺️"},
+                        {"label": "Swim toward the coral arch",  "icon": "🪸"},
+                    ],
+                },
+                "castle":  {
+                    "title": "The Dragon's Castle",
+                    "content": "You arrive at a towering castle where a friendly dragon is crying — someone stole the magic crown! The dragon asks for your help. You spot three clues near the castle gate.",
+                    "choices": [
+                        {"label": "Examine the muddy footprints", "icon": "👣"},
+                        {"label": "Ask the castle guard",          "icon": "⚔️"},
+                        {"label": "Search the tower window",       "icon": "🏰"},
+                    ],
+                },
+            }
+        
         fb = fallbacks.get(theme, {
-            "title": f"The {theme.title()} Adventure",
-            "content": f"You are about to begin an amazing adventure in a magical {theme}. Something incredible is waiting just around the corner!",
+            "title": f"The {theme.title()} Adventure" if language == 'en' else f"{theme.title()} کی مہم جوئی",
+            "content": f"You are about to begin an amazing adventure in a magical {theme}. Something incredible is waiting just around the corner!" if language == 'en' else f"تم ایک جادوئی {theme} میں ایک حیرت انگیز مہم جوئی شروع کرنے والے ہو۔ کچھ ناقابل یقین چیز بالکل کونے میں انتظار کر رہی ہے!",
             "choices": [
-                {"label": "Look around",   "icon": "👀"},
-                {"label": "Keep going",    "icon": "🚶"},
-                {"label": "Find a friend", "icon": "🤝"},
+                {"label": "Look around" if language == 'en' else "ارد گرد دیکھیں",   "icon": "👀"},
+                {"label": "Keep going" if language == 'en' else "آگے بڑھتے رہیں",    "icon": "🚶"},
+                {"label": "Find a friend" if language == 'en' else "کوئی دوست تلاش کریں", "icon": "🤝"},
             ],
         })
         return fb
