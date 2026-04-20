@@ -753,9 +753,7 @@ export default function Dashboard() {
                       <td style={{ fontSize: "22px" }}>{getFocusIcon()}</td>
                       <td>
                         <span style={{ fontWeight: 700, color: "#475569", textTransform: "capitalize" }}>
-                          {(s.game_types || [])
-                            .map((g) => g.replace(/_/g, " "))
-                            .join(", ") || s.title}
+                          {s.title || (s.game_types || []).map(g => g.replace(/_/g, " ")).join(", ")}
                         </span>
                       </td>
                       <td>

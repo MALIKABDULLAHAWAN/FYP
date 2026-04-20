@@ -31,7 +31,6 @@ const MatchingGame = lazy(() => import("./pages/games/MatchingGame"));
 const MemoryMatchGame = lazy(() => import("./pages/games/MemoryMatchGame"));
 const ObjectDiscovery = lazy(() => import("./pages/games/ObjectDiscovery"));
 const ProblemSolving = lazy(() => import("./pages/games/ProblemSolving"));
-const SpeechTherapy = lazy(() => import("./pages/games/SpeechTherapy"));
 const SceneDescriptionGame = lazy(() => import("./pages/games/SceneDescriptionGame"));
 const EmotionGestureQuest = lazy(() => import("./pages/games/EmotionGestureQuest"));
 const GazeEmotionGame = lazy(() => import("./pages/games/GazeEmotionGame"));
@@ -104,7 +103,6 @@ export default function App() {
                 <Route path="/games/shape-sort" element={<ProtectedLayout><ShapeSortGame /></ProtectedLayout>} />
                 <Route path="/games/emotion-face" element={<ProtectedLayout><EmotionFaceGame /></ProtectedLayout>} />
                 <Route path="/games/animal-sounds" element={<ProtectedLayout><AnimalSoundGame /></ProtectedLayout>} />
-                <Route path="/speech-therapy" element={<ProtectedLayout><SpeechTherapy /></ProtectedLayout>} />
                 <Route path="/sticker-pack" element={<ProtectedLayout><StickerPack /></ProtectedLayout>} />
                 <Route path="/profile" element={<ProtectedLayout><ProfilePage /></ProtectedLayout>} />
                 <Route path="/settings" element={<ProtectedLayout><Settings /></ProtectedLayout>} />

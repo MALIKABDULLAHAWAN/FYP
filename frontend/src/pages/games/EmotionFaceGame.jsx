@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useChild } from "../../hooks/useChild";
 import GameConclusionFlow from "../../components/GameConclusionFlow";
@@ -311,6 +311,7 @@ export default function EmotionFaceGame({ isSession = false, level = "easy", onC
             score={score}
             total={currentSettings.rounds}
             duration={duration}
+            level={activeLevel === 'hard' ? 3 : activeLevel === 'medium' ? 2 : 1}
             skills={["Social-Emotional", "Facial Pattern Recon", "Visual Matching"]}
             onAction={isSession ? onComplete : () => setPhase("level_select")}
             actionLabel={isSession ? "Next Activity" : "Play Again"}

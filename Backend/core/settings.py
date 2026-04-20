@@ -53,7 +53,6 @@ INSTALLED_APPS = [
     "accounts",
     "patients",
     "therapy",
-    "speech",
     "compliance",
     "audit",
 ]

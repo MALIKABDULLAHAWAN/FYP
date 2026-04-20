@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useChild } from "../../hooks/useChild";
 import GameConclusionFlow from "../../components/GameConclusionFlow";
@@ -298,6 +298,7 @@ export default function ShapeSortGame({ isSession = false, level = "easy", onCom
             score={score}
             total={currentSettings.rounds}
             duration={duration}
+            level={activeLevel === 'hard' ? 3 : activeLevel === 'medium' ? 2 : 1}
             skills={["Fine Motor", "Geometry", "Visual Matching"]}
             onAction={isSession ? onComplete : () => setPhase("level_select")}
             actionLabel={isSession ? "Continue Journey" : "Play Again"}

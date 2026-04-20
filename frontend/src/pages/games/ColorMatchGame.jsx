@@ -327,6 +327,7 @@ export default function ColorMatchGame({ isSession = false, level = "easy", onCo
             score={score}
             total={currentSettings.rounds}
             duration={duration}
+            level={activeLevel === 'hard' ? 3 : activeLevel === 'medium' ? 2 : 1}
             skills={["Visual Perception", "Categorization", "Color Recognition"]}
             onAction={isSession ? onComplete : () => setPhase("level_select")}
             actionLabel={isSession ? "Continue Journey" : "Play Again"}

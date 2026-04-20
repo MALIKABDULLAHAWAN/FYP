@@ -57,7 +57,7 @@ class SessionInsightView(APIView):
             "Social & Emotional": ["emotion_match", "emotion_gesture", "gaze_emotion",
                                    "joint_attention", "emotion_face", "gesture_quest"],
             "Speech & Language": ["speech_therapy", "story_adventure", "animal_sounds",
-                                  "speech_sparkles", "talking_time"]
+                                  "speech_sparkles"]
         }
 
         domain_stats = {}

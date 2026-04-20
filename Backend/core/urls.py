@@ -27,7 +27,6 @@ urlpatterns = [
     path("api/v1/auth/", include("accounts.urls")),
     path("api/v1/patients/", include("patients.urls")),
     path("api/v1/therapy/", include("therapy.urls")),
-    path("api/v1/speech/", include("speech.urls")),
     path("api/v1/compliance/", include("compliance.urls")),
     path("api/v1/audit/", include("audit.urls")),
 ]

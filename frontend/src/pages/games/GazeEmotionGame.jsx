@@ -1,4 +1,6 @@
+import { useState, useEffect, useRef } from "react";
 import GameConclusionFlow from "../../components/GameConclusionFlow";
+import * as faceapi from "face-api.js";
 import "../../styles/professional.css";
 
 const LEVELS = [
@@ -30,7 +32,8 @@ export default function GazeEmotionGame({ isSession = false, onComplete }) {
   const smileRef      = useRef(0);
   const targetRef     = useRef(randomTarget(LEVELS[0].targetRadius));
   const startTimeRef  = useRef(null);
-  const smileCoolRef  = useRef(0);   // frame cooldown to avoid counting one smile multiple times
+  const smileCoolRef  = useRef(0);
+  const totalTargetsRef = useRef(1); // Starts with one target
 
   // React state only for UI re-renders
   const [level,     setLevel]     = useState(0);
@@ -178,6 +181,7 @@ export default function GazeEmotionGame({ isSession = false, onComplete }) {
         scoreRef.current += 1;
         setScore(scoreRef.current);
         targetRef.current = randomTarget(lvl.targetRadius);
+        totalTargetsRef.current += 1;
       }
 
       // ── Smile detection (with cooldown to debounce) ──
@@ -204,6 +208,7 @@ export default function GazeEmotionGame({ isSession = false, onComplete }) {
 
     setLevel(lv);
     setScore(0);
+    totalTargetsRef.current = 1;
     setSmileCount(0);
     setGameTime(LEVELS[lv].time);
     setGameOver(false);
@@ -307,10 +312,11 @@ export default function GazeEmotionGame({ isSession = false, onComplete }) {
       {/* Game Over panel */}
       {gameOver && (
         <GameConclusionFlow
-          gameName="Gaze & Emotion"
+          gameName="Gaze & Emotion Match"
           score={score}
-          total={score + smileCount}
+          total={totalTargetsRef.current}
           duration={30}
+          level={level + 1}
           skills={["Ocular Motor", "Facial Expression", "Focus"]}
           onAction={isSession ? onComplete : restart}
           actionLabel={isSession ? "Finish Activity" : "Play Again"}

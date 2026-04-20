@@ -65,7 +65,7 @@ class SystemIntegration {
       const startTime = Date.now();
       
       // Preload critical assets
-      await this.assetManager.preloadAssets(['TherapistConsole', 'SpeechTherapy']);
+      await this.assetManager.preloadAssets(['TherapistConsole']);
       
       // Verify system health
       const healthCheck = await this.performHealthCheck();

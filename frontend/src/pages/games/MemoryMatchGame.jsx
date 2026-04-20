@@ -449,6 +449,7 @@ export default function MemoryMatchGame({ isSession = false, level: sessionLevel
             score={matched.size}
             total={LEVELS[levelIdx].pairs}
             duration={LEVELS[levelIdx].time - timeLeft}
+            level={levelIdx + 1}
             skills={["Memory", "Visual Scanning", "Pattern Recon"]}
             onAction={isSession ? onComplete : () => setPhase("level_select")}
             actionLabel={isSession ? "Return to Journey" : "Play Again"}

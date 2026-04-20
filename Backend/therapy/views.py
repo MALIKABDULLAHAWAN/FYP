@@ -388,9 +388,7 @@ class GameStandaloneResultView(APIView):
         except ChildProfile.DoesNotExist:
             return Response({"detail": "Child not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Map game_name to a canonical game_type
         GAME_TYPE_MAP = {
-            # Standalone mini-games
             "bubble pop": "matching",
             "bubble_pop": "matching",
             "color match": "matching",
@@ -411,7 +409,6 @@ class GameStandaloneResultView(APIView):
             "problem solving": "problem_solving",
             "speech therapy": "speech_prompt",
             "story adventure": "speech_prompt",
-            # Additional games
             "scene description": "speech_prompt",
             "scene_description": "speech_prompt",
             "gaze & emotion": "emotion_gesture",
@@ -424,12 +421,10 @@ class GameStandaloneResultView(APIView):
         normalized_name = game_name.lower().strip()
         canonical_type = GAME_TYPE_MAP.get(normalized_name, "matching")
 
-        # Find or create a matching GameImage with the CORRECT game_type
+        # Find or create a matching GameImage with THAT SPECIFIC NAME
+        # This prevents title collapsing in history and analytics breakdown
         from therapy.models import GameImage, GameSession
-        game = GameImage.objects.filter(name__icontains=game_name).first()
-        if not game:
-            # Try finding by game_type before creating
-            game = GameImage.objects.filter(game_type=canonical_type, is_active=True).first()
+        game = GameImage.objects.filter(name__iexact=game_name).first()
         if not game:
             game = GameImage.objects.create(
                 name=game_name,

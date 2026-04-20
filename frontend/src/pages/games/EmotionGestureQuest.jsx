@@ -163,6 +163,7 @@ export default function EmotionGestureQuest({ isSession = false, onComplete }) {
   // Session refs
   const sessionIdRef = useRef(null);
   const trialIdRef   = useRef(null);
+  const totalTasksRef = useRef(0);
 
   // React state (UI only)
   const [level,      setLevel]      = useState(0);
@@ -183,6 +184,7 @@ export default function EmotionGestureQuest({ isSession = false, onComplete }) {
     const t = pool[Math.floor(Math.random() * pool.length)];
     taskRef.current = t;
     setTask(t);
+    totalTasksRef.current += 1;
   }
 
   useEffect(() => {
@@ -247,7 +249,7 @@ export default function EmotionGestureQuest({ isSession = false, onComplete }) {
 
     if (childProfile) {
       try {
-        const res = await startGameSession("emotion_gesture_quest", childProfile.id, 20, {
+        const res = await startGameSession("emotion_gesture_quest", childProfile.id, 0, {
           difficulty_level: lv + 1
         });
         sessionIdRef.current = res.session.session_id;
@@ -494,10 +496,11 @@ export default function EmotionGestureQuest({ isSession = false, onComplete }) {
 
       {gameOver && (
         <GameConclusionFlow
-          gameName="Emotion & Gesture Quest"
-          score={score}
-          total={score + 5}
-          duration={LEVELS[level].time}
+          gameName="Emotion Gesture Quest"
+          score={scoreRef.current}
+          total={totalTasksRef.current || 1}
+          duration={LEVELS[level].time - timeLeft}
+          level={level + 1}
           skills={["Social-Emotional", "Fine Motor", "Mirroring"]}
           onAction={isSession ? onComplete : restart}
           actionLabel={isSession ? "Continue Journey" : "Play Again"}

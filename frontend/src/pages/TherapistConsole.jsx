@@ -349,12 +349,12 @@ export default function TherapistConsole() {
     social_emotional: {
       label: "Social / Emotional",
       icon: "😊",
-      games: ["emotion_match", "emotion_gesture", "gaze_emotion", "joint_attention", "emotion_face", "gesture_quest"]
+      games: ["emotion_match", "emotion_gesture", "gaze_emotion", "joint_attention", "emotion_face", "gesture_quest", "emotion", "gaze", "gesture"]
     },
     speech: {
-      label: "Speech Sparkles",
+      label: "Speech",
       icon: "🗣️",
-      games: ["speech_therapy", "story_adventure", "animal_sounds", "speech_sparkles", "talking_time"]
+      games: ["speech_therapy", "story_adventure", "animal_sounds", "speech_sparkles", "speech", "story", "animal"]
     }
   };
 
@@ -363,7 +363,14 @@ export default function TherapistConsole() {
     const groups = {};
     
     Object.entries(DOMAIN_MAPPING).forEach(([key, config]) => {
-      const gameStats = breakdown.filter(g => config.games.includes(g.game.toLowerCase()));
+      const gameStats = breakdown.filter(g => {
+        const name = g.game.toLowerCase();
+        return config.games.some(target => 
+          name === target || 
+          name.replace(/_/g, " ") === target.replace(/_/g, " ") ||
+          name.includes(target)
+        );
+      });
       if (gameStats.length > 0) {
         const totalTrials = gameStats.reduce((sum, g) => sum + g.total_trials, 0);
         const totalCorrect = gameStats.reduce((sum, g) => sum + g.correct, 0);
@@ -412,15 +419,15 @@ export default function TherapistConsole() {
   ].filter(d => d.value > 0);
 
   const gameTypeData = sessions.reduce((acc, s) => {
-    const gameType = s.game_types?.[0] || "Unknown";
-    acc[gameType] = (acc[gameType] || 0) + 1;
+    const gn = s.title || (s.game_types?.[0] || "Unknown");
+    acc[gn] = (acc[gn] || 0) + 1;
     return acc;
   }, {});
 
   const gameChartData = Object.entries(gameTypeData).map(([name, value]) => ({
     name: name.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase()),
     value
-  })).slice(0, 6);
+  })).slice(0, 15); // Show more games for better granularity
 
   return (
     <div className="page-wrapper">
@@ -621,7 +628,7 @@ export default function TherapistConsole() {
                 )}
                 Recent Activity
               </h3>
-              {sessions.slice(0, 5).map((s, i) => (
+              {sessions.slice(0, 10).map((s, i) => (
                 <div key={s.id} style={{ 
                   display: "flex", 
                   justifyContent: "space-between", 
@@ -631,7 +638,7 @@ export default function TherapistConsole() {
                 }}>
                   <div>
                     <div style={{ fontWeight: 600, fontSize: 14 }}>{s.child_name}</div>
-                    <div style={{ fontSize: 12, color: "var(--muted)" }}>{s.game_types?.[0]?.replace(/_/g, " ")}</div>
+                    <div style={{ fontSize: 12, color: "var(--muted)" }}>{s.title || (s.game_types?.[0]?.replace(/_/g, " "))}</div>
                   </div>
                   <div style={{ 
                     padding: "4px 10px", 

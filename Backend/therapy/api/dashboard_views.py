@@ -327,48 +327,67 @@ class ChildProgressView(APIView):
 
         overall_accuracy = (correct_trials / total_trials) if total_trials else 0.0
 
-        # Per-game breakdown
-        game_stats = []
-        # Combine game types from both sources
-        trial_types = set(trials.values_list("trial_type", flat=True).distinct())
-        game_types = set(game_sessions.values_list("game__game_type", flat=True).distinct())
-        all_game_keys = trial_types.union(game_types)
+        # Per-game breakdown: Group by game name/type for granularity
+        game_stats_map = {}
 
-        for gt in all_game_keys:
-            # Stats from TherapySessions
-            gt_trials = trials.filter(trial_type=gt)
-            gt_total = gt_trials.count()
-            gt_correct = gt_trials.filter(success=True).count()
+        # 1. Process Standalone Game Sessions (Specific names)
+        for gs in game_sessions:
+            name = gs.game.name
+            metrics = gs.performance_metrics or {}
+            gs_trials = metrics.get("total_trials", 0)
+            gs_accuracy = metrics.get("accuracy", 0)
+            gs_speed = metrics.get("avg_response_time_ms", 0)
+            gs_observation = (gs.observations or {}).get("buddy_observation")
 
-            # Stats from GameSessions
-            gt_game_sessions = game_sessions.filter(game__game_type=gt)
-            for gs in gt_game_sessions:
-                metrics = gs.performance_metrics or {}
-                gs_trials = metrics.get("total_trials", 0)
-                gs_accuracy = metrics.get("accuracy", 0)
-                gt_total += gs_trials
-                gt_correct += round(gs_trials * gs_accuracy)
+            if name not in game_stats_map:
+                game_stats_map[name] = {
+                    "total_trials": 0, "correct": 0, "speeds": [], 
+                    "sessions": 0, "observation": gs_observation
+                }
+            
+            game_stats_map[name]["total_trials"] += gs_trials
+            game_stats_map[name]["correct"] += round(gs_trials * gs_accuracy)
+            game_stats_map[name]["sessions"] += 1
+            if gs_speed: game_stats_map[name]["speeds"].append(gs_speed)
+            # Take the latest observation
+            if gs_observation: game_stats_map[name]["observation"] = gs_observation
 
-            gt_accuracy = (gt_correct / gt_total) if gt_total else 0.0
+        # 2. Process Managed Session Trials (Trial types)
+        for tt in trial_types:
+            # We map trial_type to a display name. If it matches a standalone game name, they merge.
+            # Otherwise it's a separate category.
+            display_name = tt.replace('_', ' ').title()
+            # Try to find a match in the map
+            matched_key = next((k for k in game_stats_map.keys() if k.lower() == display_name.lower()), display_name)
+            
+            if matched_key not in game_stats_map:
+                game_stats_map[matched_key] = {
+                    "total_trials": 0, "correct": 0, "speeds": [], 
+                    "sessions": 0, "observation": None
+                }
+            
+            tt_trials = trials.filter(trial_type=tt)
+            game_stats_map[matched_key]["total_trials"] += tt_trials.count()
+            game_stats_map[matched_key]["correct"] += tt_trials.filter(success=True).count()
+            game_stats_map[matched_key]["sessions"] += sessions.filter(trials__trial_type=tt).distinct().count()
 
-            # Calculate actual avg speed from GameSessions if available
-            speeds = [gs.performance_metrics.get("avg_response_time_ms") for gs in gt_game_sessions if gs.performance_metrics.get("avg_response_time_ms")]
-            gt_avg_speed = sum(speeds) / len(speeds) if speeds else 0
-
-            # Pull real latest observation
-            latest_session = gt_game_sessions.order_by("-created_at").first()
-            gt_observation = (latest_session.observations or {}).get("buddy_observation") if latest_session else None
-            if not gt_observation and gt_total > 0:
-                gt_observation = "Mastery is developing. Patterns suggest consistent target acquisition." if gt_accuracy > 0.8 else "Stability is increasing. Recommend sensory reinforcement."
+        # 3. Finalize stats
+        for name, stats in game_stats_map.items():
+            acc = (stats["correct"] / stats["total_trials"]) if stats["total_trials"] else 0.0
+            avg_speed = sum(stats["speeds"]) / len(stats["speeds"]) if stats["speeds"] else 0
+            
+            obs = stats["observation"]
+            if not obs and stats["total_trials"] > 0:
+                obs = "Mastered" if acc > 0.8 else "Developing patterns"
 
             game_stats.append({
-                "game": gt,
-                "total_trials": gt_total,
-                "correct": gt_correct,
-                "accuracy": round(gt_accuracy, 3),
-                "sessions": sessions.filter(trials__trial_type=gt).distinct().count() + gt_game_sessions.count(),
-                "avg_response_time_ms": gt_avg_speed,
-                "observation": gt_observation
+                "game": name,
+                "total_trials": stats["total_trials"],
+                "correct": stats["correct"],
+                "accuracy": round(acc, 3),
+                "sessions": stats["sessions"],
+                "avg_response_time_ms": avg_speed,
+                "observation": obs
             })
 
         # Recent sessions timeline (Combined)
@@ -406,7 +425,7 @@ class ChildProgressView(APIView):
 
         # Sort combined list by date
         recent_list.sort(key=lambda x: x["date"], reverse=True)
-        recent_list = recent_list[:10]
+        recent_list = recent_list[:50]
 
         return Response({
             "child_id": child.id,

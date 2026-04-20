@@ -260,15 +260,16 @@ export default function ObjectDiscovery({ isSession = false, level = "easy", onC
         {showWin && <SuccessBurst />}
         
         {phase === "over" && (
-           <GameConclusionFlow 
-             gameName="Object Discovery"
-             score={score}
-             total={totalRounds}
-             duration={endTime ? (endTime - startTime) / 1000 : 0}
-             skills={["Categorization", "Visual Scanning", "Attention"]}
-             onAction={isSession ? onComplete : () => setPhase("idle")}
-             actionLabel={isSession ? "Continue Journey" : "Play Again"}
-           />
+            <GameConclusionFlow 
+              gameName="Object Discovery"
+              score={score}
+              total={totalRounds}
+              duration={endTime ? (endTime - startTime) / 1000 : 0}
+              level={level === 'hard' ? 3 : level === 'medium' ? 2 : 1}
+              skills={["Categorization", "Visual Scanning", "Attention"]}
+              onAction={isSession ? onComplete : () => setPhase("idle")}
+              actionLabel={isSession ? "Continue Journey" : "Play Again"}
+            />
         )}
       </div>
     </div>

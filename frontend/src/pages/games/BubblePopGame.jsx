@@ -69,6 +69,7 @@ export default function BubblePopGame({ isSession = false, level = "easy", onCom
   const [duration, setDuration] = useState(0);
   // Track score in a ref so timer callback always has the latest value
   const scoreRef = useRef(0);
+  const spawnCountRef = useRef(0);
 
   const settings = {
     easy:   { time: 60, spawnInterval: 850, minDur: 4.5, maxDur: 9.0 },
@@ -86,6 +87,7 @@ export default function BubblePopGame({ isSession = false, level = "easy", onCom
     const color = COLORS[Math.floor(Math.random() * COLORS.length)];
     const icon = BUBBLE_ICONS[Math.floor(Math.random() * BUBBLE_ICONS.length)];
     const id = _uid++;
+    spawnCountRef.current += 1;
     setBubbles(prev => [...prev.slice(-28), { id, size, left, dur, color, icon }]);
   };
 
@@ -93,6 +95,7 @@ export default function BubblePopGame({ isSession = false, level = "easy", onCom
     setActiveLevel(selectedLevel);
     _uid = 0;
     scoreRef.current = 0;
+    spawnCountRef.current = 0;
     setScore(0);
     setBubbles([]);
     setPoppedSet(new Set());
@@ -274,8 +277,9 @@ export default function BubblePopGame({ isSession = false, level = "easy", onCom
           <GameConclusionFlow
             gameName="Bubble Pop"
             score={score}
-            total={50}
+            total={spawnCountRef.current || 1}
             duration={duration}
+            level={activeLevel === 'hard' ? 3 : activeLevel === 'medium' ? 2 : 1}
             skills={["Fine Motor", "Focus", "Visual Tracking"]}
             onAction={isSession ? onComplete : () => setPhase("level_select")}
             actionLabel={isSession ? "Continue Journey" : "Play Again"}

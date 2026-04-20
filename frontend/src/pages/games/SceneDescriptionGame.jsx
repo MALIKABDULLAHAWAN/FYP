@@ -39,6 +39,8 @@ export default function SceneDescriptionGame() {
   const [scenarioTitle, setScenarioTitle] = useState("");
   const [prompt, setPrompt] = useState("");
   const [aiHint, setAiHint] = useState("");
+  const [attemptCount, setAttemptCount] = useState(0);
+  const [totalScore, setTotalScore] = useState(0);
   const [scenarioId, setScenarioId] = useState(null);
   const [childResponse, setChildResponse] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -125,6 +127,8 @@ export default function SceneDescriptionGame() {
           },
         }
       );
+      setTotalScore(prev => prev + (result.clarity_score || 0));
+      setAttemptCount(prev => prev + 1);
       setEvaluation(result);
       if (result.feedback) setTimeout(() => speak(result.feedback), 500);
       toast.success(result.success ? "Great job!" : "Keep trying!");
@@ -143,6 +147,7 @@ export default function SceneDescriptionGame() {
       if (next.detail && next.detail.includes("No more planned trials")) {
         setSummary(next.summary || {});
         setStatus("completed");
+        if (sessionId) endSession(sessionId).catch(() => {});
         return;
       }
       loadTrial(next);
@@ -151,7 +156,12 @@ export default function SceneDescriptionGame() {
     }
   };
 
-  const handleExit = () => navigate("/games");
+  const handleExit = () => {
+    if (sessionId && status !== "completed") {
+      endSession(sessionId).catch(() => {});
+    }
+    navigate("/games");
+  };
 
   /* ────────────────────── RENDER ────────────────────── */
 
@@ -215,6 +225,7 @@ export default function SceneDescriptionGame() {
           score={summary?.correct || 0}
           total={summary?.total_trials || 20}
           duration={summary?.total_duration || 0}
+          level={difficulty}
           skills={["Language", "Categorization", "Observation"]}
           onAction={handleExit}
           actionLabel="Return Home"
@@ -387,17 +398,16 @@ export default function SceneDescriptionGame() {
             </div>
           )}
 
-          <button
-            type="button"
-            onClick={handleNext}
-            className="btn btn-primary"
-            style={{ marginTop: 12, width: "100%", padding: "12px 0", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8 }}
-          >
-            Next scenario
-            <span style={{ display: "inline-flex", transform: "rotate(180deg)" }}>
-              <UiIcon name="arrow-left" size={18} title="" />
-            </span>
-          </button>
+          <GameConclusionFlow
+            gameName="Scene Description"
+            score={totalScore}
+            total={attemptCount * 10} // Scores are out of 10
+            duration={60 - timeLeft}
+            level={1}
+            skills={["Visual Perception", "Speech", "Observation"]}
+            onAction={isSession ? onComplete : () => setPhase("initial")}
+            actionLabel={isSession ? "Continue Journey" : "Play Again"}
+          />
         </div>
       )}
     </div>

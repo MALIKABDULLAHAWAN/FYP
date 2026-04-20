@@ -59,39 +59,60 @@ class AIContentGenerator:
             return None
     
     def generate_story(self, theme: str, age: int = 8, length: str = 'short') -> Dict:
-        """Generate an educational story"""
+        """Generate an educational story opening chapter."""
         cache_key = f"story_{theme}_{age}_{length}"
         if cache_key in self.cache:
             return self.cache[cache_key]
-        
-        length_tokens = {'short': 300, 'medium': 600, 'long': 1000}
-        
-        prompt = f"""Create an engaging educational story for a {age}-year-old child.
-Theme: {theme}
-Length: {length} ({length_tokens[length]} words)
+
+        theme_contexts = {
+            "space":   "outer space, rockets, planets, and alien worlds",
+            "forest":  "an enchanted forest full of talking animals and magic",
+            "ocean":   "the deep ocean with mermaids, sea creatures, and sunken treasure",
+            "castle":  "a medieval castle with dragons, knights, and wizards",
+            "jungle":  "a lush jungle with exotic animals and hidden temples",
+            "volcano": "a volcanic island with fire spirits and ancient mysteries",
+        }
+        context = theme_contexts.get(theme, f"a magical world of {theme}")
+
+        word_target = {"short": "4-6", "medium": "7-9", "long": "10-12"}.get(length, "4-6")
+
+        prompt = f"""You are a warm, imaginative storyteller for children aged {age}.
+
+Write the OPENING CHAPTER of an adventure story set in {context}.
 
 Requirements:
-- Age-appropriate vocabulary
-- Educational value (teaches kindness, curiosity, or problem-solving)
-- Memorable characters
-- Simple plot with a lesson
-- Include exactly 3 fun, direct choices for what the child can do next.
+- Write {word_target} sentences that set the scene vividly
+- Introduce the child as the hero ("You are…")
+- Use age-appropriate vocabulary for a {age}-year-old
+- End at an exciting moment of choice
+- Provide exactly 3 specific, fun choices for what the child can do next
+  (make them specific to the scene, not generic)
 
-Format as JSON with: title, content, characters (list), lesson, choices (list of {{label, icon}})"""
+OUTPUT FORMAT — respond with ONLY this JSON (no markdown, no extra text):
+{{
+  "title": "<short adventure title>",
+  "content": "<the opening chapter text>",
+  "choices": [
+    {{"label": "<short action phrase>", "icon": "<single emoji>"}},
+    {{"label": "<short action phrase>", "icon": "<single emoji>"}},
+    {{"label": "<short action phrase>", "icon": "<single emoji>"}}
+  ]
+}}"""
 
         messages = [{"role": "user", "content": prompt}]
-        response = self._call_groq(messages, model=self.models['quality'], temperature=0.8)
-        
+        response = self._call_groq(messages, model=self.models['quality'], temperature=0.85)
+
         if response:
             try:
-                # Extract JSON from response
                 json_str = self._extract_json(response)
                 story = json.loads(json_str)
-                self.cache[cache_key] = story
-                return story
-            except:
-                return self._fallback_story(theme, age)
-        
+                # Ensure required keys exist
+                if "content" in story:
+                    self.cache[cache_key] = story
+                    return story
+            except Exception:
+                pass
+
         return self._fallback_story(theme, age)
     
     def generate_poem(self, topic: str, style: str = 'rhyming') -> Dict:
@@ -352,13 +373,54 @@ Format as JSON:
     # ============ FALLBACK CONTENT ============
     
     def _fallback_story(self, theme: str, age: int) -> Dict:
-        return {
-            'title': f'The Brave Little {theme.title()}',
-            'content': f'Once upon a time, there was a brave little {theme} who went on an adventure. They learned that being kind and helpful makes everyone happy. The end.',
-            'characters': ['Hero', 'Friend'],
-            'lesson': 'Be kind and brave',
-            'discussion_question': 'What would you do on an adventure?'
+        fallbacks = {
+            "space":   {
+                "title": "Lost in the Stars",
+                "content": "You are an astronaut floating through the galaxy when your rocket starts beeping. A small green alien waves at you from a nearby asteroid. You have to decide what to do next!",
+                "choices": [
+                    {"label": "Wave back at the alien",  "icon": "👋"},
+                    {"label": "Check the rocket alarm",  "icon": "🔧"},
+                    {"label": "Fly closer to the asteroid", "icon": "🚀"},
+                ],
+            },
+            "forest":  {
+                "title": "The Enchanted Forest",
+                "content": "You step into a glowing forest where the trees whisper your name. A tiny fairy lands on your shoulder and says she needs your help to find the lost golden acorn. The path splits in three directions!",
+                "choices": [
+                    {"label": "Follow the sparkling trail", "icon": "✨"},
+                    {"label": "Ask the wise old tree",       "icon": "🌳"},
+                    {"label": "Listen for the acorn's glow", "icon": "🌟"},
+                ],
+            },
+            "ocean":   {
+                "title": "Secrets of the Deep",
+                "content": "You dive into the crystal-blue ocean and discover a hidden underwater city. A friendly dolphin swims up and nudges a glowing map into your hands. The map shows three paths to a sunken treasure!",
+                "choices": [
+                    {"label": "Follow the dolphin",          "icon": "🐬"},
+                    {"label": "Read the glowing map",        "icon": "🗺️"},
+                    {"label": "Swim toward the coral arch",  "icon": "🪸"},
+                ],
+            },
+            "castle":  {
+                "title": "The Dragon's Castle",
+                "content": "You arrive at a towering castle where a friendly dragon is crying — someone stole the magic crown! The dragon asks for your help. You spot three clues near the castle gate.",
+                "choices": [
+                    {"label": "Examine the muddy footprints", "icon": "👣"},
+                    {"label": "Ask the castle guard",          "icon": "⚔️"},
+                    {"label": "Search the tower window",       "icon": "🏰"},
+                ],
+            },
         }
+        fb = fallbacks.get(theme, {
+            "title": f"The {theme.title()} Adventure",
+            "content": f"You are about to begin an amazing adventure in a magical {theme}. Something incredible is waiting just around the corner!",
+            "choices": [
+                {"label": "Look around",   "icon": "👀"},
+                {"label": "Keep going",    "icon": "🚶"},
+                {"label": "Find a friend", "icon": "🤝"},
+            ],
+        })
+        return fb
     
     def _fallback_poem(self, topic: str) -> Dict:
         return {

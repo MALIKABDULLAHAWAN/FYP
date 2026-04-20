@@ -276,15 +276,16 @@ export default function ProblemSolving({ isSession = false, level = "easy", onCo
 
         {/* Game over - Integrated StandaloneGameReport */}
         {phase === "over" && (
-           <GameConclusionFlow 
-             gameName="Problem Solving"
-             score={score}
-             total={roundsToPlay}
-             duration={endTime ? (endTime - startTime) / 1000 : 0}
-             skills={["Pattern Recognition", "Logic", "Sequential Thinking"]}
-             onAction={isSession ? onComplete : () => setPhase("idle")}
-             actionLabel={isSession ? "Continue Journey" : "Play Again"}
-           />
+            <GameConclusionFlow 
+              gameName="Problem Solving"
+              score={score}
+              total={roundsToPlay}
+              duration={endTime ? (endTime - startTime) / 1000 : 0}
+              level={level === 'hard' ? 3 : level === 'medium' ? 2 : 1}
+              skills={["Pattern Recognition", "Logic", "Sequential Thinking"]}
+              onAction={isSession ? onComplete : () => setPhase("idle")}
+              actionLabel={isSession ? "Continue Journey" : "Play Again"}
+            />
         )}
       </div>
     </div>

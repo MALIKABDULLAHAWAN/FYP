@@ -16,7 +16,6 @@ const NAV_ITEMS = [
   { to: "/therapist", label: "Therapy", icon: "therapist" },
   { to: "/games", label: "Fun Games", icon: "games" },
   { to: "/sticker-pack", label: "Sticker Album", icon: "star" },
-  { to: "/speech-therapy", label: "Talking Time", icon: "speech" },
   { to: "/profile", label: "My Profile", icon: "profile" },
   { to: "/settings", label: "Settings", icon: "settings" },
   { to: "/help", label: "Help", icon: "help" },

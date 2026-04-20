@@ -267,6 +267,7 @@ export default function MatchingGame({ isSession = false, level = "easy", onComp
               score={score}
               total={progress.total}
               duration={endTime ? (endTime - startTime) / 1000 : 0}
+              level={level === 'hard' ? 3 : level === 'medium' ? 2 : 1}
               skills={["Logic", "Visual Memory", "Precision"]}
               onAction={isSession ? onComplete : () => navigate('/games')}
               actionLabel={isSession ? "Finish Activity" : "Play More Games"}

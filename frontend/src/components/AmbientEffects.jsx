@@ -207,10 +207,10 @@ export const SmoothButton = ({ children, onClick, className = '', style = {}, di
 };
 
 // 3D Sticker Display
-export const Sticker3D = ({ children, animate = true }) => (
-  <div className="sticker-3d" style={{ display: 'inline-block' }}>
+export const Sticker3D = ({ children, emoji, size = 100, animate = true }) => (
+  <div className="sticker-3d" style={{ display: 'inline-block', fontSize: size }}>
     <div className={`sticker ${animate ? 'sticker-spring' : ''}`}>
-      {children}
+      {emoji || children}
     </div>
   </div>
 );

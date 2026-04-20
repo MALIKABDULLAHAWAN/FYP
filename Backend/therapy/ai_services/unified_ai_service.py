@@ -494,42 +494,111 @@ Keep it simple and child-friendly."""
         return response.text if not response.error else "Keep trying! You're getting closer! 💪"
     
     def continue_story(
-        self, 
-        current_story: str, 
+        self,
+        current_story: str,
         child_choice: str,
         agent_key: str = "story_weaver",
         turns_left: int = 5
     ) -> Dict:
-        """Continue a story based on child's choice with dynamic options"""
-        prompt = f"""Continue this story based on the child's choice:
-    
-Story so far: "{current_story}"
-Child's choice: "{child_choice}"
-Turns remaining until the end: {turns_left}
+        """Continue a story based on child's choice with dynamic, contextual options."""
 
-If turns remaining is 0, provide a satisfying conclusion and an empty choices list.
-Otherwise, provide the next part of the narrative and 3 fun, short choices for what to do next.
-REMEMBER: Output ONLY valid JSON."""
-        
+        if turns_left <= 0:
+            ending_instruction = (
+                "This is the FINAL chapter. Write a satisfying, uplifting conclusion "
+                "(3-5 sentences) that resolves the adventure. "
+                'Set "choices" to an empty array [].'
+            )
+        else:
+            ending_instruction = (
+                f"There are {turns_left} chapter(s) left. "
+                "Write the next exciting part of the story (3-5 sentences). "
+                "Then provide exactly 3 short, distinct choices for what the child can do next. "
+                "Each choice must be specific to what just happened in the story — not generic. "
+                "Include a relevant emoji icon for each choice."
+            )
+
+        prompt = f"""You are a warm, imaginative storyteller for children aged 5-12.
+
+STORY SO FAR:
+{current_story}
+
+THE CHILD'S ACTION: "{child_choice}"
+
+STRICT RULES — you MUST follow these exactly:
+- Write ONLY pure story prose. Never explain your own reasoning.
+- Never mention the child's choice by name or say things like "Since you chose..." or "As you decided to...".
+- Never break the fourth wall or reference the game.
+- Just continue the story as if the action happened naturally.
+- {ending_instruction}
+
+OUTPUT FORMAT — respond with ONLY valid JSON, nothing else before or after:
+{{
+  "narrative": "<pure story prose, 3-5 sentences>",
+  "choices": [
+    {{"label": "<short action phrase>", "icon": "<single emoji>"}},
+    {{"label": "<short action phrase>", "icon": "<single emoji>"}},
+    {{"label": "<short action phrase>", "icon": "<single emoji>"}}
+  ]
+}}"""
+
         response = self.generate_response(prompt, agent_key, use_cache=False)
-        
-        if response.error:
+
+        if response.error and not response.text:
             return {
-                "narrative": "The adventure continues in a surprising way! What do you want to do?",
-                "choices": [{"label": "Look around", "icon": "👀"}, {"label": "Keep going", "icon": "🚶"}, {"label": "Find treasure", "icon": "💎"}]
+                "narrative": (
+                    "The adventure takes an unexpected turn! Something magical happens "
+                    "just around the corner."
+                ),
+                "choices": [
+                    {"label": "Look around carefully", "icon": "👀"},
+                    {"label": "Call out for help",     "icon": "📣"},
+                    {"label": "Follow the light",      "icon": "✨"},
+                ],
             }
-        
+
+        # Try to extract and parse JSON from the response
         try:
-            import re
-            json_match = re.search(r'\{.*\}', response.text, re.DOTALL)
+            import re, json as _json
+
+            text = response.text.strip()
+
+            # Strip markdown code fences if present
+            text = re.sub(r'^```(?:json)?\s*', '', text, flags=re.IGNORECASE)
+            text = re.sub(r'\s*```$', '', text)
+            text = text.strip()
+
+            # Find the outermost JSON object
+            json_match = re.search(r'\{.*\}', text, re.DOTALL)
             if json_match:
-                return json.loads(json_match.group())
+                parsed = _json.loads(json_match.group())
+                if "narrative" in parsed:
+                    narrative = str(parsed["narrative"]).strip()
+                    choices   = parsed.get("choices")
+                    if not isinstance(choices, list) or len(choices) == 0:
+                        choices = []
+                    # Sanitise each choice
+                    clean_choices = []
+                    for c in choices:
+                        if isinstance(c, dict) and c.get("label"):
+                            clean_choices.append({
+                                "label": str(c["label"]).strip(),
+                                "icon":  str(c.get("icon", "✨")).strip(),
+                            })
+                    return {"narrative": narrative, "choices": clean_choices}
         except Exception as e:
-            print(f"Failed to parse story JSON: {e}")
-            
+            print(f"Story JSON parse error: {e}")
+
+        # Last-resort fallback: use raw text as narrative
+        raw = response.text.strip() if response.text else ""
+        # Strip any partial JSON artifacts
+        raw = re.sub(r'\{.*', '', raw, flags=re.DOTALL).strip() if raw else ""
         return {
-            "narrative": response.text,
-            "choices": [{"label": "Explore more", "icon": "✨"}, {"label": "Talk to a friend", "icon": "🗣️"}, {"label": "Secret path", "icon": "🔍"}]
+            "narrative": raw or "The adventure continues in a surprising way!",
+            "choices": [
+                {"label": "Explore more",       "icon": "✨"},
+                {"label": "Talk to a friend",   "icon": "🗣️"},
+                {"label": "Find a secret path", "icon": "🔍"},
+            ],
         }
     
     def explain_concept(

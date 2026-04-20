@@ -5,6 +5,8 @@ import {
   AnimalStickers, FruitStickers, ShapeStickers, 
   VehicleStickers, ObjectStickers, PatternStickers 
 } from "../components/Stickers";
+import { Sticker3D } from "../components/AmbientEffects";
+
 import "./Dashboard.css"; // Reuse card and panel styles
 
 export default function StickerPack() {
@@ -21,13 +23,42 @@ export default function StickerPack() {
     }
   }, []);
 
+  const RewardStickers = {
+    star_gold: <Sticker3D emoji="⭐" size={80} />,
+    trophy: <Sticker3D emoji="🏆" size={80} />,
+    unicorn: <Sticker3D emoji="🦄" size={80} />,
+    rocket: <Sticker3D emoji="🚀" size={80} />,
+    dino: <Sticker3D emoji="🦖" size={80} />,
+    heart: <Sticker3D emoji="💖" size={80} />,
+    lion: <Sticker3D emoji="🦁" size={80} />,
+    cat: <Sticker3D emoji="🐱" size={80} />,
+    dog: <Sticker3D emoji="🐶" size={80} />,
+    rabbit: <Sticker3D emoji="🐰" size={80} />,
+    bird: <Sticker3D emoji="🐦" size={80} />,
+    fish: <Sticker3D emoji="🐠" size={80} />,
+    bee: <Sticker3D emoji="🐝" size={80} />,
+    apple: <Sticker3D emoji="🍎" size={80} />,
+    banana: <Sticker3D emoji="🍌" size={80} />,
+    strawberry: <Sticker3D emoji="🍓" size={80} />,
+    car: <Sticker3D emoji="🚗" size={80} />,
+    boat: <Sticker3D emoji="⛵" size={80} />,
+    airplane: <Sticker3D emoji="✈️" size={80} />,
+    book: <Sticker3D emoji="📚" size={80} />,
+    balloon: <Sticker3D emoji="🎈" size={80} />,
+    ice_cream: <Sticker3D emoji="🍦" size={80} />,
+    pizza: <Sticker3D emoji="🍕" size={80} />,
+    gift: <Sticker3D emoji="🎁" size={80} />,
+  };
+
   const CATEGORIES = [
     { id: "animals", label: "Animals", icon: "dog", data: AnimalStickers },
     { id: "fruits", label: "Fruits", icon: "palette", data: FruitStickers },
     { id: "shapes", label: "Shapes", icon: "star", data: ShapeStickers },
     { id: "vehicles", label: "Vehicles", icon: "rocket", data: VehicleStickers },
     { id: "objects", label: "Objects", icon: "book", data: ObjectStickers },
+    { id: "rewards", label: "Rewards", icon: "award", data: RewardStickers },
   ];
+
 
   const currentCategory = CATEGORIES.find(c => c.id === activeTab);
 

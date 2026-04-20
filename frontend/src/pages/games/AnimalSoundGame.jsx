@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useChild } from "../../hooks/useChild";
 import GameConclusionFlow from "../../components/GameConclusionFlow";
@@ -342,9 +342,10 @@ export default function AnimalSoundGame({ isSession = false, level = "easy", onC
             score={score}
             total={TOTAL_ROUNDS}
             duration={duration}
-            skills={["Fine Motor", "Auditory Processing", "Visual Recognition"]}
+            level={activeLevel === 'hard' ? 3 : activeLevel === 'medium' ? 2 : 1}
+            skills={["Auditory Processing", "Vocabulary", "Association"]}
             onAction={isSession ? onComplete : () => setPhase("level_select")}
-            actionLabel={isSession ? "Next Journey Task" : "Play Again"}
+            actionLabel={isSession ? "Continue Journey" : "Play Again"}
           />
         )}
       </div>
