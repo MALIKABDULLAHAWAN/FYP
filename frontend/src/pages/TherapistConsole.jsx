@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { listChildren, createChild, updateChild, deleteChild } from "../api/patients";
 import { getSessionHistory, getChildProgress, getDashboardStats, getChildInsights } from "../api/games";
