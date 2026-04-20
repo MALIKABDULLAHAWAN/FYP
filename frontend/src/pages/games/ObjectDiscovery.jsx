@@ -67,7 +67,7 @@ export default function ObjectDiscovery({ isSession = false, level = "easy", onC
   const [round, setRound] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [showWin, setShowWin] = useState(false);
-  const [startTime] = useState(Date.now());
+  const startTimeRef = useRef(null);
   const [endTime, setEndTime] = useState(null);
 
   const currentCategory = CATEGORIES[catIdx % CATEGORIES.length];
@@ -86,6 +86,7 @@ export default function ObjectDiscovery({ isSession = false, level = "easy", onC
   const startGame = useCallback(() => {
     setScore(0);
     startRound(0);
+    startTimeRef.current = Date.now();
     setPhase("playing");
   }, [startRound]);
 
@@ -264,7 +265,7 @@ export default function ObjectDiscovery({ isSession = false, level = "easy", onC
              gameName="Object Discovery"
              score={score}
              total={totalRounds}
-             duration={endTime ? (endTime - startTime) / 1000 : 0}
+             duration={endTime && startTimeRef.current ? (endTime - startTimeRef.current) / 1000 : 0}
              skills={["Categorization", "Visual Scanning", "Attention"]}
              onAction={isSession ? onComplete : () => setPhase("idle")}
              actionLabel={isSession ? "Continue Journey" : "Play Again"}

@@ -90,7 +90,7 @@ export default function ProblemSolving({ isSession = false, level = "easy", onCo
   const [round, setRound] = useState(0);
   const [feedback, setFeedback] = useState(null); // null | "correct" | wrong-option
   const [streak, setStreak] = useState(0);
-  const [startTime] = useState(Date.now());
+  const startTimeRef = useRef(null);
   const [endTime, setEndTime] = useState(null);
 
   const roundsToPlay = level === "easy" ? 6 : level === "medium" ? 10 : 15;
@@ -107,6 +107,7 @@ export default function ProblemSolving({ isSession = false, level = "easy", onCo
     setFeedback(null);
     setQueue(q.slice(1));
     setCurrent(q[0]);
+    startTimeRef.current = Date.now();
     setPhase("playing");
   }, [buildQueue]);
 
@@ -280,7 +281,7 @@ export default function ProblemSolving({ isSession = false, level = "easy", onCo
              gameName="Problem Solving"
              score={score}
              total={roundsToPlay}
-             duration={endTime ? (endTime - startTime) / 1000 : 0}
+             duration={endTime && startTimeRef.current ? (endTime - startTimeRef.current) / 1000 : 0}
              skills={["Pattern Recognition", "Logic", "Sequential Thinking"]}
              onAction={isSession ? onComplete : () => setPhase("idle")}
              actionLabel={isSession ? "Continue Journey" : "Play Again"}

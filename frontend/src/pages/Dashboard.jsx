@@ -735,51 +735,9 @@ export default function Dashboard() {
                 </tr>
               </thead>
               <tbody>
-                {sessions.map((s) => {
-                  const getFocusIcon = () => {
-                    const gn = ((s.game_types || [])[0] || s.title || "").toLowerCase();
-                    if (gn.includes("emotion")) return "😊";
-                    if (gn.includes("color") || gn.includes("memory") || gn.includes("matching") || gn.includes("sorting") || gn.includes("shape")) return "🧠";
-                    if (gn.includes("bubble")) return "👋";
-                    if (gn.includes("sound") || gn.includes("speech") || gn.includes("story")) return "🗣️";
-                    if (gn.includes("attention") || gn.includes("ja") || gn.includes("joint") || gn.includes("object")) return "👀";
-                    return "🎮";
-                  };
-                  
-                  return (
-                    <tr key={s.id}>
-                      <td style={{ padding: "18px", color: "#64748b", fontSize: "12px", fontWeight: 600 }}>{s.session_date}</td>
-                      <td style={{ fontWeight: 700, color: "#1e293b" }}>{s.child_name}</td>
-                      <td style={{ fontSize: "22px" }}>{getFocusIcon()}</td>
-                      <td>
-                        <span style={{ fontWeight: 700, color: "#475569", textTransform: "capitalize" }}>
-                          {(s.game_types || [])
-                            .map((g) => g.replace(/_/g, " "))
-                            .join(", ") || s.title}
-                        </span>
-                      </td>
-                      <td>
-                        <span className={`status-badge status-${s.status}`} style={{ textTransform: "uppercase", fontSize: "10px", letterSpacing: "1px", fontWeight: 800, borderRadius: 6, padding: "4px 8px" }}>
-                          {s.status?.replace("_", " ")}
-                        </span>
-                      </td>
-                      <td style={{ fontWeight: 800, color: "#1e293b" }}>{s.correct}/{s.total_trials}</td>
-                      <td style={{ width: 60 }}>
-                        <div style={{ position: "relative", width: 44, height: 44 }}>
-                          <ProgressRing
-                            value={Math.round(s.accuracy * 100)}
-                            size={44}
-                            strokeWidth={4}
-                            color={s.accuracy >= 0.8 ? "#10b981" : s.accuracy >= 0.5 ? "#f59e0b" : "#ef4444"}
-                          />
-                          <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 900, color: "#475569" }}>
-                            {Math.round(s.accuracy * 100)}%
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
+                {sessions.map((s) => (
+                  <DashboardActivityRow key={s.id} session={s} />
+                ))}
               </tbody>
             </table>
           </div>
@@ -850,5 +808,150 @@ export default function Dashboard() {
       <AIAgentPanel initialAgent="gameHelper" />
     </div>
     </div>
+  );
+}
+
+// Activity row with fun AI insights for children/parents
+function DashboardActivityRow({ session: s }) {
+  const [expanded, setExpanded] = useState(false);
+  const [buddyNote, setBuddyNote] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const getFocusIcon = () => {
+    const gn = ((s.game_types || [])[0] || s.title || "").toLowerCase();
+    if (gn.includes("emotion")) return "😊";
+    if (gn.includes("color") || gn.includes("memory") || gn.includes("matching") || gn.includes("sorting") || gn.includes("shape")) return "🧠";
+    if (gn.includes("bubble")) return "👋";
+    if (gn.includes("sound") || gn.includes("speech") || gn.includes("story")) return "🗣️";
+    if (gn.includes("attention") || gn.includes("ja") || gn.includes("joint") || gn.includes("object")) return "👀";
+    return "🎮";
+  };
+
+  useEffect(() => {
+    if (expanded && !buddyNote) {
+      let mounted = true;
+      setLoading(true);
+      const activityName = (s.game_types || []).join(", ") || s.title;
+      const ctx = `You are Buddy, a friendly AI companion for a child using a therapy app. The child just looked at their past activity: ${activityName}. They got ${s.correct} stars out of ${s.total_trials}! Their accuracy was ${Math.round(s.accuracy * 100)}%. Write a super fun, encouraging 1-sentence message for the child about this specific activity record. Use an emoji!`;
+      
+      import("../api/games").then(({ getAiEncouragement }) => {
+        getAiEncouragement(ctx)
+          .then(data => {
+            if (mounted && data?.message) setBuddyNote(data.message);
+            else if (mounted) setBuddyNote("You did a great job on this adventure! Let's play more! 🚀");
+          })
+          .catch(() => {
+            if (mounted) setBuddyNote("You're a superstar! Keep playing and having fun! ⭐");
+          })
+          .finally(() => {
+            if (mounted) setLoading(false);
+          });
+      });
+      return () => { mounted = false; };
+    }
+  }, [expanded, s, buddyNote]);
+
+  return (
+    <>
+      <tr 
+        onClick={() => setExpanded(!expanded)} 
+        style={{ 
+          cursor: "pointer", 
+          background: expanded ? "#f0f4ff" : "transparent",
+          transition: "all 0.3s ease"
+        }}
+        title="Click to see what Buddy thinks!"
+      >
+        <td style={{ padding: "18px", color: "#64748b", fontSize: "12px", fontWeight: 600 }}>{s.session_date}</td>
+        <td style={{ fontWeight: 700, color: "#1e293b" }}>{s.child_name}</td>
+        <td style={{ fontSize: "22px" }}>{getFocusIcon()}</td>
+        <td>
+          <span style={{ fontWeight: 700, color: "#475569", textTransform: "capitalize" }}>
+            {(s.game_types || [])
+              .map((g) => g.replace(/_/g, " "))
+              .join(", ") || s.title}
+          </span>
+        </td>
+        <td>
+          <span className={`status-badge status-${s.status}`} style={{ textTransform: "uppercase", fontSize: "10px", letterSpacing: "1px", fontWeight: 800, borderRadius: 6, padding: "4px 8px" }}>
+            {s.status?.replace("_", " ")}
+          </span>
+        </td>
+        <td style={{ fontWeight: 800, color: "#1e293b" }}>{s.correct}/{s.total_trials}</td>
+        <td style={{ width: 60 }}>
+          <div style={{ position: "relative", width: 44, height: 44 }}>
+            <ProgressRing
+              value={Math.round(s.accuracy * 100)}
+              size={44}
+              strokeWidth={4}
+              color={s.accuracy >= 0.8 ? "#10b981" : s.accuracy >= 0.5 ? "#f59e0b" : "#ef4444"}
+            />
+            <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 900, color: "#475569" }}>
+              {Math.round(s.accuracy * 100)}%
+            </div>
+          </div>
+        </td>
+      </tr>
+      {expanded && (
+        <tr>
+          <td colSpan="7" style={{ padding: "0" }}>
+            <motion.div 
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              style={{
+                background: "linear-gradient(to bottom, #f0f4ff, #ffffff)",
+                padding: "24px",
+                borderBottom: "1px solid #e2e8f0",
+                overflow: "hidden"
+              }}
+            >
+              <div style={{ display: "flex", gap: "24px", alignItems: "start" }}>
+                <div style={{ 
+                  flex: 1, 
+                  background: "white", 
+                  padding: "16px", 
+                  borderRadius: "20px",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.03)",
+                  border: "1px solid #e2e8f0"
+                }}>
+                  <p style={{ margin: "0 0 8px 0", fontSize: "11px", fontWeight: 800, color: "#6366f1", textTransform: "uppercase" }}>Adventure Details</p>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                    <div style={{ fontSize: "13px" }}><strong>Stars Earned:</strong> {s.correct} ⭐</div>
+                    <div style={{ fontSize: "13px" }}><strong>Total Challenges:</strong> {s.total_trials} 🎮</div>
+                    <div style={{ fontSize: "13px" }}><strong>Accuracy:</strong> {Math.round(s.accuracy * 100)}% 🎯</div>
+                    <div style={{ fontSize: "13px" }}><strong>Date:</strong> {s.session_date} 📅</div>
+                  </div>
+                </div>
+                
+                <div style={{ flex: 1.5, position: "relative" }}>
+                  <div style={{ 
+                    background: "#6366f1", 
+                    color: "white", 
+                    padding: "20px", 
+                    borderRadius: "24px 24px 24px 4px",
+                    boxShadow: "0 10px 25px rgba(99, 102, 241, 0.2)",
+                    position: "relative"
+                  }}>
+                    <p style={{ margin: "0 0 10px 0", fontSize: "14px", fontWeight: 800, display: "flex", alignItems: "center", gap: 8 }}>
+                      🐰 Buddy's Message
+                    </p>
+                    {loading ? (
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <div className="spinner-white" style={{ width: 14, height: 14 }}></div>
+                        <span style={{ fontSize: "13px", opacity: 0.8, fontStyle: "italic" }}>Buddy is thinking... ✨</span>
+                      </div>
+                    ) : (
+                      <p style={{ margin: 0, fontSize: "15px", fontWeight: 600, lineHeight: 1.5 }}>
+                        {buddyNote}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </td>
+        </tr>
+      )}
+    </>
   );
 }

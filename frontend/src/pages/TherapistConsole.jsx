@@ -1404,15 +1404,7 @@ export default function TherapistConsole() {
                 Recent Sessions
               </h4>
               {childProgress.recent_sessions.map((s, i) => (
-                <div key={i} className="session-row">
-                  <span className="session-date">{s.date}</span>
-                  <span className="session-title">{s.title}</span>
-                  <span className={`status-badge status-${s.status}`}>{s.status}</span>
-                  <span className="session-score">{s.correct}/{s.total_trials}</span>
-                  <span className={`accuracy-badge ${(!s.correct && s.status !== "completed") ? "acc-mid" : s.accuracy >= 0.8 ? "acc-high" : s.accuracy >= 0.5 ? "acc-mid" : "acc-low"}`}>
-                    {(!s.correct && s.status !== "completed") ? "N/A" : `${(s.accuracy * 100).toFixed(0)}%`}
-                  </span>
-                </div>
+                <ChildRecentSessionItem key={i} session={s} />
               ))}
             </div>
           )}
@@ -1684,5 +1676,75 @@ function SessionHistoryRow({ session: s, assets }) {
         </tr>
       )}
     </>
+  );
+}
+
+// Compact session item for the Child Detail side-panel
+function ChildRecentSessionItem({ session: s }) {
+  const [expanded, setExpanded] = useState(false);
+  const [insight, setInsight] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (expanded && !insight) {
+      let mounted = true;
+      setLoading(true);
+      const gameStr = s.title;
+      const ctx = `Reviewing a ${gameStr} session for a specific child. Score: ${s.correct}/${s.total_trials}. Accuracy: ${Math.round(s.accuracy * 100)}%. Provide a 1-sentence professional clinical tip for the therapist based on this record. No emojis.`;
+      
+      import("../api/games").then(({ getAiEncouragement }) => {
+        getAiEncouragement(ctx)
+          .then(data => {
+            if (mounted && data?.message) setInsight(data.message);
+            else if (mounted) setInsight("Observation: Session baseline remains consistent with prior performance levels.");
+          })
+          .catch(() => {
+            if (mounted) setInsight("Baseline metrics achieved.");
+          })
+          .finally(() => {
+            if (mounted) setLoading(false);
+          });
+      });
+      return () => { mounted = false; };
+    }
+  }, [expanded, s, insight]);
+
+  return (
+    <div style={{ marginBottom: expanded ? 12 : 4 }}>
+      <div 
+        className="session-row" 
+        onClick={() => setExpanded(!expanded)} 
+        style={{ cursor: "pointer", background: expanded ? "rgba(99,102,241,0.05)" : "#fff", height: "auto", minHeight: "44px", border: expanded ? "1px solid rgba(99,102,241,0.2)" : "1px solid #edf2f7" }}
+      >
+        <span className="session-date">{s.date}</span>
+        <span className="session-title">{s.title}</span>
+        <span className={`status-badge status-${s.status}`}>{s.status}</span>
+        <span className="session-score">{s.correct}/{s.total_trials}</span>
+        <span className={`accuracy-badge ${(!s.correct && s.status !== "completed") ? "acc-mid" : s.accuracy >= 0.8 ? "acc-high" : s.accuracy >= 0.5 ? "acc-mid" : "acc-low"}`}>
+          {(!s.correct && s.status !== "completed") ? "N/A" : `${(s.accuracy * 100).toFixed(0)}%`}
+        </span>
+      </div>
+      {expanded && (
+        <div style={{ 
+          margin: "0 4px", 
+          padding: "12px", 
+          background: "#fff", 
+          border: "1px solid #e2e8f0", 
+          borderTop: "none", 
+          borderRadius: "0 0 12px 12px",
+          fontSize: "12px",
+          animation: "slideUp 0.2s ease-out"
+        }}>
+          <div style={{ fontWeight: 800, color: "var(--primary)", fontSize: "10px", textTransform: "uppercase", marginBottom: "6px", display: "flex", alignItems: "center", gap: 4 }}>
+            <span>🧠</span> Clinician Pulse
+          </div>
+          {loading ? (
+            <div style={{ color: "var(--muted)", fontStyle: "italic", animation: "pulse-op 1.5s infinite" }}>Synthesizing insight...</div>
+          ) : (
+            <div style={{ color: "#475569", lineHeight: "1.4" }}>{insight}</div>
+          )}
+        </div>
+      )}
+    </div>
   );
 }

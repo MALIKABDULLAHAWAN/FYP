@@ -35,7 +35,7 @@ export default function MatchingGame({ isSession = false, level = "easy", onComp
   const [options, setOptions] = useState([]);
   const [selectedChildAvatar] = useState("🧩");
   const [target, setTarget] = useState(null);
-  const [startTime] = useState(Date.now());
+  const startTimeRef = useRef(null);
   const [endTime, setEndTime] = useState(null);
 
   // Start fresh session
@@ -50,6 +50,7 @@ export default function MatchingGame({ isSession = false, level = "easy", onComp
       const resp = await startGameSession('matching', selectedChild, 10, { difficulty_level: difficultyLevel });
       setSessionId(resp.session.session_id);
       loadTrial(resp.first_trial);
+      startTimeRef.current = Date.now();
       setGameState('playing');
     } catch (err) {
       toast.error("Failed to start game");
@@ -266,7 +267,7 @@ export default function MatchingGame({ isSession = false, level = "easy", onComp
               gameName="Matching Game"
               score={score}
               total={progress.total}
-              duration={endTime ? (endTime - startTime) / 1000 : 0}
+              duration={endTime && startTimeRef.current ? (endTime - startTimeRef.current) / 1000 : 0}
               skills={["Logic", "Visual Memory", "Precision"]}
               onAction={isSession ? onComplete : () => navigate('/games')}
               actionLabel={isSession ? "Finish Activity" : "Play More Games"}
