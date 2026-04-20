@@ -424,12 +424,20 @@ class GameStandaloneResultView(APIView):
         # Find or create a matching GameImage with THAT SPECIFIC NAME
         # This prevents title collapsing in history and analytics breakdown
         from therapy.models import GameImage, GameSession
-        game = GameImage.objects.filter(name__iexact=game_name).first()
-        if not game:
-            game = GameImage.objects.create(
-                name=game_name,
-                game_type=canonical_type,
-                is_active=True
+        try:
+            game = GameImage.objects.filter(name__iexact=game_name).first()
+            if not game:
+                game = GameImage.objects.create(
+                    name=game_name,
+                    game_type=canonical_type,
+                    is_active=True
+                )
+        except Exception as e:
+            print(f"Failed to find/create specific GameImage for {game_name}: {e}")
+            # Fallback to a generic game record to ensure the session is still saved
+            game, _ = GameImage.objects.get_or_create(
+                name="Standalone Activity",
+                defaults={"game_type": "matching", "is_active": True}
             )
 
         # Create and finalize the session
@@ -445,17 +453,20 @@ class GameStandaloneResultView(APIView):
             assignment = child.assigned_therapists.first()
         assigned_therapist = assignment.therapist if assignment else request.user
 
-        session = GameSession.objects.create(
-            child=child,
-            game=game,
-            therapist=assigned_therapist,
-            started_at=timezone.now(),
-            duration_seconds=data.get("duration_seconds", 0),
-            performance_metrics=metrics,
-            therapeutic_goals_targeted=data.get("skills_tested", []),
-            status="completed" # UI branding
-        )
-        session.completed_at = timezone.now()
+        try:
+            session = GameSession.objects.create(
+                child=child,
+                game=game,
+                therapist=assigned_therapist,
+                started_at=timezone.now(),
+                duration_seconds=data.get("duration_seconds", 0),
+                performance_metrics=metrics,
+                therapeutic_goals_targeted=data.get("skills_tested", []),
+            )
+            session.completed_at = timezone.now()
+        except Exception as e:
+            print(f"Critical error creating GameSession: {e}")
+            return Response({"detail": f"Failed to record session: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
         
         # Generate Buddy's AI Observation
         try:
@@ -482,8 +493,11 @@ class GameStandaloneResultView(APIView):
 
         session.save()
         
-        # Trigger metrics recalculation
-        child.calculate_progress_metrics()
+        # Trigger metrics recalculation (wrap in try-except to avoid 500ing session save)
+        try:
+            child.calculate_progress_metrics()
+        except Exception as e:
+            print(f"Metrics recalculation failed: {e}")
         
         return Response({
             "status": "success",

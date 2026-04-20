@@ -208,7 +208,7 @@ class GameImage(models.Model):
     category = models.CharField(max_length=50, blank=True, default="", help_text="E.g., animal, food, vehicle")
     
     # Image
-    image = models.ImageField(upload_to="game_images/%Y/%m/")
+    image = models.ImageField(upload_to="game_images/%Y/%m/", null=True, blank=True)
     emoji = models.CharField(max_length=10, blank=True, default="", help_text="Emoji representation if available")
     
     # Difficulty and metadata

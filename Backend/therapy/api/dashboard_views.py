@@ -329,6 +329,10 @@ class ChildProgressView(APIView):
 
         # Per-game breakdown: Group by game name/type for granularity
         game_stats_map = {}
+        game_stats = []  # Initialize the output list
+
+        # Collect all unique trial types from managed sessions
+        trial_types = list(trials.values_list("trial_type", flat=True).distinct())
 
         # 1. Process Standalone Game Sessions (Specific names)
         for gs in game_sessions:
@@ -402,6 +406,7 @@ class ChildProgressView(APIView):
             recent_list.append({
                 "session_id": s.id,
                 "date": str(s.session_date),
+                "created_at": s.created_at.isoformat(),
                 "status": s.status,
                 "title": s.title or f"Adventure with {s.therapist.full_name or 'Buddy'}",
                 "total_trials": s_total,
@@ -415,6 +420,7 @@ class ChildProgressView(APIView):
             recent_list.append({
                 "session_id": gs.id,
                 "date": str(gs.created_at.date()),
+                "created_at": gs.created_at.isoformat(),
                 "status": "completed" if gs.completed_at else "in_progress",
                 "title": f"Standalone {gs.game.name}",
                 "total_trials": metrics.get("total_trials", 0),
@@ -423,8 +429,8 @@ class ChildProgressView(APIView):
                 "type": "standalone"
             })
 
-        # Sort combined list by date
-        recent_list.sort(key=lambda x: x["date"], reverse=True)
+        # Sort combined list by created_at (newest first)
+        recent_list.sort(key=lambda x: x["created_at"], reverse=True)
         recent_list = recent_list[:50]
 
         return Response({

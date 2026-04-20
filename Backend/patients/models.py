@@ -93,57 +93,62 @@ class ChildProfile(models.Model):
         return f"ChildProfile({self.user.email})"
 
     def calculate_progress_metrics(self):
-        """Calculate and update progress metrics based on game sessions"""
+        """Calculate and update progress metrics based on game sessions in a robust, single-pass way."""
         from therapy.models import GameSession
         
-        sessions = GameSession.objects.filter(child=self)
-        total_sessions = sessions.count()
+        # Fetch all sessions once to avoid multiple DB hits and fragile JSON lookups
+        sessions = list(GameSession.objects.filter(child=self).exclude(completed_at__isnull=True))
+        total_sessions = len(sessions)
         
-        # Calculate average score
-        scores = []
+        if total_sessions == 0:
+            self.progress_metrics = {
+                "total_sessions": 0,
+                "average_score": 0,
+                "games_completed": 0,
+                "therapeutic_goals_progress": {},
+            }
+            self.save(update_fields=['progress_metrics', 'updated_at'])
+            return
+
+        total_score = 0
+        goal_data = {} # goal_name -> {total_score, count, last_date}
+
         for session in sessions:
             metrics = session.performance_metrics or {}
-            if "score" in metrics:
-                scores.append(metrics["score"])
-        average_score = sum(scores) / len(scores) if scores else 0
-        
-        # Count completed games
-        games_completed = sessions.filter(completed_at__isnull=False).count()
-        
-        # Calculate therapeutic goals progress
-        therapeutic_goals_progress = {}
-        for session in sessions:
+            score = metrics.get("score", 0) or 0
+            total_score += score
+            
             goals = session.therapeutic_goals_targeted or []
-            metrics = session.performance_metrics or {}
-            score = metrics.get("score", 0)
+            if isinstance(goals, str): goals = [goals] # legacy support
             
             for goal in goals:
-                if goal not in therapeutic_goals_progress:
-                    therapeutic_goals_progress[goal] = {
-                        "sessions_completed": 0,
-                        "average_performance": 0,
-                        "last_session_date": None,
-                    }
-                therapeutic_goals_progress[goal]["sessions_completed"] += 1
-                therapeutic_goals_progress[goal]["last_session_date"] = session.created_at.isoformat()
-        
-        # Calculate average performance per goal
-        for goal, data in therapeutic_goals_progress.items():
-            goal_sessions = sessions.filter(therapeutic_goals_targeted__contains=[goal])
-            scores = []
-            for session in goal_sessions:
-                metrics = session.performance_metrics or {}
-                if "score" in metrics:
-                    scores.append(metrics["score"])
-            data["average_performance"] = sum(scores) / len(scores) if scores else 0
-        
+                if goal not in goal_data:
+                    goal_data[goal] = {"total_score": 0, "count": 0, "last_date": None}
+                
+                goal_data[goal]["total_score"] += score
+                goal_data[goal]["count"] += 1
+                
+                # Update last date if this session is newer
+                sess_date = session.created_at.isoformat()
+                if not goal_data[goal]["last_date"] or sess_date > goal_data[goal]["last_date"]:
+                    goal_data[goal]["last_date"] = sess_date
+
+        # Format therapeutic goals progress
+        therapeutic_goals_progress = {}
+        for goal, data in goal_data.items():
+            therapeutic_goals_progress[goal] = {
+                "sessions_completed": data["count"],
+                "average_performance": round(data["total_score"] / data["count"], 2) if data["count"] > 0 else 0,
+                "last_session_date": data["last_date"]
+            }
+
         self.progress_metrics = {
             "total_sessions": total_sessions,
-            "average_score": average_score,
-            "games_completed": games_completed,
+            "average_score": round(total_score / total_sessions, 2),
+            "games_completed": total_sessions,
             "therapeutic_goals_progress": therapeutic_goals_progress,
         }
-        self.save()
+        self.save(update_fields=['progress_metrics', 'updated_at'])
 
 
 class Guardian(models.Model):

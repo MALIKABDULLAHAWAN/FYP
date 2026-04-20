@@ -3,6 +3,7 @@ import RewardScreen from './RewardScreen';
 import StandaloneGameReport from './StandaloneGameReport';
 import StickerAward from './StickerAward';
 import { useChild } from '../hooks/useChild';
+import { useToast } from '../hooks/useToast';
 import { AnimatePresence } from 'framer-motion';
 import { apiFetch } from '../api/client';
 
@@ -48,6 +49,7 @@ export default function GameConclusionFlow({
 
   const [phase, setPhase] = useState('celebration'); // celebration, sticker, analysis
   const { selectedChild } = useChild();
+  const toast = useToast();
   const hasSaved = useRef(false);
 
   useEffect(() => {
@@ -70,21 +72,23 @@ export default function GameConclusionFlow({
         child_id: finalChildId,
         game_name: gameName,
         score,
-        total_trials: total,
-        accuracy: Number(accuracy.toFixed(4)),
+        total_trials: Math.max(1, total), // Ensure valid for analytics
+        accuracy: Math.min(1, Math.max(0, Number(accuracy.toFixed(4)))),
         duration_seconds: duration || 0,
         skills_tested: Array.isArray(skills) ? skills : [],
-        level: level, // Include level in the payload if possible
+        level: level,
         status: 'completed',
       },
     })
       .then((resp) => {
         console.log(`[GameConclusionFlow] ✅ Session saved for "${gameName}" (Level ${level}):`, resp);
+        toast.success(`Session recorded: ${gameName} 🌟`);
       })
       .catch((err) => {
         console.warn(`[GameConclusionFlow] ⚠️ Session save failed for "${gameName}":`, err);
+        toast.error(`Could not save session: ${err.message || "Generic error"}`);
       });
-  }, [selectedChild, results?.child_id, gameName, score, total, accuracy, duration, skills, level]);
+  }, [selectedChild, results?.child_id, gameName, score, total, accuracy, duration, skills, level, toast]);
 
   const handleRewardNext = () => {
     // Standard for stickers: Level 3+ and Accuracy >= 80%

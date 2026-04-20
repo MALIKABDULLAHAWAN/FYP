@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { listChildren, createChild, updateChild, deleteChild } from "../api/patients";
 import { getSessionHistory, getChildProgress, getDashboardStats, getChildInsights } from "../api/games";
+import { useChild } from "../hooks/useChild";
 import { SkeletonStatCards, SkeletonTable } from "../components/Skeleton";
 import ProgressRing from "../components/ProgressRing";
 import { GameSelector } from "../components/GameSelector";
@@ -30,12 +31,20 @@ export default function TherapistConsole() {
 
   const [children, setChildren] = useState([]);
   const [sessions, setSessions] = useState([]);
-  const [selectedChild, setSelectedChild] = useState(null);
+  const { selectedChild, setSelectedChild } = useChild();
   const [childProgress, setChildProgress] = useState(null);
   const [showAddChild, setShowAddChild] = useState(false);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState(null);
   const [activeTab, setActiveTab] = useState("overview"); // overview, children, sessions, analytics, games
+
+  // Auto-refresh sessions when switching to analytics tab
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    if (tabId === "analytics" || tabId === "sessions") {
+      silentRefresh();
+    }
+  };
   const [childInsights, setChildInsights] = useState(null);
   const [loadingInsights, setLoadingInsights] = useState(false);
   const [assets, setAssets] = useState({});
@@ -79,10 +88,25 @@ export default function TherapistConsole() {
   const [isRequestingDeepDive, setIsRequestingDeepDive] = useState(false);
   const [expandedSessionId, setExpandedSessionId] = useState(null);
 
+  // Live update tracking
+  const [lastUpdated, setLastUpdated] = useState(null);
+
   useEffect(() => {
     loadData();
     preloadAssets();
     loadGames();
+
+    // Poll for new sessions every 15 seconds (background, no spinner)
+    const pollInterval = setInterval(() => silentRefresh(), 15000);
+    
+    // Also refresh when tab becomes active
+    const handleFocus = () => silentRefresh();
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      clearInterval(pollInterval);
+      window.removeEventListener('focus', handleFocus);
+    };
   }, []);
 
   async function preloadAssets() {
@@ -137,8 +161,36 @@ export default function TherapistConsole() {
       setChildren(Array.isArray(c) ? c : []);
       setSessions(Array.isArray(s) ? s : []);
       setStats(st);
+      setLastUpdated(new Date());
     } finally {
       setLoading(false);
+    }
+  }
+
+  // Silent background refresh — no loading spinner, just updates sessions + stats
+  async function silentRefresh() {
+    try {
+      const promises = [
+        getSessionHistory({ limit: 50 }).catch(() => null),
+        getDashboardStats().catch(() => null),
+      ];
+
+      // If a child is currently selected, refresh their data too
+      if (selectedChild) {
+        promises.push(getChildProgress(selectedChild).catch(() => null));
+        promises.push(getChildInsights(selectedChild).catch(() => null));
+      }
+
+      const [s, st, cp, ci] = await Promise.all(promises);
+      
+      if (s) setSessions(Array.isArray(s) ? s : []);
+      if (st) setStats(st);
+      if (cp) setChildProgress(cp);
+      if (ci) setChildInsights(ci);
+      
+      setLastUpdated(new Date());
+    } catch (_) {
+      // Silently ignore poll errors
     }
   }
 
@@ -439,6 +491,19 @@ export default function TherapistConsole() {
             <p className="therapist-subtitle-enhanced">Manage patients, review sessions, track progress</p>
           </div>
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+            {/* Live indicator */}
+            {lastUpdated && (
+              <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "#6b7280" }}>
+                <span style={{
+                  width: 8, height: 8, borderRadius: "50%", background: "#10b981",
+                  display: "inline-block",
+                  boxShadow: "0 0 0 2px rgba(16,185,129,0.3)",
+                  animation: "pulse 2s infinite"
+                }} />
+                <span style={{ fontWeight: 600, color: "#10b981" }}>Live</span>
+                <span>· {lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+              </div>
+            )}
             <button className="therapist-add-btn" style={{ background: "#f0f9ff", color: "#0ea5e9", borderColor: "#bae6fd" }} onClick={() => loadData()}>
               <span className="therapist-sticker-wrap">
                 {TherapistStickers.refresh}
@@ -498,7 +563,7 @@ export default function TherapistConsole() {
         ].map(tab => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => handleTabChange(tab.id)}
             className={`therapist-tab-enhanced ${activeTab === tab.id ? 'active' : ''}`}
           >
             <span className="therapist-sticker-wrap">{tab.sticker}</span>
@@ -663,77 +728,211 @@ export default function TherapistConsole() {
       )}
 
       {/* Analytics Tab */}
-      {activeTab === "analytics" && (
-        <div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 24 }}>
-            {/* Session Status Chart */}
-            <div className="panel" style={{ padding: 24 }}>
-              <h3 style={{ margin: "0 0 16px 0", fontSize: 18, display: 'flex', alignItems: 'center', gap: 8 }}>
-                {assets.analyticsChart && (
-                  <img src={assets.analyticsChart.url} alt="Session status" style={{ width: 20, height: 20 }} />
+      {activeTab === "analytics" && (() => {
+        // Build per-game-result data (score + accuracy per child) from sessions
+        const recentGameResults = sessions
+          .filter(s => s.status === "completed" && s.total_trials > 0)
+          .slice(0, 20)
+          .map(s => ({
+            name: `${s.child_name?.split(" ")[0] || "?"} · ${(s.title || s.game_types?.[0] || "Game").replace(/_/g, " ").substring(0, 14)}`,
+            score: s.correct || 0,
+            accuracy: Math.round((s.accuracy || 0) * 100),
+            child: s.child_name || "Unknown",
+            game: s.title || s.game_types?.[0] || "Unknown",
+            date: s.session_date,
+          }))
+          .reverse();
+
+        // Child performance comparison: avg accuracy per child
+        const childAccMap = {};
+        sessions.filter(s => s.status === "completed" && s.total_trials > 0).forEach(s => {
+          const name = s.child_name || "Unknown";
+          if (!childAccMap[name]) childAccMap[name] = { total: 0, count: 0 };
+          childAccMap[name].total += (s.accuracy || 0) * 100;
+          childAccMap[name].count += 1;
+        });
+        const childAccData = Object.entries(childAccMap).map(([name, d]) => ({
+          name,
+          avgAccuracy: Math.round(d.total / d.count),
+          sessions: d.count,
+        })).sort((a, b) => b.avgAccuracy - a.avgAccuracy);
+
+        return (
+          <div>
+            {/* Row 1: Session Status + Games Played */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 24 }}>
+              {/* Session Status Pie */}
+              <div className="panel" style={{ padding: 24 }}>
+                <h3 style={{ margin: "0 0 16px 0", fontSize: 18, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  {assets.analyticsChart && <img src={assets.analyticsChart.url} alt="" style={{ width: 20, height: 20 }} />}
+                  Session Status
+                </h3>
+                {sessionStatusData.length > 0 ? (
+                  <RechartsContainer width="100%" height={200}>
+                    <PieChart>
+                      <Pie data={sessionStatusData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
+                        {sessionStatusData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </RechartsContainer>
+                ) : (
+                  <div style={{ textAlign: "center", padding: "40px", color: "var(--muted)" }}>No session data yet. Play some games!</div>
                 )}
-                Session Status
-              </h3>
-              {sessionStatusData.length > 0 ? (
-                <RechartsContainer width="100%" height={200}>
-                  <PieChart>
-                    <Pie
-                      data={sessionStatusData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={80}
-                      paddingAngle={5}
-                      dataKey="value"
-                    >
-                      {sessionStatusData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </RechartsContainer>
-              ) : (
-                <div style={{ textAlign: "center", padding: "40px", color: "var(--muted)" }}>
-                  No session data available
+                <div style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 12 }}>
+                  {sessionStatusData.map((d, i) => (
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12 }}>
+                      <span style={{ width: 10, height: 10, borderRadius: "50%", background: d.color, display: "inline-block" }}></span>
+                      <span>{d.name}: {d.value}</span>
+                    </div>
+                  ))}
                 </div>
-              )}
-              <div style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 12 }}>
-                {sessionStatusData.map((d, i) => (
-                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12 }}>
-                    <span style={{ width: 10, height: 10, borderRadius: "50%", background: d.color }}></span>
-                    <span>{d.name}: {d.value}</span>
-                  </div>
-                ))}
+              </div>
+
+              {/* Games Played Bar */}
+              <div className="panel" style={{ padding: 24 }}>
+                <h3 style={{ margin: "0 0 16px 0", fontSize: 18, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  {assets.sessionsIcon && <img src={assets.sessionsIcon.url} alt="" style={{ width: 20, height: 20 }} />}
+                  Games Played (by Type)
+                </h3>
+                {gameChartData.length > 0 ? (
+                  <RechartsContainer width="100%" height={200}>
+                    <BarChart data={gameChartData}>
+                      <XAxis dataKey="name" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
+                      <YAxis hide />
+                      <Tooltip />
+                      <Bar dataKey="value" fill="var(--primary)" radius={[8, 8, 0, 0]} />
+                    </BarChart>
+                  </RechartsContainer>
+                ) : (
+                  <div style={{ textAlign: "center", padding: "40px", color: "var(--muted)" }}>No game data available</div>
+                )}
               </div>
             </div>
 
-            {/* Game Types Chart */}
-            <div className="panel" style={{ padding: 24 }}>
-              <h3 style={{ margin: "0 0 16px 0", fontSize: 18, display: 'flex', alignItems: 'center', gap: 8 }}>
-                {assets.sessionsIcon && (
-                  <img src={assets.sessionsIcon.url} alt="Games played" style={{ width: 20, height: 20 }} />
-                )}
-                Games Played
-              </h3>
-              {gameChartData.length > 0 ? (
-                <RechartsContainer width="100%" height={200}>
-                  <BarChart data={gameChartData}>
-                    <XAxis dataKey="name" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
-                    <YAxis hide />
-                    <Tooltip />
-                    <Bar dataKey="value" fill="var(--primary)" radius={[8, 8, 0, 0]} />
+            {/* Row 2: Score + Accuracy per game result (per child) */}
+            <div className="panel" style={{ padding: 24, marginBottom: 24 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+                <h3 style={{ margin: 0, fontSize: 18, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  {TherapistStickers.analytics} Recent Game Results — Score & Accuracy by Child
+                </h3>
+                <span style={{ fontSize: 12, color: "var(--muted)", fontStyle: "italic" }}>
+                  Last {recentGameResults.length} completed games
+                </span>
+              </div>
+              {recentGameResults.length > 0 ? (
+                <RechartsContainer width="100%" height={280}>
+                  <BarChart data={recentGameResults} margin={{ top: 10, right: 20, left: 0, bottom: 60 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                    <XAxis
+                      dataKey="name"
+                      tick={{ fontSize: 9, fontWeight: 600 }}
+                      angle={-35}
+                      textAnchor="end"
+                      interval={0}
+                      axisLine={false}
+                      tickLine={false}
+                    />
+                    <YAxis yAxisId="left" hide domain={[0, 'auto']} />
+                    <YAxis yAxisId="right" orientation="right" domain={[0, 100]} tick={{ fontSize: 10 }} tickFormatter={v => `${v}%`} />
+                    <Tooltip
+                      formatter={(val, name) => [name === "accuracy" ? `${val}%` : val, name === "accuracy" ? "Accuracy" : "Score"]}
+                      labelFormatter={(label) => `Game: ${label}`}
+                      contentStyle={{ borderRadius: 12, border: "none", boxShadow: "0 10px 25px rgba(0,0,0,0.12)" }}
+                    />
+                    <Legend verticalAlign="top" height={28} />
+                    <Bar yAxisId="left" dataKey="score" name="Score" fill="#6366F1" radius={[6, 6, 0, 0]} maxBarSize={28} />
+                    <Bar yAxisId="right" dataKey="accuracy" name="Accuracy (%)" fill="#10b981" radius={[6, 6, 0, 0]} maxBarSize={28} />
                   </BarChart>
                 </RechartsContainer>
               ) : (
-                <div style={{ textAlign: "center", padding: "40px", color: "var(--muted)" }}>
-                  No game data available
+                <div style={{ textAlign: "center", padding: "48px 24px", color: "var(--muted)" }}>
+                  <div style={{ fontSize: 40, marginBottom: 12 }}>🎮</div>
+                  <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>No completed games yet</div>
+                  <div style={{ fontSize: 13 }}>After children play games, their scores and accuracy will appear here.</div>
                 </div>
               )}
             </div>
+
+            {/* Row 3: Child Performance Comparison */}
+            {childAccData.length > 0 && (
+              <div className="panel" style={{ padding: 24, marginBottom: 24 }}>
+                <h3 style={{ margin: "0 0 16px 0", fontSize: 18, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  {TherapistStickers.children} Child Performance Comparison — Average Accuracy
+                </h3>
+                <RechartsContainer width="100%" height={220}>
+                  <BarChart data={childAccData} layout="vertical" margin={{ left: 20, right: 40, top: 4, bottom: 4 }}>
+                    <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f0f0f0" />
+                    <XAxis type="number" domain={[0, 100]} tickFormatter={v => `${v}%`} tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
+                    <YAxis type="category" dataKey="name" tick={{ fontSize: 12, fontWeight: 700 }} axisLine={false} tickLine={false} width={90} />
+                    <Tooltip
+                      formatter={(val) => [`${val}%`, "Avg Accuracy"]}
+                      contentStyle={{ borderRadius: 12, border: "none", boxShadow: "0 10px 25px rgba(0,0,0,0.12)" }}
+                    />
+                    <Bar dataKey="avgAccuracy" name="Avg Accuracy" radius={[0, 8, 8, 0]} maxBarSize={26}>
+                      {childAccData.map((entry, index) => (
+                        <Cell key={index} fill={entry.avgAccuracy >= 80 ? "#10b981" : entry.avgAccuracy >= 50 ? "#f59e0b" : "#ef4444"} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </RechartsContainer>
+                <div style={{ display: "flex", gap: 16, marginTop: 12, flexWrap: "wrap", justifyContent: "center" }}>
+                  {[["#10b981", "≥80% — Excellent"], ["#f59e0b", "50-79% — Developing"], ["#ef4444", "<50% — Needs Support"]].map(([color, label]) => (
+                    <div key={label} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12 }}>
+                      <span style={{ width: 10, height: 10, borderRadius: 3, background: color, display: "inline-block" }}></span>
+                      <span>{label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Row 4: Detailed results table */}
+            {recentGameResults.length > 0 && (
+              <div className="panel" style={{ padding: 24 }}>
+                <h3 style={{ margin: "0 0 16px 0", fontSize: 18, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  {TherapistStickers.sessions} Detailed Game Results — by Child
+                </h3>
+                <div className="table-wrapper">
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Child</th>
+                        <th>Game</th>
+                        <th>Score</th>
+                        <th>Accuracy</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[...sessions].filter(s => s.status === "completed" && s.total_trials > 0).slice(0, 20).map((s, i) => (
+                        <tr key={i}>
+                          <td style={{ fontSize: 12, color: "var(--muted)" }}>{s.session_date}</td>
+                          <td style={{ fontWeight: 700 }}>{s.child_name || "—"}</td>
+                          <td>
+                            <span style={{ fontWeight: 600 }}>{s.title || (s.game_types?.[0] || "Unknown").replace(/_/g, " ")}</span>
+                            {s.type === "standalone" && (
+                              <span style={{ marginLeft: 6, fontSize: 9, fontWeight: 800, background: "#eef2ff", color: "#6366f1", padding: "2px 6px", borderRadius: 6 }}>SOLO</span>
+                            )}
+                          </td>
+                          <td style={{ fontWeight: 700, color: "#2d3748" }}>
+                            {s.correct} / {s.total_trials}
+                          </td>
+                          <td>
+                            <span className={`accuracy-badge ${(s.accuracy || 0) >= 0.8 ? "acc-high" : (s.accuracy || 0) >= 0.5 ? "acc-mid" : "acc-low"}`}>
+                              {Math.round((s.accuracy || 0) * 100)}%
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Games Tab */}
       {activeTab === "games" && (
@@ -1069,8 +1268,8 @@ export default function TherapistConsole() {
                 ) : (
                   /* ── Enhanced Child Card ── */
                   <div
-                    className={`therapist-child-card-enhanced ${selectedChild === c.id ? "selected" : ""}`}
-                    onClick={() => setSelectedChild(selectedChild === c.id ? null : c.id)}
+                    className={`therapist-child-card-enhanced ${selectedChild === String(c.id) ? "selected" : ""}`}
+                    onClick={() => setSelectedChild(selectedChild === String(c.id) ? "" : String(c.id))}
                   >
                     <div className="therapist-child-avatar-enhanced">
                       {(c.full_name || c.email || '?').charAt(0).toUpperCase()}
