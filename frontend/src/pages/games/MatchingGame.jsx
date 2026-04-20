@@ -20,12 +20,10 @@ import GameConclusionFlow from '../../components/GameConclusionFlow';
  * A high-fidelity therapeutic game where children drag objects to their 
  * matching pair or category.
  */
-export default function MatchingGame({ isSession = false, level: initialLevel = "easy", onComplete }) {
+export default function MatchingGame({ isSession = false, level = "easy", onComplete }) {
   const navigate = useNavigate();
   const { selectedChild } = useChild();
   const toast = useToast();
-
-  const [level, setLevel] = useState(initialLevel);
 
   const [gameState, setGameState] = useState('idle'); // idle, loading, playing, feedback, complete
   const [sessionId, setSessionId] = useState(null);
@@ -37,7 +35,7 @@ export default function MatchingGame({ isSession = false, level: initialLevel = 
   const [options, setOptions] = useState([]);
   const [selectedChildAvatar] = useState("🧩");
   const [target, setTarget] = useState(null);
-  const startTimeRef = useRef(null);
+  const [startTime] = useState(Date.now());
   const [endTime, setEndTime] = useState(null);
 
   // Start fresh session
@@ -52,7 +50,6 @@ export default function MatchingGame({ isSession = false, level: initialLevel = 
       const resp = await startGameSession('matching', selectedChild, 10, { difficulty_level: difficultyLevel });
       setSessionId(resp.session.session_id);
       loadTrial(resp.first_trial);
-      startTimeRef.current = Date.now();
       setGameState('playing');
     } catch (err) {
       toast.error("Failed to start game");
@@ -153,7 +150,7 @@ export default function MatchingGame({ isSession = false, level: initialLevel = 
           </div>
           <div>
             <h1 style={{ margin: 0, fontSize: 24, fontWeight: 900, color: '#1E1B4B' }}>Matching Challenge</h1>
-            <div style={{ fontSize: 13, color: '#6366F1', fontWeight: 700 }}>LEVEL {level === "easy" ? "1" : level === "medium" ? "2" : "3"} • COGNITIVE FOCUS</div>
+            <div style={{ fontSize: 13, color: '#6366F1', fontWeight: 700 }}>LEVEL 1 • COGNITIVE FOCUS</div>
           </div>
         </div>
         
@@ -184,30 +181,7 @@ export default function MatchingGame({ isSession = false, level: initialLevel = 
           >
             <div style={{ fontSize: 100, marginBottom: 20 }}>🧩</div>
             <h2 style={{ fontSize: 32, fontWeight: 900, color: '#1E1B4B', marginBottom: 12 }}>Ready to Match?</h2>
-            <p style={{ fontSize: 18, color: '#475569', marginBottom: 24 }}>Drag the objects to their matching friend!</p>
-            
-            <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginBottom: 32 }}>
-              {['easy', 'medium', 'hard'].map(lvl => (
-                <button
-                  key={lvl}
-                  onClick={() => setLevel(lvl)}
-                  style={{
-                    padding: '10px 24px',
-                    borderRadius: 16,
-                    border: '2px solid',
-                    borderColor: level === lvl ? '#6366F1' : '#E2E8F0',
-                    background: level === lvl ? '#EEF2FF' : 'white',
-                    color: level === lvl ? '#6366F1' : '#64748B',
-                    fontWeight: 800,
-                    cursor: 'pointer',
-                    textTransform: 'capitalize'
-                  }}
-                >
-                  {lvl}
-                </button>
-              ))}
-            </div>
-
+            <p style={{ fontSize: 18, color: '#475569', marginBottom: 32 }}>Drag the objects to their matching friend!</p>
             <button 
               onClick={startChallenge}
               style={{
@@ -292,7 +266,7 @@ export default function MatchingGame({ isSession = false, level: initialLevel = 
               gameName="Matching Game"
               score={score}
               total={progress.total}
-              duration={endTime && startTimeRef.current ? (endTime - startTimeRef.current) / 1000 : 0}
+              duration={endTime ? (endTime - startTime) / 1000 : 0}
               skills={["Logic", "Visual Memory", "Precision"]}
               onAction={isSession ? onComplete : () => navigate('/games')}
               actionLabel={isSession ? "Finish Activity" : "Play More Games"}

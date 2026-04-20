@@ -56,10 +56,9 @@ const SpringBtn = ({ children, onClick, disabled, style }) => (
   </motion.button>
 );
 
-export default function ObjectDiscovery({ isSession = false, level: initialLevel = "easy", onComplete }) {
+export default function ObjectDiscovery({ isSession = false, level = "easy", onComplete }) {
   const navigate = useNavigate();
   const { childProfile } = useChild();
-  const [level, setLevel] = useState(initialLevel);
   const [phase, setPhase] = useState(isSession ? "playing" : "idle"); 
   const [catIdx, setCatIdx] = useState(0);
   const [items, setItems] = useState([]);
@@ -68,7 +67,7 @@ export default function ObjectDiscovery({ isSession = false, level: initialLevel
   const [round, setRound] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [showWin, setShowWin] = useState(false);
-  const startTimeRef = useRef(null);
+  const [startTime] = useState(Date.now());
   const [endTime, setEndTime] = useState(null);
 
   const currentCategory = CATEGORIES[catIdx % CATEGORIES.length];
@@ -87,7 +86,6 @@ export default function ObjectDiscovery({ isSession = false, level: initialLevel
   const startGame = useCallback(() => {
     setScore(0);
     startRound(0);
-    startTimeRef.current = Date.now();
     setPhase("playing");
   }, [startRound]);
 
@@ -172,30 +170,7 @@ export default function ObjectDiscovery({ isSession = false, level: initialLevel
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
             <div style={{ fontSize: 100, marginBottom: 20 }}>🦁</div>
             <h1 style={{ fontSize: 44, fontWeight: 900, color: "#2d3748", marginBottom: 20 }}>Ready to Explore?</h1>
-            <p style={{ fontSize: 18, color: "#718096", marginBottom: 24 }}>Find all the things that belong together!</p>
-            
-            <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginBottom: 32 }}>
-              {['easy', 'medium', 'hard'].map(lvl => (
-                <button
-                  key={lvl}
-                  onClick={() => setLevel(lvl)}
-                  style={{
-                    padding: '10px 24px',
-                    borderRadius: 16,
-                    border: '2px solid',
-                    borderColor: level === lvl ? '#FF8C42' : '#E2E8F0',
-                    background: level === lvl ? '#FFF0E8' : 'white',
-                    color: level === lvl ? '#FF8C42' : '#64748B',
-                    fontWeight: 800,
-                    cursor: 'pointer',
-                    textTransform: 'capitalize'
-                  }}
-                >
-                  {lvl}
-                </button>
-              ))}
-            </div>
-
+            <p style={{ fontSize: 18, color: "#718096", marginBottom: 40 }}>Find all the things that belong together!</p>
             <SpringBtn onClick={startGame} style={{
               background: "linear-gradient(135deg, #FF8C42, #FB923C)",
               color: "white", padding: "20px 60px", borderRadius: "50px",
@@ -289,7 +264,7 @@ export default function ObjectDiscovery({ isSession = false, level: initialLevel
              gameName="Object Discovery"
              score={score}
              total={totalRounds}
-             duration={endTime && startTimeRef.current ? (endTime - startTimeRef.current) / 1000 : 0}
+             duration={endTime ? (endTime - startTime) / 1000 : 0}
              skills={["Categorization", "Visual Scanning", "Attention"]}
              onAction={isSession ? onComplete : () => setPhase("idle")}
              actionLabel={isSession ? "Continue Journey" : "Play Again"}

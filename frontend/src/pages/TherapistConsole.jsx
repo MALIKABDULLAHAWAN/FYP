@@ -77,6 +77,7 @@ export default function TherapistConsole() {
 
   // deep dive
   const [isRequestingDeepDive, setIsRequestingDeepDive] = useState(false);
+  const [expandedSessionId, setExpandedSessionId] = useState(null);
 
   useEffect(() => {
     loadData();
@@ -1404,7 +1405,15 @@ export default function TherapistConsole() {
                 Recent Sessions
               </h4>
               {childProgress.recent_sessions.map((s, i) => (
-                <ChildRecentSessionItem key={i} session={s} />
+                <div key={i} className="session-row">
+                  <span className="session-date">{s.date}</span>
+                  <span className="session-title">{s.title}</span>
+                  <span className={`status-badge status-${s.status}`}>{s.status}</span>
+                  <span className="session-score">{s.correct}/{s.total_trials}</span>
+                  <span className={`accuracy-badge ${(!s.correct && s.status !== "completed") ? "acc-mid" : s.accuracy >= 0.8 ? "acc-high" : s.accuracy >= 0.5 ? "acc-mid" : "acc-low"}`}>
+                    {(!s.correct && s.status !== "completed") ? "N/A" : `${(s.accuracy * 100).toFixed(0)}%`}
+                  </span>
+                </div>
               ))}
             </div>
           )}
@@ -1424,6 +1433,11 @@ export default function TherapistConsole() {
             </select>
             <select className="input" style={{ minWidth: 140 }} value={gameFilter} onChange={(e) => setGameFilter(e.target.value)}>
               <option value="">All Games</option>
+              <option value="bubble_pop">Bubble Pop</option>
+              <option value="color_match">Color Match</option>
+              <option value="shape_sort">Shape Sort</option>
+              <option value="emotion_face">Emotion Match</option>
+              <option value="animal_sounds">Animal Sounds</option>
               <option value="joint_attention">Joint Attention</option>
               <option value="matching">Matching</option>
               <option value="object_discovery">Object Discovery</option>
@@ -1456,7 +1470,73 @@ export default function TherapistConsole() {
               </thead>
               <tbody>
                 {filteredSessions.map((s) => (
-                  <SessionHistoryRow key={s.id} session={s} assets={assets} />
+                  <React.Fragment key={s.id}>
+                    <tr 
+                      onClick={() => setExpandedSessionId(expandedSessionId === s.id ? null : s.id)}
+                      style={{ cursor: "pointer", transition: "background 0.2s" }}
+                      className={expandedSessionId === s.id ? "row-expanded" : ""}
+                    >
+                      <td>{s.session_date}</td>
+                      <td>{s.child_name}</td>
+                      <td>{(s.game_types || []).map((g) => g.replace(/_/g, " ")).join(", ") || s.title}</td>
+                      <td><span className={`status-badge status-${s.status}`}>{s.status}</span></td>
+                      <td>{s.correct}/{s.total_trials}</td>
+                      <td>
+                        <span className={`accuracy-badge ${(!s.correct && s.status !== "completed") ? "acc-mid" : s.accuracy >= 0.8 ? "acc-high" : s.accuracy >= 0.5 ? "acc-mid" : "acc-low"}`}>
+                          {(!s.correct && s.status !== "completed") ? "N/A" : `${(s.accuracy * 100).toFixed(0)}%`}
+                        </span>
+                      </td>
+                    </tr>
+                    {expandedSessionId === s.id && (
+                      <tr className="detail-row">
+                        <td colSpan="6" style={{ padding: "0 24px 24px 24px" }}>
+                          <div className="session-detail-pane animate-slide-down">
+                            <div className="detail-grid">
+                              <div className="detail-section ai-note">
+                                <div className="detail-label">
+                                  <span className="sticker-mini">{TherapistStickers.analytics}</span> Buddy's Clinical Insight
+                                </div>
+                                <div className="detail-content ai-text">
+                                  {s.buddy_observation}
+                                </div>
+                              </div>
+                              <div className="detail-section">
+                                <div className="detail-label">Metrics</div>
+                                <div className="metrics-summary">
+                                  <div className="metric-item">
+                                    <span className="m-label">Duration:</span>
+                                    <span className="m-value">{s.duration_seconds}s</span>
+                                  </div>
+                                  <div className="metric-item">
+                                    <span className="m-label">Type:</span>
+                                    <span className="m-value" style={{ textTransform: 'capitalize' }}>{s.type}</span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="detail-section">
+                                <div className="detail-label">Targeted Goals</div>
+                                <div className="goals-badges">
+                                  {(s.therapeutic_goals || []).length > 0 ? (
+                                    s.therapeutic_goals.map((g, gi) => (
+                                      <span key={gi} className="goal-badge-mini">{g}</span>
+                                    ))
+                                  ) : (
+                                    <span className="goal-badge-mini gray">General Engagement</span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                            {s.observations && (
+                              <div className="detail-section full-width" style={{ marginTop: 12 }}>
+                                <div className="detail-label">Clinical Observations</div>
+                                <div className="detail-content">{s.observations}</div>
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
                 ))}
               </tbody>
             </table>
@@ -1573,178 +1653,6 @@ function StatCardEnhanced({ sticker, label, value, accent, trend, trendSuffix = 
         )}
       </div>
       <div className="therapist-stat-label-enhanced">{label}</div>
-    </div>
-  );
-}
-
-// SessionHistoryRow Component with expandable AI Insights
-function SessionHistoryRow({ session: s, assets }) {
-  const [expanded, setExpanded] = useState(false);
-  const [insight, setInsight] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (expanded && !insight) {
-      let mounted = true;
-      setLoading(true);
-      const gameStr = (s.game_types || []).join(", ") || s.title;
-      const ctx = `You are a clinical AI reviewing a recent therapy game session. Game: ${gameStr}. Player: ${s.child_name}. Status: ${s.status}. Score: ${s.correct} points out of ${s.total_trials} total trials. Accuracy: ${Math.round(s.accuracy * 100)}%. Provide a professional 2-sentence clinical insight or observation regarding this specific session performance for the therapist to read. Use no emojis.`;
-      
-      import("../api/games").then(({ getAiEncouragement }) => {
-        getAiEncouragement(ctx)
-          .then(data => {
-            if (mounted && data && data.message) setInsight(data.message);
-            else if (mounted) setInsight("Session metrics appear stable. Continue monitoring future sessions.");
-          })
-          .catch(() => {
-            if (mounted) setInsight("Session metrics appear stable. Continue monitoring future sessions.");
-          })
-          .finally(() => {
-            if (mounted) setLoading(false);
-          });
-      });
-      return () => { mounted = false; };
-    }
-  }, [expanded, s, insight]);
-
-  return (
-    <>
-      <tr 
-        onClick={() => setExpanded(!expanded)} 
-        style={{ cursor: "pointer", background: expanded ? "rgba(99, 102, 241, 0.05)" : "transparent", transition: "background 0.2s" }}
-        title="Click to view clinical details and AI insights"
-      >
-        <td>{s.session_date}</td>
-        <td>{s.child_name}</td>
-        <td>{(s.game_types || []).map((g) => g.replace(/_/g, " ")).join(", ") || s.title}</td>
-        <td><span className={`status-badge status-${s.status}`}>{s.status}</span></td>
-        <td>{s.correct}/{s.total_trials}</td>
-        <td>
-          <span className={`accuracy-badge ${(!s.correct && s.status !== "completed") ? "acc-mid" : s.accuracy >= 0.8 ? "acc-high" : s.accuracy >= 0.5 ? "acc-mid" : "acc-low"}`}>
-            {(!s.correct && s.status !== "completed") ? "N/A" : `${(s.accuracy * 100).toFixed(0)}%`}
-          </span>
-        </td>
-      </tr>
-      {expanded && (
-        <tr>
-          <td colSpan="6" style={{ padding: "0" }}>
-            <div style={{
-              padding: "20px 24px",
-              background: "#fafafa",
-              borderBottom: "1px solid #edf2f7",
-              boxShadow: "inset 0 4px 6px -4px rgba(0,0,0,0.05)",
-              animation: "slideUp 0.3s ease-out"
-            }}>
-              <div style={{ display: "flex", gap: "24px" }}>
-                <div style={{ flex: 1, borderRight: "1px solid #e2e8f0", paddingRight: "24px" }}>
-                  <h4 style={{ margin: "0 0 12px 0", fontSize: "14px", color: "var(--primary)" }}>Session Architecture</h4>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", fontSize: "13px" }}>
-                    <div><strong>Identifier:</strong> {s.id.split('-').pop()}</div>
-                    <div><strong>Engine:</strong> {s.type === 'standalone' ? 'Standalone Game' : 'Managed Adventure'}</div>
-                    <div><strong>Player:</strong> {s.child_name}</div>
-                    <div><strong>Supervisor:</strong> {s.therapist_name || 'System Auto'}</div>
-                    <div><strong>Logged:</strong> {new Date(s.created_at).toLocaleString()}</div>
-                  </div>
-                </div>
-                <div style={{ flex: 1.5 }}>
-                  <h4 style={{ margin: "0 0 12px 0", fontSize: "14px", color: "#4f46e5", display: "flex", alignItems: "center", gap: "8px" }}>
-                    🤖 Clinical AI Insight
-                  </h4>
-                  {loading ? (
-                    <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "12px", background: "rgba(99, 102, 241, 0.1)", borderRadius: "8px" }}>
-                      <span className="spinner" style={{ width: 14, height: 14 }}></span>
-                      <span style={{ fontSize: "13px", color: "#4338ca", fontStyle: "italic", animation: "pulse-op 1.5s infinite" }}>Analyzing metrics against session logic...</span>
-                    </div>
-                  ) : (
-                    <div style={{ 
-                      padding: "14px", 
-                      background: "white", 
-                      borderRadius: "8px", 
-                      border: "1px solid rgba(99, 102, 241, 0.2)",
-                      fontSize: "13px",
-                      lineHeight: "1.6",
-                      color: "#334155",
-                      animation: "fadeIn 0.4s ease"
-                    }}>
-                      {insight}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </td>
-        </tr>
-      )}
-    </>
-  );
-}
-
-// Compact session item for the Child Detail side-panel
-function ChildRecentSessionItem({ session: s }) {
-  const [expanded, setExpanded] = useState(false);
-  const [insight, setInsight] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (expanded && !insight) {
-      let mounted = true;
-      setLoading(true);
-      const gameStr = s.title;
-      const ctx = `Reviewing a ${gameStr} session for a specific child. Score: ${s.correct}/${s.total_trials}. Accuracy: ${Math.round(s.accuracy * 100)}%. Provide a 1-sentence professional clinical tip for the therapist based on this record. No emojis.`;
-      
-      import("../api/games").then(({ getAiEncouragement }) => {
-        getAiEncouragement(ctx)
-          .then(data => {
-            if (mounted && data?.message) setInsight(data.message);
-            else if (mounted) setInsight("Observation: Session baseline remains consistent with prior performance levels.");
-          })
-          .catch(() => {
-            if (mounted) setInsight("Baseline metrics achieved.");
-          })
-          .finally(() => {
-            if (mounted) setLoading(false);
-          });
-      });
-      return () => { mounted = false; };
-    }
-  }, [expanded, s, insight]);
-
-  return (
-    <div style={{ marginBottom: expanded ? 12 : 4 }}>
-      <div 
-        className="session-row" 
-        onClick={() => setExpanded(!expanded)} 
-        style={{ cursor: "pointer", background: expanded ? "rgba(99,102,241,0.05)" : "#fff", height: "auto", minHeight: "44px", border: expanded ? "1px solid rgba(99,102,241,0.2)" : "1px solid #edf2f7" }}
-      >
-        <span className="session-date">{s.date}</span>
-        <span className="session-title">{s.title}</span>
-        <span className={`status-badge status-${s.status}`}>{s.status}</span>
-        <span className="session-score">{s.correct}/{s.total_trials}</span>
-        <span className={`accuracy-badge ${(!s.correct && s.status !== "completed") ? "acc-mid" : s.accuracy >= 0.8 ? "acc-high" : s.accuracy >= 0.5 ? "acc-mid" : "acc-low"}`}>
-          {(!s.correct && s.status !== "completed") ? "N/A" : `${(s.accuracy * 100).toFixed(0)}%`}
-        </span>
-      </div>
-      {expanded && (
-        <div style={{ 
-          margin: "0 4px", 
-          padding: "12px", 
-          background: "#fff", 
-          border: "1px solid #e2e8f0", 
-          borderTop: "none", 
-          borderRadius: "0 0 12px 12px",
-          fontSize: "12px",
-          animation: "slideUp 0.2s ease-out"
-        }}>
-          <div style={{ fontWeight: 800, color: "var(--primary)", fontSize: "10px", textTransform: "uppercase", marginBottom: "6px", display: "flex", alignItems: "center", gap: 4 }}>
-            <span>🧠</span> Clinician Pulse
-          </div>
-          {loading ? (
-            <div style={{ color: "var(--muted)", fontStyle: "italic", animation: "pulse-op 1.5s infinite" }}>Synthesizing insight...</div>
-          ) : (
-            <div style={{ color: "#475569", lineHeight: "1.4" }}>{insight}</div>
-          )}
-        </div>
-      )}
     </div>
   );
 }

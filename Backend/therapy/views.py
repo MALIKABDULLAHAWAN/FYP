@@ -426,6 +426,30 @@ class GameStandaloneResultView(APIView):
             status="completed" # UI branding
         )
         session.completed_at = timezone.now()
+        
+        # Generate Buddy's AI Observation
+        try:
+            from therapy.ai_services.unified_ai_service import get_ai_service
+            ai_service = get_ai_service()
+            duration_pretty = f"{session.duration_seconds}s" if session.duration_seconds < 60 else f"{session.duration_seconds // 60}m {session.duration_seconds % 60}s"
+            
+            prompt = f"""
+            Generate a short, unique clinical observation (1-2 sentences) from Buddy the AI for this game session:
+            - Game: {game_name}
+            - Accuracy: {round(metrics.get("accuracy", 0) * 100)}%
+            - Duration: {duration_pretty}
+            - Goals Targeted: {', '.join(data.get("skills_tested", []))}
+            
+            Focus on what this shows about the child's focus or motor skills. Be encouraging but clinical.
+            """
+            ai_response = ai_service.generate_response(prompt, agent_key="clinical_analyst")
+            if session.observations is None: session.observations = {}
+            session.observations["buddy_observation"] = ai_response.text
+        except Exception as e:
+            print(f"AI Observation generation failed: {e}")
+            if session.observations is None: session.observations = {}
+            session.observations["buddy_observation"] = "Pattern suggests engagement with therapeutic stimuli."
+
         session.save()
         
         # Trigger metrics recalculation

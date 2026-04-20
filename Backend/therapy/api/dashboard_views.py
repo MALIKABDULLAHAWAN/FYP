@@ -436,7 +436,7 @@ class SessionHistoryView(APIView):
         
         if game_type:
             sessions = sessions.filter(trials__trial_type=game_type).distinct()
-            game_sessions = game_sessions.filter(game__game_type=game_type)
+            game_sessions = game_sessions.filter(Q(game__game_type=game_type) | Q(game__name__icontains=game_type.replace('_', ' ')))
 
         # 1. Process Therapy Sessions (Managed)
         if hide_orphans:
@@ -468,6 +468,10 @@ class SessionHistoryView(APIView):
                 "game_types": trial_types,
                 "type": "managed",
                 "created_at": s.created_at.isoformat(),
+                "duration_seconds": int((s.ended_at - s.started_at).total_seconds()) if s.ended_at and s.started_at else 0,
+                "therapeutic_goals": [], # TherapySession doesn't have a direct field, can be inferred from trials
+                "observations": s.notes,
+                "buddy_observation": s.notes[:100] if s.notes else "Standard clinical managed session."
             })
 
         # Process Game Sessions
@@ -487,6 +491,10 @@ class SessionHistoryView(APIView):
                 "game_types": [gs.game.game_type],
                 "type": "standalone",
                 "created_at": gs.created_at.isoformat(),
+                "duration_seconds": gs.duration_seconds,
+                "therapeutic_goals": gs.therapeutic_goals_targeted,
+                "observations": gs.therapist_notes,
+                "buddy_observation": (gs.observations or {}).get("buddy_observation") or "Clinical pattern suggests steady engagement."
             })
 
         # Final Sort and Limit

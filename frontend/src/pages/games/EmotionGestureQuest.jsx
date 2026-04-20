@@ -170,7 +170,6 @@ export default function EmotionGestureQuest({ isSession = false, onComplete }) {
   const [timeLeft,   setTimeLeft]   = useState(LEVELS[0].time);
   const [task,       setTask]       = useState(null);
   const [feedback,   setFeedback]   = useState(null); 
-  const [phase, setPhase] = useState("loading"); // loading, level_select, playing, over
   const [gameOver,   setGameOver]   = useState(false);
   const [loading,    setLoading]    = useState(true);
   const [loadMsg,    setLoadMsg]    = useState("Loading face detection…");
@@ -202,7 +201,6 @@ export default function EmotionGestureQuest({ isSession = false, onComplete }) {
         if (videoRef.current) videoRef.current.srcObject = stream;
 
         setLoading(false);
-        setPhase("level_select");
 
         setLoadMsg("Loading gesture AI…");
         const mpOk = await initMediaPipeHands(videoRef.current);
@@ -228,7 +226,8 @@ export default function EmotionGestureQuest({ isSession = false, onComplete }) {
     const vid = videoRef.current;
     if (!vid) return;
     const onPlay = () => {
-      // Game loop controlled by startLoop() called from level select
+      pickTask(null);
+      startGame(levelRef.current);
     };
     vid.addEventListener("play", onPlay);
     return () => vid.removeEventListener("play", onPlay);
@@ -425,61 +424,6 @@ export default function EmotionGestureQuest({ isSession = false, onComplete }) {
           <p style={{ color: "#64748b", fontSize: 13 }}>
             Allow camera access in your browser and ensure <code>/models</code> is served.
           </p>
-        </div>
-      </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (phase === "level_select" && !isSession) {
-    return (
-      <div style={styles.wrapper}>
-        <div style={styles.header}>
-          <h2 style={styles.title}>🎭 Emotion & Gesture Quest</h2>
-          <p style={styles.subtitle}>Choose your challenge level to begin!</p>
-        </div>
-        <div style={{
-          textAlign: "center", padding: "60px 24px",
-          background: "rgba(255,255,255,0.05)", borderRadius: 32, border: "2px dashed rgba(167,139,250,0.3)",
-          display: "flex", flexDirection: "column", gap: 32, alignItems: "center"
-        }}>
-          <div style={{ fontSize: 80 }}>🎭✋</div>
-          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center' }}>
-            {LEVELS.map((L, i) => (
-              <button
-                key={L.name}
-                onClick={() => {
-                  setLevel(i);
-                  levelRef.current = i;
-                }}
-                style={{
-                  padding: '16px 32px', borderRadius: 24, border: '3px solid',
-                  borderColor: level === i ? '#a78bfa' : 'rgba(255,255,255,0.1)',
-                  background: level === i ? 'rgba(167,139,250,0.1)' : 'transparent',
-                  color: level === i ? '#a78bfa' : '#94a3b8',
-                  fontWeight: 800, cursor: 'pointer', fontSize: 18
-                }}
-              >
-                {L.label}
-              </button>
-            ))}
-          </div>
-          <button
-            onClick={() => {
-              setPhase("playing");
-              pickTask(null);
-              startGame(levelRef.current);
-            }}
-            style={{
-              padding: '20px 64px', borderRadius: 24,
-              background: 'linear-gradient(135deg, #a78bfa, #60a5fa)',
-              color: 'white', fontWeight: 900, fontSize: 24,
-              boxShadow: '0 12px 32px rgba(167,139,250,0.4)', border: 'none', cursor: 'pointer'
-            }}
-          >
-            Start Quest!
-          </button>
         </div>
       </div>
     );

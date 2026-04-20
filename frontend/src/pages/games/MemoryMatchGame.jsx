@@ -185,7 +185,6 @@ export default function MemoryMatchGame({ isSession = false, level: sessionLevel
   const [confetti, setConfetti] = useState([]);
   const [loading, setLoading] = useState(false);
   const timerRef = useRef(null);
-  const startTimeRef = useRef(null);
 
   const level = LEVELS[levelIdx];
 
@@ -210,7 +209,6 @@ export default function MemoryMatchGame({ isSession = false, level: sessionLevel
       setTimeLeft(lv.time);
       setLock(false);
       setPhase("playing");
-      startTimeRef.current = Date.now();
     } catch (err) {
       console.error("Failed to load images", err);
       setDeck(buildDeck(shuffle(ALL_CARDS).slice(0, lv.pairs)));
@@ -221,7 +219,6 @@ export default function MemoryMatchGame({ isSession = false, level: sessionLevel
       setTimeLeft(lv.time);
       setLock(false);
       setPhase("playing");
-      startTimeRef.current = Date.now();
     } finally {
       setLoading(false);
     }
@@ -251,7 +248,7 @@ export default function MemoryMatchGame({ isSession = false, level: sessionLevel
             onComplete({
               score: matched.size,
               accuracy: matched.size / (LEVELS[levelIdx].pairs || 1),
-              duration: (Date.now() - startTimeRef.current) / 1000
+              duration: LEVELS[levelIdx].time - t
             });
           }
           
@@ -275,7 +272,7 @@ export default function MemoryMatchGame({ isSession = false, level: sessionLevel
            onComplete({
               score: moves,
               accuracy: 1.0,
-              duration: (Date.now() - startTimeRef.current) / 1000
+              duration: LEVELS[levelIdx].time - timeLeft
             });
         }, 1000);
       } else {
@@ -451,7 +448,7 @@ export default function MemoryMatchGame({ isSession = false, level: sessionLevel
             gameName="Memory Match"
             score={matched.size}
             total={LEVELS[levelIdx].pairs}
-            duration={endTime && startTimeRef.current ? (endTime - startTimeRef.current) / 1000 : (Date.now() - (startTimeRef.current || Date.now())) / 1000}
+            duration={LEVELS[levelIdx].time - timeLeft}
             skills={["Memory", "Visual Scanning", "Pattern Recon"]}
             onAction={isSession ? onComplete : () => setPhase("level_select")}
             actionLabel={isSession ? "Return to Journey" : "Play Again"}

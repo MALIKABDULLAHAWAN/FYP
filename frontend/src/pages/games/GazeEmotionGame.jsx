@@ -18,11 +18,8 @@ function randomTarget(radius) {
   };
 }
 
-export default function GazeEmotionGame({ isSession = false, level: initialLevel = "easy", onComplete }) {
-  const navigate = useNavigate();
+export default function GazeEmotionGame({ isSession = false, onComplete }) {
   const videoRef   = useRef(null);
-  const [phase, setPhase] = useState(isSession ? "playing" : "idle");
-  const [activeLevel, setActiveLevel] = useState(initialLevel);
   const canvasRef  = useRef(null);
   const rafRef     = useRef(null);   // requestAnimationFrame id
   const runningRef = useRef(false);  // controls the detection loop
@@ -44,18 +41,7 @@ export default function GazeEmotionGame({ isSession = false, level: initialLevel
   const [loading,   setLoading]   = useState(true);
   const [camError,  setCamError]  = useState(null);
 
-  const startCamera = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
-    } catch (err) {
-      setCamError(err.message || "Camera access failed");
-    }
-  };
-
-  /* ─── Load models ─── */
+  /* ─── Load models & start camera ─── */
   useEffect(() => {
     let cancelled = false;
     async function setup() {
@@ -65,12 +51,14 @@ export default function GazeEmotionGame({ isSession = false, level: initialLevel
         await faceapi.nets.faceExpressionNet.loadFromUri("/models");
         if (cancelled) return;
         setLoading(false);
-        if (isSession) {
-          setPhase("playing");
-          startCamera();
+
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        if (cancelled) { stream.getTracks().forEach(t => t.stop()); return; }
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
         }
       } catch (err) {
-        if (!cancelled) setCamError(err.message || "Model load failed");
+        if (!cancelled) setCamError(err.message || "Camera or model load failed");
       }
     }
     setup();
@@ -81,7 +69,7 @@ export default function GazeEmotionGame({ isSession = false, level: initialLevel
         videoRef.current.srcObject.getTracks().forEach(t => t.stop());
       }
     };
-  }, [isSession]);
+  }, []);
 
   /* ─── Start loop when video plays ─── */
   useEffect(() => {
@@ -123,7 +111,6 @@ export default function GazeEmotionGame({ isSession = false, level: initialLevel
     }
 
     const lvl = LEVELS[levelRef.current];
-    if (phase !== "playing") return;
 
     // ── Timer ──
     const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000);
@@ -252,53 +239,6 @@ export default function GazeEmotionGame({ isSession = false, level: initialLevel
       <div style={{ marginBottom: 16, color: "var(--color-text-secondary)" }}>
         Look at the pulsing green target with your eyes — and smile to earn bonus points!
       </div>
-
-      {phase === "idle" && !loading && (
-        <div style={{
-          textAlign: "center", padding: "40px 24px",
-          background: "rgba(99,102,241,0.05)", borderRadius: 24, border: "2px dashed #6366F1",
-          display: "flex", flexDirection: "column", gap: 20, alignItems: "center"
-        }}>
-          <div style={{ fontSize: 44 }}>👀</div>
-          <h3 style={{ margin: 0, fontWeight: 900, color: "#1E1B4B" }}>Ready to gaze?</h3>
-          
-          <div style={{ display: 'flex', gap: 12 }}>
-            {LEVELS.map((L, i) => (
-              <button
-                key={L.name}
-                onClick={() => {
-                  setActiveLevel(L.name.toLowerCase());
-                  levelRef.current = i;
-                }}
-                style={{
-                  padding: '10px 24px', borderRadius: 16, border: '2px solid',
-                  borderColor: levelRef.current === i ? '#6366F1' : '#E2E8F0',
-                  background: levelRef.current === i ? '#EEF2FF' : 'white',
-                  color: levelRef.current === i ? '#6366F1' : '#64748B',
-                  fontWeight: 800, cursor: 'pointer'
-                }}
-              >
-                {L.name}
-              </button>
-            ))}
-          </div>
-
-          <button
-            onClick={() => {
-              setPhase("playing");
-              startCamera();
-            }}
-            style={{
-              padding: '16px 48px', borderRadius: 20,
-              background: 'linear-gradient(135deg, #6366F1, #4F46E5)',
-              color: 'white', fontWeight: 900, fontSize: 20,
-              boxShadow: '0 8px 24px rgba(99, 102, 241, 0.4)', border: 'none', cursor: 'pointer'
-            }}
-          >
-            Start Game
-          </button>
-        </div>
-      )}
 
       {loading && (
         <div style={{ textAlign: "center", padding: 40, color: "var(--color-text-secondary)" }}>
