@@ -198,7 +198,7 @@ else:
         o.strip()
         for o in os.getenv(
             "CORS_ALLOWED_ORIGINS",
-            "http://localhost:5173,http://127.0.0.1:5173",
+            "http://localhost:5173,http://127.0.0.1:5173", "https://*.ngrok-free.app,https://*.ngrok.io,https://*.vercel.app",
         ).split(",")
         if o.strip()
     ]
