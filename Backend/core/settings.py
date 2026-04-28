@@ -198,9 +198,14 @@ else:
         o.strip()
         for o in os.getenv(
             "CORS_ALLOWED_ORIGINS",
-            "http://localhost:5173,http://127.0.0.1:5173", "https://*.ngrok-free.app,https://*.ngrok.io,https://*.vercel.app",
+            "http://localhost:5173,http://127.0.0.1:5173",
         ).split(",")
         if o.strip()
+    ]
+    CORS_ALLOWED_ORIGIN_REGEXES = [
+        r"^https://.*\.ngrok-free\.app$",
+        r"^https://.*\.ngrok\.io$",
+        r"^https://.*\.vercel\.app$",
     ]
 CORS_ALLOW_CREDENTIALS = True
 
