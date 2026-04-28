@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { buildWebSocketUrl } from '../api/base';
 
 /**
  * REACT HOOK FOR WEBSOCKET CONNECTIONS
@@ -156,7 +157,7 @@ export function useGameRoom(roomCode, playerId, playerName) {
   const [myScore, setMyScore] = useState(0);
   const [leaderboard, setLeaderboard] = useState([]);
   
-  const wsUrl = `ws://localhost:8000/ws/game/${roomCode}/`;
+  const wsUrl = buildWebSocketUrl(`/ws/game/${roomCode}/`);
   
   const handleMessage = useCallback((data) => {
     switch (data.type) {
@@ -311,7 +312,7 @@ export function useProgressTracking(childId) {
   const [progress, setProgress] = useState(null);
   const [isLive, setIsLive] = useState(false);
   
-  const wsUrl = `ws://localhost:8000/ws/progress/${childId}/`;
+  const wsUrl = buildWebSocketUrl(`/ws/progress/${childId}/`);
   
   const handleMessage = useCallback((data) => {
     if (data.type === 'initial_data') {

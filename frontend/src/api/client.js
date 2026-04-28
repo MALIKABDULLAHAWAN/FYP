@@ -1,17 +1,6 @@
-const runtimeEnv =
-  (typeof globalThis !== "undefined" && globalThis.__VITE_ENV__) ||
-  (typeof window !== "undefined" && window.__VITE_ENV__) ||
-  {};
+import { getApiOrigin } from "./base";
 
-const RAW_BASE =
-  runtimeEnv.VITE_API_BASE ||
-  runtimeEnv.VITE_API_URL ||
-  runtimeEnv.VITE_API_BASE_URL ||
-  import.meta.env.VITE_API_BASE ||
-  import.meta.env.VITE_API_URL ||
-  import.meta.env.VITE_API_BASE_URL ||
-  "http://127.0.0.1:8000";
-const API_BASE = RAW_BASE.replace(/\/+$/, "").replace(/\/api$/, ""); // normalize legacy env values
+const API_BASE = getApiOrigin();
 
 // ---- Token storage ----
 export function getToken() {
@@ -168,3 +157,5 @@ export async function apiFetch(
 
   return data ?? {};
 }
+
+export { API_BASE };

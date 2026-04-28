@@ -9,8 +9,6 @@
 
 import { apiFetch } from "../api/client";
 
-const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000/api/v1";
-
 // Voice options with gender and language support
 const VOICE_OPTIONS = {
   female_en: { name: "Female (English)", gender: "female", lang: "en-US", pitch: 1.3, rate: 0.95 },

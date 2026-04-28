@@ -8,6 +8,7 @@
  */
 
 import DataPersistenceService from './DataPersistenceService.js';
+import { buildWebSocketUrl } from '../api/base.js';
 
 class CrossDeviceSyncService {
   constructor() {
@@ -32,7 +33,7 @@ class CrossDeviceSyncService {
    */
   initializeRealTimeSync() {
     try {
-      const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:8000/ws/sync/';
+      const wsUrl = buildWebSocketUrl('/ws/sync/');
       this.websocket = new WebSocket(`${wsUrl}${this.deviceId}/`);
       
       this.websocket.onopen = () => {

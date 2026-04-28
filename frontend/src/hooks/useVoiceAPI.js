@@ -4,8 +4,9 @@
  */
 
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { apiFetch } from '../api/client';
 
-const WS_URL = 'ws://localhost:8001/ws/voice';
+const WS_URL = import.meta.env.VITE_VOICE_WS_URL || '';
 
 export function useVoiceAPI() {
   const [isProcessing, setIsProcessing] = useState(false);
@@ -30,6 +31,11 @@ export function useVoiceAPI() {
   };
 
   const connectWS = useCallback(() => {
+    if (!WS_URL) {
+      setStatus('Voice server ready');
+      return;
+    }
+
     if (wsRef.current?.readyState === WebSocket.OPEN) return;
     // Don't retry if we've already exhausted retries
     if (retryCountRef.current > MAX_RETRIES) return;
@@ -156,6 +162,39 @@ export function useVoiceAPI() {
   };
 
   const sendTextCommand = useCallback((text, childId = null) => {
+    if (!WS_URL) {
+      setIsProcessing(true);
+      setStatus('Processing...');
+
+      apiFetch('/api/v1/voice/command/', {
+        method: 'POST',
+        auth: false,
+        body: {
+          command: text,
+          language: 'en',
+          child_id: childId,
+        },
+      })
+        .then((response) => {
+          if (response?.response) {
+            setLastResponse({
+              text: response.response,
+              agent: 'voice',
+              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            });
+          }
+          setStatus('Voice server ready');
+        })
+        .catch((err) => {
+          setError(err.message || 'Voice request failed');
+        })
+        .finally(() => {
+          setIsProcessing(false);
+        });
+
+      return;
+    }
+
     if (wsRef.current?.readyState !== WebSocket.OPEN) {
       console.error("Voice server not connected. ReadyState:", wsRef.current?.readyState);
       setError("Voice server not connected");

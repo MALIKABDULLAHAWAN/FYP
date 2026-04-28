@@ -5,6 +5,8 @@ import time
 import queue
 import hashlib
 import uuid
+from pathlib import Path
+from django.http import FileResponse, Http404
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -16,7 +18,16 @@ import speech_recognition as sr
 from django.core.files.storage import default_storage
 from django.conf import settings
 
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+groq_client = None
+
+
+def get_groq_client():
+    global groq_client
+    if groq_client is None:
+        api_key = os.getenv("GROQ_API_KEY")
+        if api_key:
+            groq_client = Groq(api_key=api_key)
+    return groq_client
 
 pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
 
@@ -131,12 +142,20 @@ def process_command(user_id, command, language="en"):
                 {"role": "user", "content": command}
             ]
 
-            chat_completion = client.chat.completions.create(
-                messages=messages,
-                model="llama-3.3-70b-versatile"
-            )
+            client = get_groq_client()
+            if client is None:
+                lower_command = command.lower()
+                if any(word in lower_command for word in ["hello", "hi", "hey", "salam", "assalam"]):
+                    response_text = "Hello! I’m Aura, and I’m here with you. How can I help today?" if language != "ur" else "السلام علیکم! میں اورا ہوں، آپ کی مدد کے لیے حاضر ہوں۔ آج میں آپ کی کیا مدد کر سکتی ہوں؟"
+                else:
+                    response_text = "I’m here, but my AI key isn’t configured yet. Please set GROQ_API_KEY to enable full responses." if language != "ur" else "میں حاضر ہوں، لیکن میرا AI key ابھی configured نہیں ہے۔ مکمل جوابات کے لیے GROQ_API_KEY سیٹ کریں۔"
+            else:
+                chat_completion = client.chat.completions.create(
+                    messages=messages,
+                    model="llama-3.3-70b-versatile"
+                )
 
-            response_text = chat_completion.choices[0].message.content
+                response_text = chat_completion.choices[0].message.content
 
             conversation_history[user_id].append({"role": "user", "content": command})
             conversation_history[user_id].append({"role": "assistant", "content": response_text})
@@ -151,6 +170,14 @@ def process_command(user_id, command, language="en"):
         except Exception as e:
             error_msg = f"خرابی: {str(e)}" if language == "ur" else f"Error: {str(e)}"
             return error_msg
+
+
+def _audio_path_from_filename(filename):
+    safe_name = Path(filename).name
+    audio_path = os.path.join(AUDIO_CACHE, safe_name)
+    if not os.path.isfile(audio_path):
+        raise Http404("Audio file not found")
+    return audio_path
 
 
 def generate_audio_response(text, language="en"):
@@ -205,7 +232,7 @@ def voice_command(request):
         if audio_file:
             # Create URL for the audio file
             audio_filename = os.path.basename(audio_file)
-            audio_url = f"/media/voice_cache/{audio_filename}"
+            audio_url = f"/api/v1/voice/audio/{audio_filename}/"
 
         return Response({
             'status': 'success',
@@ -219,6 +246,19 @@ def voice_command(request):
             {'error': str(e)},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def serve_audio(request, filename):
+    """Stream a generated voice response audio file."""
+    try:
+        audio_path = _audio_path_from_filename(filename)
+        return FileResponse(open(audio_path, 'rb'), content_type='audio/mpeg')
+    except Http404:
+        raise
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['POST'])

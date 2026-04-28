@@ -9,16 +9,10 @@ import { useChild } from "../../hooks/useChild";
 import { useToast } from "../../hooks/useToast";
 import { startGameSession, nextGameTrial, endSession } from "../../api/games";
 import { apiFetch } from "../../api/client";
+import { buildApiUrl } from "../../api/base";
 import GameConclusionFlow from "../../components/GameConclusionFlow";
 import UiIcon from "../../components/ui/UiIcon";
 import DifficultyIndicator from "../../components/DifficultyIndicator";
-
-const API_BASE = (
-  import.meta.env.VITE_API_BASE ||
-  import.meta.env.VITE_API_URL ||
-  import.meta.env.VITE_API_BASE_URL ||
-  "http://127.0.0.1:8000"
-).replace(/\/+$/, "").replace(/\/api$/, "");
 
 export default function SceneDescriptionGame() {
   const navigate = useNavigate();
@@ -68,7 +62,7 @@ export default function SceneDescriptionGame() {
     setTrial(trialData);
     // Prefix backend-relative image URLs with API base
     const rawUrl = trialData.image_url || "";
-    setImageUrl(rawUrl ? (rawUrl.startsWith("http") ? rawUrl : `${API_BASE}${rawUrl}`) : null);
+    setImageUrl(rawUrl ? (rawUrl.startsWith("http") ? rawUrl : buildApiUrl(rawUrl)) : null);
     setScenarioTitle(trialData.title || "");
     setPrompt(trialData.prompt || "Describe what you see.");
     setAiHint(trialData.ai_hint || "");

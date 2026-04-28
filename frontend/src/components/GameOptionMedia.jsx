@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import PatternToken from "./ui/PatternToken";
 import { CONTENT_LIBRARY } from "../data/contentLibrary";
 import { Sticker3D, SpringContainer } from "./AmbientEffects";
-
-const API_BASE = (import.meta.env.VITE_API_BASE || "http://127.0.0.1:8000").replace(/\/+$/, "");
+import { buildApiUrl } from "../api/base";
 
 /**
  * Helper to get a sticker component for a given label/id
@@ -27,7 +26,7 @@ export function resolveGameImageUrl(opt) {
   if (!raw) return null;
   if (raw.startsWith("http://") || raw.startsWith("https://")) return raw;
   const path = raw.startsWith("/") ? raw : `/${raw}`;
-  return `${API_BASE}${path}`;
+  return buildApiUrl(path);
 }
 
 /**

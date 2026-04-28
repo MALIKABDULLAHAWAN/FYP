@@ -12,6 +12,7 @@
  */
 
 import { apiFetch, getToken } from '../api/client';
+import { getApiOrigin } from '../api/base';
 
 class DataPersistenceService {
   constructor() {
@@ -22,6 +23,7 @@ class DataPersistenceService {
     this.lastSyncTimestamp = null;
     this.syncInProgress = false;
     this.persistenceTimeout = 100; // 100ms requirement
+    this.apiBaseUrl = getApiOrigin();
     
     // Initialize offline/online event listeners
     this.initializeNetworkListeners();

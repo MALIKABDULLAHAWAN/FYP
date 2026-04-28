@@ -5,8 +5,7 @@
  */
 
 import { useState, useCallback, useRef, useEffect } from 'react';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
+import { buildApiUrl } from '../api/base';
 
 // Get token using same key as api/client.js
 function getAuthToken() {
@@ -138,7 +137,7 @@ export function useVoiceAI() {
 
       const token = localStorage.getItem('token') || localStorage.getItem('access_token') || '';
       
-      const response = await fetch(`${API_BASE_URL}/therapy/voice/audio`, {
+      const response = await fetch(buildApiUrl('/api/v1/therapy/voice/audio'), {
         method: 'POST',
         headers: {
           'Authorization': token ? `Bearer ${token}` : ''
@@ -160,7 +159,7 @@ export function useVoiceAI() {
         // Build absolute URL if needed
         const mediaUrl = result.audio_url.startsWith('http') 
           ? result.audio_url 
-          : `${API_BASE_URL.replace('/api/v1', '')}${result.audio_url}`;
+          : buildApiUrl(result.audio_url);
           
         const audio = new Audio(mediaUrl);
         audio.play().catch(e => console.warn('Browser blocked audio playback:', e));
@@ -225,7 +224,7 @@ export function useVoiceAI() {
     try {
       const token = localStorage.getItem('token') || localStorage.getItem('access_token') || '';
       
-      await fetch(`${API_BASE_URL}/therapy/voice/stop`, {
+      await fetch(buildApiUrl('/api/v1/therapy/voice/stop'), {
         method: 'POST',
         headers: {
           'Authorization': token ? `Bearer ${token}` : ''
@@ -243,7 +242,7 @@ export function useVoiceAI() {
     try {
       const token = localStorage.getItem('token') || localStorage.getItem('access_token') || '';
       
-      await fetch(`${API_BASE_URL}/therapy/voice/clear-history`, {
+      await fetch(buildApiUrl('/api/v1/therapy/voice/clear-history'), {
         method: 'POST',
         headers: {
           'Authorization': token ? `Bearer ${token}` : ''
