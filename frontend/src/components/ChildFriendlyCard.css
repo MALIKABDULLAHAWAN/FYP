@@ -1,0 +1,109 @@
+/**
+ * ChildFriendlyCard Styles
+ */
+
+.child-friendly-card {
+  background-color: var(--color-background-primary);
+  border-radius: var(--border-radius-large);
+  box-shadow: var(--shadow-small);
+  transition: all var(--transition-normal);
+  overflow: hidden;
+}
+
+/* Padding Variants */
+.child-friendly-card.padding-default {
+  padding: var(--spacing-lg);
+}
+
+.child-friendly-card.padding-small {
+  padding: var(--spacing-md);
+}
+
+.child-friendly-card.padding-large {
+  padding: var(--spacing-xl);
+}
+
+.child-friendly-card.padding-none {
+  padding: 0;
+}
+
+/* Default Variant */
+.child-friendly-card.variant-default {
+  background-color: var(--color-background-primary);
+  border: 1px solid #e0e0e0;
+}
+
+/* Elevated Variant */
+.child-friendly-card.variant-elevated {
+  background-color: var(--color-background-primary);
+  box-shadow: var(--shadow-medium);
+}
+
+/* Accent Variant */
+.child-friendly-card.variant-accent {
+  background-color: var(--color-background-accent);
+  border: 1px solid #d0e8f2;
+}
+
+/* Secondary Variant */
+.child-friendly-card.variant-secondary {
+  background-color: var(--color-background-secondary);
+  border: 1px solid #f0f0f0;
+}
+
+/* Interactive State */
+.child-friendly-card.interactive {
+  cursor: pointer;
+}
+
+.child-friendly-card.interactive:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-large);
+}
+
+.child-friendly-card.interactive:active {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+}
+
+.child-friendly-card.interactive:focus-visible {
+  outline: 3px solid var(--color-primary-blue);
+  outline-offset: 2px;
+}
+
+/* Reduced Motion */
+.reduced-motion .child-friendly-card.interactive:hover {
+  transform: none;
+}
+
+.reduced-motion .child-friendly-card.interactive:active {
+  transform: none;
+}
+
+/* Mobile Responsive */
+@media (max-width: 640px) {
+  .child-friendly-card.padding-default {
+    padding: var(--spacing-md);
+  }
+
+  .child-friendly-card.padding-large {
+    padding: var(--spacing-lg);
+  }
+}
+
+/* High Contrast Mode */
+.high-contrast-mode .child-friendly-card {
+  border: 2px solid currentColor;
+}
+
+.high-contrast-mode .child-friendly-card.variant-default {
+  border: 2px solid #000;
+}
+
+.high-contrast-mode .child-friendly-card.variant-accent {
+  border: 2px solid #000;
+}
+
+.high-contrast-mode .child-friendly-card.variant-secondary {
+  border: 2px solid #000;
+}

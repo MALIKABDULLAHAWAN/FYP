@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dhyan Voice Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive, sans-serif;
+            background: linear-gradient(135deg, #E8F5E9 0%, #E3F2FD 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 24px;
+            padding: 30px 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 24px;
+            background: linear-gradient(90deg, #E91E63, #FF9800);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .header p {
+            color: #666;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+        .avatar-section {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .avatar-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FFB6C1, #FFC0CB);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            box-shadow: 0 8px 20px rgba(255, 182, 193, 0.4);
+        }
+        .story-display {
+            background: linear-gradient(135deg, #F5F5F5, #EEEEEE);
+            border-radius: 16px;
+            padding: 15px 20px;
+            text-align: center;
+            margin: 15px 0;
+            font-size: 14px;
+            color: #555;
+        }
+        .choose-friend {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 14px;
+            color: #555;
+        }
+        .avatar-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+        .friend-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #E0E0E0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .friend-avatar:hover, .friend-avatar.active {
+            border-color: #E91E63;
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
+        }
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .action-btn {
+            padding: 14px 16px;
+            border: none;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-family: inherit;
+        }
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        }
+        .btn-stats { background: linear-gradient(135deg, #FF8A80, #F8BBD9); color: white; }
+        .btn-encourage { background: linear-gradient(135deg, #FFCC80, #F8BBD0); color: white; }
+        .btn-joke { background: linear-gradient(135deg, #4DD0E1, #64B5F6); color: white; }
+        .btn-song { background: linear-gradient(135deg, #81C784, #4DD0E1); color: white; }
+        .btn-story { background: linear-gradient(135deg, #BA68C8, #F8BBD0); color: white; }
+        .btn-chat { background: linear-gradient(135deg, #FFCC80, #FFAB91); color: white; }
+        .voice-settings {
+            background: #F5F5F5;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .voice-settings h3 {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 15px;
+        }
+        .slider-group {
+            margin-bottom: 15px;
+        }
+        .slider-group label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #FF8A80, #BA68C8, #64B5F6);
+            outline: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #E91E63;
+            cursor: pointer;
+        }
+        .error-box {
+            background: #FFEBEE;
+            border-radius: 12px;
+            padding: 12px 16px;
+            text-align: center;
+            margin: 15px 0;
+            color: #C62828;
+            font-size: 13px;
+        }
+        .try-saying {
+            background: linear-gradient(135deg, #C8E6C9, #A5D6A7);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .try-saying h3 {
+            font-size: 14px;
+            color: #2E7D32;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .try-saying ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .try-saying li {
+            font-size: 13px;
+            color: #388E3C;
+            margin: 8px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        .try-saying li::before {
+            content: "•";
+            color: #4CAF50;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+        .mic-section {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .mic-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #E91E63, #FF5722);
+            border: none;
+            color: white;
+            font-size: 36px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(233, 30, 99, 0.4);
+            transition: all 0.3s ease;
+        }
+        .mic-btn:hover {
+            transform: scale(1.1);
+        }
+        .mic-btn.recording {
+            animation: pulse 1.5s infinite;
+            background: linear-gradient(135deg, #FF5722, #FF9800);
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 8px 20px rgba(233, 30, 99, 0.4); }
+            50% { box-shadow: 0 8px 30px rgba(233, 30, 99, 0.7); }
+        }
+        .status-text {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎙️ Dhyan Voice Assistant</h1>
+            <p>Hi Malik! I'm here to chat, tell jokes, and help you learn!</p>
+        </div>
+
+        <div class="avatar-section">
+            <div class="avatar-circle">📚</div>
+        </div>
+
+        <div class="story-display" id="response">
+            📚 Long ago, in a land far away... (Ask me to continue the story!)
+        </div>
+
+        <div class="choose-friend">Choose Your Friend:</div>
+        <div class="avatar-row">
+            <div class="friend-avatar">🐰</div>
+            <div class="friend-avatar">🐻</div>
+            <div class="friend-avatar">🐱</div>
+            <div class="friend-avatar">🐶</div>
+            <div class="friend-avatar">🦁</div>
+            <div class="friend-avatar">🐼</div>
+            <div class="friend-avatar active">🦄</div>
+            <div class="friend-avatar">🦊</div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="action-btn btn-stats" onclick="sendCommand('Show my stats')">
+                📊 My Stats
+            </button>
+            <button class="action-btn btn-encourage" onclick="sendCommand('Encourage me')">
+                💪 Encourage Me
+            </button>
+            <button class="action-btn btn-joke" onclick="sendCommand('Tell me a joke')">
+                🤡 Tell a Joke
+            </button>
+            <button class="action-btn btn-song" onclick="sendCommand('Sing a song')">
+                🎵 Sing a Song
+            </button>
+            <button class="action-btn btn-story" onclick="sendCommand('Tell me a story')">
+                📚 Tell a Story
+            </button>
+            <button class="action-btn btn-chat" onclick="startVoiceChat()">
+                💬 Chat with AI
+            </button>
+        </div>
+
+        <div class="voice-settings">
+            <h3>🛠️ Voice Settings</h3>
+            <div class="slider-group">
+                <label>Speed: <span id="speedValue">1.0x</span></label>
+                <input type="range" class="slider" id="speedSlider" min="0.5" max="2" step="0.1" value="1">
+            </div>
+            <div class="slider-group">
+                <label>Pitch: <span id="pitchValue">1.0x</span></label>
+                <input type="range" class="slider" id="pitchSlider" min="0.5" max="2" step="0.1" value="1">
+            </div>
+        </div>
+
+        <div class="error-box" id="errorBox" style="display: none;">
+            ⚠️ Oops! Something went wrong. Try again!
+        </div>
+
+        <div class="mic-section">
+            <button class="mic-btn" id="micBtn">🎤</button>
+            <div class="status-text" id="statusText">Tap to speak</div>
+        </div>
+
+        <div class="try-saying">
+            <h3>💡 Try saying:</h3>
+            <ul>
+                <li>"Hello" or "Hi Dhyan"</li>
+                <li>"Tell me a joke"</li>
+                <li>"Sing a song"</li>
+                <li>"Encourage me"</li>
+                <li>"Tell me a story"</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let mediaRecorder;
+        let audioChunks = [];
+        const micBtn = document.getElementById('micBtn');
+        const statusText = document.getElementById('statusText');
+        const responseDiv = document.getElementById('response');
+        const errorBox = document.getElementById('errorBox');
+
+        // Speed slider
+        document.getElementById('speedSlider').addEventListener('input', (e) => {
+            document.getElementById('speedValue').textContent = e.target.value + 'x';
+        });
+
+        // Pitch slider
+        document.getElementById('pitchSlider').addEventListener('input', (e) => {
+            document.getElementById('pitchValue').textContent = e.target.value + 'x';
+        });
+
+        // Avatar selection
+        document.querySelectorAll('.friend-avatar').forEach(avatar => {
+            avatar.addEventListener('click', () => {
+                document.querySelectorAll('.friend-avatar').forEach(a => a.classList.remove('active'));
+                avatar.classList.add('active');
+            });
+        });
+
+        async function sendCommand(command) {
+            statusText.textContent = 'Thinking...';
+            errorBox.style.display = 'none';
+            
+            try {
+                const response = await fetch('/api/command', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command })
+                });
+                
+                const result = await response.json();
+                
+                if (result.response) {
+                    responseDiv.textContent = result.response;
+                    statusText.textContent = 'Tap to speak';
+                } else {
+                    showError();
+                }
+            } catch (error) {
+                showError();
+            }
+        }
+
+        function showError() {
+            errorBox.style.display = 'block';
+            statusText.textContent = 'Tap to try again';
+        }
+
+        function startVoiceChat() {
+            micBtn.click();
+        }
+
+        // Recording functionality
+        micBtn.addEventListener('click', async () => {
+            if (micBtn.classList.contains('recording')) {
+                stopRecording();
+            } else {
+                await startRecording();
+            }
+        });
+
+        async function startRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+
+                mediaRecorder.ondataavailable = (event) => {
+                    audioChunks.push(event.data);
+                };
+
+                mediaRecorder.onstop = async () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    const formData = new FormData();
+                    formData.append('audio', audioBlob, 'command.wav');
+
+                    statusText.textContent = 'Processing...';
+
+                    try {
+                        const response = await fetch('/process_audio', {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        const result = await response.json();
+
+                        if (result.status === 'success') {
+                            responseDiv.textContent = result.response;
+                            statusText.textContent = 'Tap to speak';
+                            errorBox.style.display = 'none';
+                        } else {
+                            showError();
+                        }
+                    } catch (error) {
+                        showError();
+                    }
+                };
+
+                mediaRecorder.start();
+                micBtn.classList.add('recording');
+                micBtn.textContent = '⏹️';
+                statusText.textContent = 'Listening...';
+            } catch (error) {
+                statusText.textContent = 'Microphone access denied';
+            }
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach(track => track.stop());
+            }
+            micBtn.classList.remove('recording');
+            micBtn.textContent = '🎤';
+            statusText.textContent = 'Processing...';
+        }
+    </script>
+</body>
+</html>

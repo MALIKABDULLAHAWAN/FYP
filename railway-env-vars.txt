@@ -1,0 +1,18 @@
+Copy these environment variables to Railway:
+
+DJANGO_SECRET_KEY=django-insecure-your-super-secret-key-change-this-to-something-random-and-long
+DJANGO_DEBUG=0
+DJANGO_ALLOWED_HOSTS=*.railway.app
+GROQ_API_KEY=your-groq-api-key-here
+CORS_ALLOWED_ORIGINS=https://your-vercel-app.vercel.app
+CORS_ALLOW_ALL=0
+CSRF_TRUSTED_ORIGINS=https://*.railway.app,https://your-vercel-app.vercel.app
+LOG_LEVEL=INFO
+
+Instructions:
+1. In Railway dashboard, go to your project
+2. Click "Variables" tab
+3. Add each variable above (one by one)
+4. Replace "your-groq-api-key-here" with your actual Groq API key
+5. Replace "your-vercel-app.vercel.app" with your actual Vercel domain
+6. Railway will automatically provide DATABASE_URL for PostgreSQL

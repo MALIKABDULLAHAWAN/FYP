@@ -1,0 +1,5111 @@
+{
+  "totalFiles": 212,
+  "scannedFiles": 114,
+  "emojisFound": [
+    {
+      "file": "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\api\\client.js",
+      "emojis": [
+        {
+          "emoji": "✅",
+          "category": "general",
+          "position": 3730,
+          "line": 143,
+          "context": "\n  });\n\n  const data = await safeJson(res);\n\n  // ✅ If token expired, try refresh once and retry ori"
+        },
+        {
+          "emoji": "✅",
+          "category": "actions",
+          "position": 3730,
+          "line": 143,
+          "context": "\n  });\n\n  const data = await safeJson(res);\n\n  // ✅ If token expired, try refresh once and retry ori"
+        }
+      ]
+    },
+    {
+      "file": "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\GameCard.jsx",
+      "emojis": [
+        {
+          "emoji": "✓",
+          "category": "general",
+          "position": 1629,
+          "line": 64,
+          "context": "\n            <span className=\"selected-checkmark\">✓</span>\r\n          </div>\r\n        )}\r\n      </di"
+        }
+      ]
+    },
+    {
+      "file": "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\EmojiReplacer\\EmojiClassifier.js",
+      "emojis": [
+        {
+          "emoji": "👨",
+          "category": "general",
+          "position": 603,
+          "line": 20,
+          "context": "turn {\r\n      // Medical and Professional\r\n      '👨‍⚕️': { category: 'medical', subcategory: 'profe"
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 606,
+          "line": 20,
+          "context": "n {\r\n      // Medical and Professional\r\n      '👨‍⚕️': { category: 'medical', subcategory: 'professi"
+        },
+        {
+          "emoji": "👩",
+          "category": "general",
+          "position": 736,
+          "line": 21,
+          "context": "', context: ['header', 'professional'] },\r\n      '👩‍⚕️': { category: 'medical', subcategory: 'profe"
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 739,
+          "line": 21,
+          "context": "context: ['header', 'professional'] },\r\n      '👩‍⚕️': { category: 'medical', subcategory: 'professi"
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 869,
+          "line": 22,
+          "context": "', context: ['header', 'professional'] },\r\n      '⚕️': { category: 'medical', subcategory: 'symbol',"
+        },
+        {
+          "emoji": "🏥",
+          "category": "general",
+          "position": 992,
+          "line": 23,
+          "context": "ium', context: ['medical', 'clinical'] },\r\n      '🏥': { category: 'medical', subcategory: 'facility"
+        },
+        {
+          "emoji": "📊",
+          "category": "general",
+          "position": 1279,
+          "line": 27,
+          "context": "'] },\r\n\r\n      // Interface and Analytics\r\n      '📊': { category: 'interface', subcategory: 'analyt"
+        },
+        {
+          "emoji": "📈",
+          "category": "general",
+          "position": 1407,
+          "line": 28,
+          "context": "h', context: ['dashboard', 'progress'] },\r\n      '📈': { category: 'interface', subcategory: 'analyt"
+        },
+        {
+          "emoji": "📉",
+          "category": "general",
+          "position": 1537,
+          "line": 29,
+          "context": ", context: ['progress', 'improvement'] },\r\n      '📉': { category: 'interface', subcategory: 'analyt"
+        },
+        {
+          "emoji": "📋",
+          "category": "general",
+          "position": 1665,
+          "line": 30,
+          "context": "ium', context: ['decline', 'analysis'] },\r\n      '📋': { category: 'interface', subcategory: 'docume"
+        },
+        {
+          "emoji": "📝",
+          "category": "general",
+          "position": 1795,
+          "line": 31,
+          "context": "igh', context: ['sessions', 'records'] },\r\n      '📝': { category: 'interface', subcategory: 'docume"
+        },
+        {
+          "emoji": "📧",
+          "category": "general",
+          "position": 1920,
+          "line": 32,
+          "context": "e: 'high', context: ['notes', 'forms'] },\r\n      '📧': { category: 'interface', subcategory: 'commun"
+        },
+        {
+          "emoji": "➕",
+          "category": "general",
+          "position": 2082,
+          "line": 35,
+          "context": "rms'] },\r\n\r\n      // Actions and Controls\r\n      '➕': { category: 'action', subcategory: 'add', ther"
+        },
+        {
+          "emoji": "✏",
+          "category": "general",
+          "position": 2192,
+          "line": 36,
+          "context": "ue: 'high', context: ['create', 'new'] },\r\n      '✏️': { category: 'action', subcategory: 'edit', th"
+        },
+        {
+          "emoji": "🗑",
+          "category": "general",
+          "position": 2307,
+          "line": 37,
+          "context": " 'high', context: ['modify', 'update'] },\r\n      '🗑️': { category: 'action', subcategory: 'delete',"
+        },
+        {
+          "emoji": "✅",
+          "category": "general",
+          "position": 2427,
+          "line": 38,
+          "context": "medium', context: ['remove', 'delete'] },\r\n      '✅': { category: 'status', subcategory: 'success', "
+        },
+        {
+          "emoji": "❌",
+          "category": "general",
+          "position": 2548,
+          "line": 39,
+          "context": "gh', context: ['completed', 'correct'] },\r\n      '❌': { category: 'status', subcategory: 'failure', "
+        },
+        {
+          "emoji": "⚠",
+          "category": "general",
+          "position": 2670,
+          "line": 40,
+          "context": "ium', context: ['incorrect', 'failed'] },\r\n      '⚠️': { category: 'status', subcategory: 'warning',"
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 2830,
+          "line": 43,
+          "context": " },\r\n\r\n      // Children and Demographics\r\n      '👶': { category: 'demographic', subcategory: 'chil"
+        },
+        {
+          "emoji": "👧",
+          "category": "general",
+          "position": 2951,
+          "line": 44,
+          "context": " 'high', context: ['patient', 'child'] },\r\n      '👧': { category: 'demographic', subcategory: 'chil"
+        },
+        {
+          "emoji": "👦",
+          "category": "general",
+          "position": 3073,
+          "line": 45,
+          "context": "'high', context: ['patient', 'female'] },\r\n      '👦': { category: 'demographic', subcategory: 'chil"
+        },
+        {
+          "emoji": "👤",
+          "category": "general",
+          "position": 3316,
+          "line": 47,
+          "context": "high', context: ['patient', 'neutral'] },\r\n      '👤': { category: 'demographic', subcategory: 'pers"
+        },
+        {
+          "emoji": "🗣",
+          "category": "general",
+          "position": 3482,
+          "line": 50,
+          "context": "] },\r\n\r\n      // Speech and Communication\r\n      '🗣️': { category: 'speech', subcategory: 'speaking"
+        },
+        {
+          "emoji": "🎙",
+          "category": "general",
+          "position": 3609,
+          "line": 51,
+          "context": ", context: ['speech', 'communication'] },\r\n      '🎙️': { category: 'speech', subcategory: 'recordin"
+        },
+        {
+          "emoji": "🔊",
+          "category": "general",
+          "position": 3737,
+          "line": 52,
+          "context": ", context: ['recording', 'microphone'] },\r\n      '🔊': { category: 'audio', subcategory: 'volume', t"
+        },
+        {
+          "emoji": "🔇",
+          "category": "general",
+          "position": 3850,
+          "line": 53,
+          "context": "ue: 'high', context: ['audio', 'loud'] },\r\n      '🔇': { category: 'audio', subcategory: 'mute', the"
+        },
+        {
+          "emoji": "🔈",
+          "category": "general",
+          "position": 3962,
+          "line": 54,
+          "context": "e: 'high', context: ['audio', 'muted'] },\r\n      '🔈': { category: 'audio', subcategory: 'volume', t"
+        },
+        {
+          "emoji": "🎧",
+          "category": "general",
+          "position": 4078,
+          "line": 55,
+          "context": " 'medium', context: ['audio', 'quiet'] },\r\n      '🎧': { category: 'audio', subcategory: 'equipment'"
+        },
+        {
+          "emoji": "🖼",
+          "category": "general",
+          "position": 4241,
+          "line": 58,
+          "context": "s'] },\r\n\r\n      // Learning and Cognition\r\n      '🖼️': { category: 'learning', subcategory: 'visual"
+        },
+        {
+          "emoji": "📖",
+          "category": "general",
+          "position": 4362,
+          "line": 59,
+          "context": "'high', context: ['picture', 'visual'] },\r\n      '📖': { category: 'learning', subcategory: 'reading"
+        },
+        {
+          "emoji": "❓",
+          "category": "general",
+          "position": 4602,
+          "line": 61,
+          "context": "'high', context: ['thinking', 'brain'] },\r\n      '❓': { category: 'learning', subcategory: 'question"
+        },
+        {
+          "emoji": "💭",
+          "category": "general",
+          "position": 4725,
+          "line": 62,
+          "context": "igh', context: ['question', 'inquiry'] },\r\n      '💭': { category: 'learning', subcategory: 'thought"
+        },
+        {
+          "emoji": "🎮",
+          "category": "general",
+          "position": 4880,
+          "line": 65,
+          "context": "dea'] },\r\n\r\n      // Games and Activities\r\n      '🎮': { category: 'activity', subcategory: 'game', "
+        },
+        {
+          "emoji": "🎯",
+          "category": "general",
+          "position": 4995,
+          "line": 66,
+          "context": "e: 'high', context: ['gaming', 'play'] },\r\n      '🎯': { category: 'activity', subcategory: 'target'"
+        },
+        {
+          "emoji": "🏆",
+          "category": "general",
+          "position": 5114,
+          "line": 67,
+          "context": " 'high', context: ['goal', 'accuracy'] },\r\n      '🏆': { category: 'achievement', subcategory: 'trop"
+        },
+        {
+          "emoji": "🌟",
+          "category": "general",
+          "position": 5237,
+          "line": 68,
+          "context": "'high', context: ['success', 'winner'] },\r\n      '🌟': { category: 'achievement', subcategory: 'star"
+        },
+        {
+          "emoji": "👍",
+          "category": "general",
+          "position": 5359,
+          "line": 69,
+          "context": "high', context: ['excellent', 'great'] },\r\n      '👍': { category: 'achievement', subcategory: 'appr"
+        },
+        {
+          "emoji": "💪",
+          "category": "general",
+          "position": 5483,
+          "line": 70,
+          "context": " 'high', context: ['good', 'positive'] },\r\n      '💪': { category: 'achievement', subcategory: 'stre"
+        },
+        {
+          "emoji": "🔁",
+          "category": "general",
+          "position": 5972,
+          "line": 76,
+          "context": "ue: 'medium', context: ['stop', 'end'] },\r\n      '🔁': { category: 'media', subcategory: 'repeat', t"
+        },
+        {
+          "emoji": "🎂",
+          "category": "general",
+          "position": 6122,
+          "line": 79,
+          "context": "ain'] },\r\n\r\n      // Personal Information\r\n      '🎂': { category: 'personal', subcategory: 'birthda"
+        },
+        {
+          "emoji": "⚧",
+          "category": "general",
+          "position": 6241,
+          "line": 80,
+          "context": "e: 'medium', context: ['birth', 'age'] },\r\n      '⚧': { category: 'personal', subcategory: 'gender',"
+        },
+        {
+          "emoji": "♂",
+          "category": "general",
+          "position": 6363,
+          "line": 81,
+          "context": "dium', context: ['gender', 'identity'] },\r\n      '♂️': { category: 'personal', subcategory: 'male', "
+        },
+        {
+          "emoji": "♀",
+          "category": "general",
+          "position": 6480,
+          "line": 82,
+          "context": " 'medium', context: ['male', 'gender'] },\r\n      '♀️': { category: 'personal', subcategory: 'female'"
+        },
+        {
+          "emoji": "🎉",
+          "category": "general",
+          "position": 6638,
+          "line": 85,
+          "context": "] },\r\n\r\n      // Celebration and Feedback\r\n      '🎉': { category: 'celebration', subcategory: 'part"
+        },
+        {
+          "emoji": "🎊",
+          "category": "general",
+          "position": 6765,
+          "line": 86,
+          "context": "', context: ['celebration', 'success'] },\r\n      '🎊': { category: 'celebration', subcategory: 'conf"
+        },
+        {
+          "emoji": "✨",
+          "category": "general",
+          "position": 6899,
+          "line": 87,
+          "context": "ontext: ['celebration', 'achievement'] },\r\n      '✨': { category: 'celebration', subcategory: 'spark"
+        },
+        {
+          "emoji": "🌈",
+          "category": "general",
+          "position": 7023,
+          "line": 88,
+          "context": "medium', context: ['special', 'magic'] },\r\n      '🌈': { category: 'celebration', subcategory: 'rain"
+        },
+        {
+          "emoji": "⚡",
+          "category": "general",
+          "position": 7178,
+          "line": 91,
+          "context": " 'positive'] },\r\n\r\n      // Quick Actions\r\n      '⚡': { category: 'action', subcategory: 'quick', th"
+        },
+        {
+          "emoji": "🔔",
+          "category": "general",
+          "position": 7293,
+          "line": 92,
+          "context": " 'medium', context: ['fast', 'energy'] },\r\n      '🔔': { category: 'notification', subcategory: 'ale"
+        },
+        {
+          "emoji": "📤",
+          "category": "general",
+          "position": 7422,
+          "line": 93,
+          "context": "m', context: ['notification', 'alert'] },\r\n      '📤': { category: 'action', subcategory: 'upload', "
+        },
+        {
+          "emoji": "📥",
+          "category": "general",
+          "position": 7539,
+          "line": 94,
+          "context": " 'medium', context: ['send', 'upload'] },\r\n      '📥': { category: 'action', subcategory: 'download'"
+        },
+        {
+          "emoji": "👨‍⚕️",
+          "category": "medical",
+          "position": 603,
+          "line": 20,
+          "context": "turn {\r\n      // Medical and Professional\r\n      '👨‍⚕️': { category: 'medical', subcategory: 'profe"
+        },
+        {
+          "emoji": "👩‍⚕️",
+          "category": "medical",
+          "position": 736,
+          "line": 21,
+          "context": "', context: ['header', 'professional'] },\r\n      '👩‍⚕️': { category: 'medical', subcategory: 'profe"
+        },
+        {
+          "emoji": "⚕️",
+          "category": "medical",
+          "position": 869,
+          "line": 22,
+          "context": "', context: ['header', 'professional'] },\r\n      '⚕️': { category: 'medical', subcategory: 'symbol',"
+        },
+        {
+          "emoji": "🏥",
+          "category": "medical",
+          "position": 992,
+          "line": 23,
+          "context": "ium', context: ['medical', 'clinical'] },\r\n      '🏥': { category: 'medical', subcategory: 'facility"
+        },
+        {
+          "emoji": "🩺",
+          "category": "medical",
+          "position": 1117,
+          "line": 24,
+          "context": "ium', context: ['medical', 'clinical'] },\r\n      '🩺': { category: 'medical', subcategory: 'equipmen"
+        },
+        {
+          "emoji": "📊",
+          "category": "interface",
+          "position": 1279,
+          "line": 27,
+          "context": "'] },\r\n\r\n      // Interface and Analytics\r\n      '📊': { category: 'interface', subcategory: 'analyt"
+        },
+        {
+          "emoji": "📈",
+          "category": "interface",
+          "position": 1407,
+          "line": 28,
+          "context": "h', context: ['dashboard', 'progress'] },\r\n      '📈': { category: 'interface', subcategory: 'analyt"
+        },
+        {
+          "emoji": "📉",
+          "category": "interface",
+          "position": 1537,
+          "line": 29,
+          "context": ", context: ['progress', 'improvement'] },\r\n      '📉': { category: 'interface', subcategory: 'analyt"
+        },
+        {
+          "emoji": "📋",
+          "category": "interface",
+          "position": 1665,
+          "line": 30,
+          "context": "ium', context: ['decline', 'analysis'] },\r\n      '📋': { category: 'interface', subcategory: 'docume"
+        },
+        {
+          "emoji": "📝",
+          "category": "interface",
+          "position": 1795,
+          "line": 31,
+          "context": "igh', context: ['sessions', 'records'] },\r\n      '📝': { category: 'interface', subcategory: 'docume"
+        },
+        {
+          "emoji": "📧",
+          "category": "interface",
+          "position": 1920,
+          "line": 32,
+          "context": "e: 'high', context: ['notes', 'forms'] },\r\n      '📧': { category: 'interface', subcategory: 'commun"
+        },
+        {
+          "emoji": "⚡",
+          "category": "interface",
+          "position": 7178,
+          "line": 91,
+          "context": " 'positive'] },\r\n\r\n      // Quick Actions\r\n      '⚡': { category: 'action', subcategory: 'quick', th"
+        },
+        {
+          "emoji": "🔔",
+          "category": "interface",
+          "position": 7293,
+          "line": 92,
+          "context": " 'medium', context: ['fast', 'energy'] },\r\n      '🔔': { category: 'notification', subcategory: 'ale"
+        },
+        {
+          "emoji": "➕",
+          "category": "actions",
+          "position": 2082,
+          "line": 35,
+          "context": "rms'] },\r\n\r\n      // Actions and Controls\r\n      '➕': { category: 'action', subcategory: 'add', ther"
+        },
+        {
+          "emoji": "✏️",
+          "category": "actions",
+          "position": 2192,
+          "line": 36,
+          "context": "ue: 'high', context: ['create', 'new'] },\r\n      '✏️': { category: 'action', subcategory: 'edit', th"
+        },
+        {
+          "emoji": "🗑️",
+          "category": "actions",
+          "position": 2307,
+          "line": 37,
+          "context": " 'high', context: ['modify', 'update'] },\r\n      '🗑️': { category: 'action', subcategory: 'delete',"
+        },
+        {
+          "emoji": "✅",
+          "category": "actions",
+          "position": 2427,
+          "line": 38,
+          "context": "medium', context: ['remove', 'delete'] },\r\n      '✅': { category: 'status', subcategory: 'success', "
+        },
+        {
+          "emoji": "❌",
+          "category": "actions",
+          "position": 2548,
+          "line": 39,
+          "context": "gh', context: ['completed', 'correct'] },\r\n      '❌': { category: 'status', subcategory: 'failure', "
+        },
+        {
+          "emoji": "⚠️",
+          "category": "actions",
+          "position": 2670,
+          "line": 40,
+          "context": "ium', context: ['incorrect', 'failed'] },\r\n      '⚠️': { category: 'status', subcategory: 'warning',"
+        },
+        {
+          "emoji": "📤",
+          "category": "actions",
+          "position": 7422,
+          "line": 93,
+          "context": "m', context: ['notification', 'alert'] },\r\n      '📤': { category: 'action', subcategory: 'upload', "
+        },
+        {
+          "emoji": "📥",
+          "category": "actions",
+          "position": 7539,
+          "line": 94,
+          "context": " 'medium', context: ['send', 'upload'] },\r\n      '📥': { category: 'action', subcategory: 'download'"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 2830,
+          "line": 43,
+          "context": " },\r\n\r\n      // Children and Demographics\r\n      '👶': { category: 'demographic', subcategory: 'chil"
+        },
+        {
+          "emoji": "👧",
+          "category": "children",
+          "position": 2951,
+          "line": 44,
+          "context": " 'high', context: ['patient', 'child'] },\r\n      '👧': { category: 'demographic', subcategory: 'chil"
+        },
+        {
+          "emoji": "👦",
+          "category": "children",
+          "position": 3073,
+          "line": 45,
+          "context": "'high', context: ['patient', 'female'] },\r\n      '👦': { category: 'demographic', subcategory: 'chil"
+        },
+        {
+          "emoji": "🧒",
+          "category": "children",
+          "position": 3193,
+          "line": 46,
+          "context": ": 'high', context: ['patient', 'male'] },\r\n      '🧒': { category: 'demographic', subcategory: 'chil"
+        },
+        {
+          "emoji": "🗣️",
+          "category": "speech",
+          "position": 3482,
+          "line": 50,
+          "context": "] },\r\n\r\n      // Speech and Communication\r\n      '🗣️': { category: 'speech', subcategory: 'speaking"
+        },
+        {
+          "emoji": "🎙️",
+          "category": "speech",
+          "position": 3609,
+          "line": 51,
+          "context": ", context: ['speech', 'communication'] },\r\n      '🎙️': { category: 'speech', subcategory: 'recordin"
+        },
+        {
+          "emoji": "🔊",
+          "category": "speech",
+          "position": 3737,
+          "line": 52,
+          "context": ", context: ['recording', 'microphone'] },\r\n      '🔊': { category: 'audio', subcategory: 'volume', t"
+        },
+        {
+          "emoji": "🔇",
+          "category": "speech",
+          "position": 3850,
+          "line": 53,
+          "context": "ue: 'high', context: ['audio', 'loud'] },\r\n      '🔇': { category: 'audio', subcategory: 'mute', the"
+        },
+        {
+          "emoji": "🔈",
+          "category": "speech",
+          "position": 3962,
+          "line": 54,
+          "context": "e: 'high', context: ['audio', 'muted'] },\r\n      '🔈': { category: 'audio', subcategory: 'volume', t"
+        },
+        {
+          "emoji": "🎧",
+          "category": "speech",
+          "position": 4078,
+          "line": 55,
+          "context": " 'medium', context: ['audio', 'quiet'] },\r\n      '🎧': { category: 'audio', subcategory: 'equipment'"
+        },
+        {
+          "emoji": "🖼️",
+          "category": "learning",
+          "position": 4241,
+          "line": 58,
+          "context": "s'] },\r\n\r\n      // Learning and Cognition\r\n      '🖼️': { category: 'learning', subcategory: 'visual"
+        },
+        {
+          "emoji": "📖",
+          "category": "learning",
+          "position": 4362,
+          "line": 59,
+          "context": "'high', context: ['picture', 'visual'] },\r\n      '📖': { category: 'learning', subcategory: 'reading"
+        },
+        {
+          "emoji": "🧠",
+          "category": "learning",
+          "position": 4479,
+          "line": 60,
+          "context": "ue: 'high', context: ['story', 'book'] },\r\n      '🧠': { category: 'learning', subcategory: 'cogniti"
+        },
+        {
+          "emoji": "❓",
+          "category": "learning",
+          "position": 4602,
+          "line": 61,
+          "context": "'high', context: ['thinking', 'brain'] },\r\n      '❓': { category: 'learning', subcategory: 'question"
+        },
+        {
+          "emoji": "💭",
+          "category": "learning",
+          "position": 4725,
+          "line": 62,
+          "context": "igh', context: ['question', 'inquiry'] },\r\n      '💭': { category: 'learning', subcategory: 'thought"
+        },
+        {
+          "emoji": "🎮",
+          "category": "games",
+          "position": 4880,
+          "line": 65,
+          "context": "dea'] },\r\n\r\n      // Games and Activities\r\n      '🎮': { category: 'activity', subcategory: 'game', "
+        },
+        {
+          "emoji": "🎯",
+          "category": "games",
+          "position": 4995,
+          "line": 66,
+          "context": "e: 'high', context: ['gaming', 'play'] },\r\n      '🎯': { category: 'activity', subcategory: 'target'"
+        },
+        {
+          "emoji": "🏆",
+          "category": "games",
+          "position": 5114,
+          "line": 67,
+          "context": " 'high', context: ['goal', 'accuracy'] },\r\n      '🏆': { category: 'achievement', subcategory: 'trop"
+        },
+        {
+          "emoji": "🌟",
+          "category": "games",
+          "position": 5237,
+          "line": 68,
+          "context": "'high', context: ['success', 'winner'] },\r\n      '🌟': { category: 'achievement', subcategory: 'star"
+        },
+        {
+          "emoji": "👍",
+          "category": "games",
+          "position": 5359,
+          "line": 69,
+          "context": "high', context: ['excellent', 'great'] },\r\n      '👍': { category: 'achievement', subcategory: 'appr"
+        },
+        {
+          "emoji": "💪",
+          "category": "games",
+          "position": 5483,
+          "line": 70,
+          "context": " 'high', context: ['good', 'positive'] },\r\n      '💪': { category: 'achievement', subcategory: 'stre"
+        },
+        {
+          "emoji": "👤",
+          "category": "personal",
+          "position": 3316,
+          "line": 47,
+          "context": "high', context: ['patient', 'neutral'] },\r\n      '👤': { category: 'demographic', subcategory: 'pers"
+        },
+        {
+          "emoji": "🎂",
+          "category": "personal",
+          "position": 6122,
+          "line": 79,
+          "context": "ain'] },\r\n\r\n      // Personal Information\r\n      '🎂': { category: 'personal', subcategory: 'birthda"
+        },
+        {
+          "emoji": "⚧",
+          "category": "personal",
+          "position": 6241,
+          "line": 80,
+          "context": "e: 'medium', context: ['birth', 'age'] },\r\n      '⚧': { category: 'personal', subcategory: 'gender',"
+        },
+        {
+          "emoji": "♂️",
+          "category": "personal",
+          "position": 6363,
+          "line": 81,
+          "context": "dium', context: ['gender', 'identity'] },\r\n      '♂️': { category: 'personal', subcategory: 'male', "
+        },
+        {
+          "emoji": "♀️",
+          "category": "personal",
+          "position": 6480,
+          "line": 82,
+          "context": " 'medium', context: ['male', 'gender'] },\r\n      '♀️': { category: 'personal', subcategory: 'female'"
+        },
+        {
+          "emoji": "▶️",
+          "category": "media",
+          "position": 5636,
+          "line": 73,
+          "context": ", 'strong'] },\r\n\r\n      // Media Controls\r\n      '▶️': { category: 'media', subcategory: 'play', the"
+        },
+        {
+          "emoji": "⏸️",
+          "category": "media",
+          "position": 5747,
+          "line": 74,
+          "context": "ue: 'high', context: ['start', 'play'] },\r\n      '⏸️': { category: 'media', subcategory: 'pause', th"
+        },
+        {
+          "emoji": "⏹️",
+          "category": "media",
+          "position": 5861,
+          "line": 75,
+          "context": ": 'medium', context: ['pause', 'stop'] },\r\n      '⏹️': { category: 'media', subcategory: 'stop', the"
+        },
+        {
+          "emoji": "🔁",
+          "category": "media",
+          "position": 5972,
+          "line": 76,
+          "context": "ue: 'medium', context: ['stop', 'end'] },\r\n      '🔁': { category: 'media', subcategory: 'repeat', t"
+        },
+        {
+          "emoji": "🎉",
+          "category": "celebration",
+          "position": 6638,
+          "line": 85,
+          "context": "] },\r\n\r\n      // Celebration and Feedback\r\n      '🎉': { category: 'celebration', subcategory: 'part"
+        },
+        {
+          "emoji": "🎊",
+          "category": "celebration",
+          "position": 6765,
+          "line": 86,
+          "context": "', context: ['celebration', 'success'] },\r\n      '🎊': { category: 'celebration', subcategory: 'conf"
+        },
+        {
+          "emoji": "✨",
+          "category": "celebration",
+          "position": 6899,
+          "line": 87,
+          "context": "ontext: ['celebration', 'achievement'] },\r\n      '✨': { category: 'celebration', subcategory: 'spark"
+        },
+        {
+          "emoji": "🌈",
+          "category": "celebration",
+          "position": 7023,
+          "line": 88,
+          "context": "medium', context: ['special', 'magic'] },\r\n      '🌈': { category: 'celebration', subcategory: 'rain"
+        }
+      ]
+    },
+    {
+      "file": "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\EmojiReplacer\\EmojiReplacer.js",
+      "emojis": [
+        {
+          "emoji": "👨",
+          "category": "general",
+          "position": 1326,
+          "line": 36,
+          "context": "fic therapeutic context patterns\r\n      medical: /👨‍⚕️|👩‍⚕️|🏥|⚕️|🩺|💊|🏥/g,\r\n      \r\n      inter"
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 1329,
+          "line": 36,
+          "context": " therapeutic context patterns\r\n      medical: /👨‍⚕️|👩‍⚕️|🏥|⚕️|🩺|💊|🏥/g,\r\n      \r\n      interfac"
+        },
+        {
+          "emoji": "👩",
+          "category": "general",
+          "position": 1332,
+          "line": 36,
+          "context": "erapeutic context patterns\r\n      medical: /👨‍⚕️|👩‍⚕️|🏥|⚕️|🩺|💊|🏥/g,\r\n      \r\n      interface: "
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 1335,
+          "line": 36,
+          "context": "peutic context patterns\r\n      medical: /👨‍⚕️|👩‍⚕️|🏥|⚕️|🩺|💊|🏥/g,\r\n      \r\n      interface: /📊"
+        },
+        {
+          "emoji": "🏥",
+          "category": "general",
+          "position": 1338,
+          "line": 36,
+          "context": "tic context patterns\r\n      medical: /👨‍⚕️|👩‍⚕️|🏥|⚕️|🩺|💊|🏥/g,\r\n      \r\n      interface: /📊|📈"
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 1341,
+          "line": 36,
+          "context": " context patterns\r\n      medical: /👨‍⚕️|👩‍⚕️|🏥|⚕️|🩺|💊|🏥/g,\r\n      \r\n      interface: /📊|📈|📉"
+        },
+        {
+          "emoji": "💊",
+          "category": "general",
+          "position": 1347,
+          "line": 36,
+          "context": "xt patterns\r\n      medical: /👨‍⚕️|👩‍⚕️|🏥|⚕️|🩺|💊|🏥/g,\r\n      \r\n      interface: /📊|📈|📉|📋|📝"
+        },
+        {
+          "emoji": "🏥",
+          "category": "general",
+          "position": 1350,
+          "line": 36,
+          "context": "patterns\r\n      medical: /👨‍⚕️|👩‍⚕️|🏥|⚕️|🩺|💊|🏥/g,\r\n      \r\n      interface: /📊|📈|📉|📋|📝|📧"
+        },
+        {
+          "emoji": "📊",
+          "category": "general",
+          "position": 1383,
+          "line": 38,
+          "context": "\udc69‍⚕️|🏥|⚕️|🩺|💊|🏥/g,\r\n      \r\n      interface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n"
+        },
+        {
+          "emoji": "📈",
+          "category": "general",
+          "position": 1386,
+          "line": 38,
+          "context": "️|🏥|⚕️|🩺|💊|🏥/g,\r\n      \r\n      interface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n   "
+        },
+        {
+          "emoji": "📉",
+          "category": "general",
+          "position": 1389,
+          "line": 38,
+          "context": "\udfe5|⚕️|🩺|💊|🏥/g,\r\n      \r\n      interface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      "
+        },
+        {
+          "emoji": "📋",
+          "category": "general",
+          "position": 1392,
+          "line": 38,
+          "context": "️|🩺|💊|🏥/g,\r\n      \r\n      interface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n "
+        },
+        {
+          "emoji": "📝",
+          "category": "general",
+          "position": 1395,
+          "line": 38,
+          "context": "\ude7a|💊|🏥/g,\r\n      \r\n      interface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n    "
+        },
+        {
+          "emoji": "📧",
+          "category": "general",
+          "position": 1398,
+          "line": 38,
+          "context": "\udc8a|🏥/g,\r\n      \r\n      interface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      a"
+        },
+        {
+          "emoji": "📱",
+          "category": "general",
+          "position": 1401,
+          "line": 38,
+          "context": "\udfe5/g,\r\n      \r\n      interface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      acti"
+        },
+        {
+          "emoji": "💻",
+          "category": "general",
+          "position": 1404,
+          "line": 38,
+          "context": ",\r\n      \r\n      interface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      actions"
+        },
+        {
+          "emoji": "🖥",
+          "category": "general",
+          "position": 1407,
+          "line": 38,
+          "context": "      \r\n      interface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      actions: /"
+        },
+        {
+          "emoji": "⚡",
+          "category": "general",
+          "position": 1411,
+          "line": 38,
+          "context": "  \r\n      interface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      actions: /➕|➖|"
+        },
+        {
+          "emoji": "🔔",
+          "category": "general",
+          "position": 1413,
+          "line": 38,
+          "context": "\r\n      interface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      actions: /➕|➖|✏️"
+        },
+        {
+          "emoji": "🔍",
+          "category": "general",
+          "position": 1416,
+          "line": 38,
+          "context": "     interface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      actions: /➕|➖|✏️|🗑"
+        },
+        {
+          "emoji": "🔧",
+          "category": "general",
+          "position": 1419,
+          "line": 38,
+          "context": "  interface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      actions: /➕|➖|✏️|🗑️|\ud83d"
+        },
+        {
+          "emoji": "⚙",
+          "category": "general",
+          "position": 1422,
+          "line": 38,
+          "context": "nterface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      actions: /➕|➖|✏️|🗑️|📤|\ud83d"
+        },
+        {
+          "emoji": "🛠",
+          "category": "general",
+          "position": 1425,
+          "line": 38,
+          "context": "rface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      actions: /➕|➖|✏️|🗑️|📤|📥|✅"
+        },
+        {
+          "emoji": "➕",
+          "category": "general",
+          "position": 1457,
+          "line": 40,
+          "context": "🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      actions: /➕|➖|✏️|🗑️|📤|📥|✅|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n  "
+        },
+        {
+          "emoji": "➖",
+          "category": "general",
+          "position": 1459,
+          "line": 40,
+          "context": "️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      actions: /➕|➖|✏️|🗑️|📤|📥|✅|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n    "
+        },
+        {
+          "emoji": "✏",
+          "category": "general",
+          "position": 1461,
+          "line": 40,
+          "context": "⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      actions: /➕|➖|✏️|🗑️|📤|📥|✅|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n      "
+        },
+        {
+          "emoji": "🗑",
+          "category": "general",
+          "position": 1464,
+          "line": 40,
+          "context": "\udd14|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      actions: /➕|➖|✏️|🗑️|📤|📥|✅|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n      chi"
+        },
+        {
+          "emoji": "📤",
+          "category": "general",
+          "position": 1468,
+          "line": 40,
+          "context": "|🔧|⚙️|🛠️/g,\r\n      \r\n      actions: /➕|➖|✏️|🗑️|📤|📥|✅|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n      childre"
+        },
+        {
+          "emoji": "📥",
+          "category": "general",
+          "position": 1471,
+          "line": 40,
+          "context": "|⚙️|🛠️/g,\r\n      \r\n      actions: /➕|➖|✏️|🗑️|📤|📥|✅|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n      children: "
+        },
+        {
+          "emoji": "✅",
+          "category": "general",
+          "position": 1474,
+          "line": 40,
+          "context": "|🛠️/g,\r\n      \r\n      actions: /➕|➖|✏️|🗑️|📤|📥|✅|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n      children: /👶"
+        },
+        {
+          "emoji": "❌",
+          "category": "general",
+          "position": 1476,
+          "line": 40,
+          "context": "\udee0️/g,\r\n      \r\n      actions: /➕|➖|✏️|🗑️|📤|📥|✅|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n      children: /👶|\ud83d"
+        },
+        {
+          "emoji": "⚠",
+          "category": "general",
+          "position": 1478,
+          "line": 40,
+          "context": "/g,\r\n      \r\n      actions: /➕|➖|✏️|🗑️|📤|📥|✅|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n      children: /👶|👧|"
+        },
+        {
+          "emoji": "🚨",
+          "category": "general",
+          "position": 1481,
+          "line": 40,
+          "context": "\r\n      \r\n      actions: /➕|➖|✏️|🗑️|📤|📥|✅|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n      children: /👶|👧|👦|"
+        },
+        {
+          "emoji": "🔴",
+          "category": "general",
+          "position": 1484,
+          "line": 40,
+          "context": "     \r\n      actions: /➕|➖|✏️|🗑️|📤|📥|✅|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n      children: /👶|👧|👦|🧒|"
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 1522,
+          "line": 42,
+          "context": "\udce5|✅|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n      children: /👶|👧|👦|🧒|👨‍👩‍👧‍👦|👪/g,\r\n      \r\n      speec"
+        },
+        {
+          "emoji": "👧",
+          "category": "general",
+          "position": 1525,
+          "line": 42,
+          "context": "|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n      children: /👶|👧|👦|🧒|👨‍👩‍👧‍👦|👪/g,\r\n      \r\n      speech: "
+        },
+        {
+          "emoji": "👦",
+          "category": "general",
+          "position": 1528,
+          "line": 42,
+          "context": "⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n      children: /👶|👧|👦|🧒|👨‍👩‍👧‍👦|👪/g,\r\n      \r\n      speech: /🗣"
+        },
+        {
+          "emoji": "👨",
+          "category": "general",
+          "position": 1534,
+          "line": 42,
+          "context": "🔴|🟢|🟡/g,\r\n      \r\n      children: /👶|👧|👦|🧒|👨‍👩‍👧‍👦|👪/g,\r\n      \r\n      speech: /🗣️|🎙️|"
+        },
+        {
+          "emoji": "👩",
+          "category": "general",
+          "position": 1537,
+          "line": 42,
+          "context": "🟢|🟡/g,\r\n      \r\n      children: /👶|👧|👦|🧒|👨‍👩‍👧‍👦|👪/g,\r\n      \r\n      speech: /🗣️|🎙️|🔊|"
+        },
+        {
+          "emoji": "👧",
+          "category": "general",
+          "position": 1540,
+          "line": 42,
+          "context": "🟡/g,\r\n      \r\n      children: /👶|👧|👦|🧒|👨‍👩‍👧‍👦|👪/g,\r\n      \r\n      speech: /🗣️|🎙️|🔊|🔇|"
+        },
+        {
+          "emoji": "👦",
+          "category": "general",
+          "position": 1543,
+          "line": 42,
+          "context": "g,\r\n      \r\n      children: /👶|👧|👦|🧒|👨‍👩‍👧‍👦|👪/g,\r\n      \r\n      speech: /🗣️|🎙️|🔊|🔇|🔈|"
+        },
+        {
+          "emoji": "👪",
+          "category": "general",
+          "position": 1546,
+          "line": 42,
+          "context": "\n      \r\n      children: /👶|👧|👦|🧒|👨‍👩‍👧‍👦|👪/g,\r\n      \r\n      speech: /🗣️|🎙️|🔊|🔇|🔈|🎧|"
+        },
+        {
+          "emoji": "🗣",
+          "category": "general",
+          "position": 1576,
+          "line": 44,
+          "context": "\udc67|👦|🧒|👨‍👩‍👧‍👦|👪/g,\r\n      \r\n      speech: /🗣️|🎙️|🔊|🔇|🔈|🎧|📢|📣/g,\r\n      \r\n      learni"
+        },
+        {
+          "emoji": "🎙",
+          "category": "general",
+          "position": 1580,
+          "line": 44,
+          "context": "|🧒|👨‍👩‍👧‍👦|👪/g,\r\n      \r\n      speech: /🗣️|🎙️|🔊|🔇|🔈|🎧|📢|📣/g,\r\n      \r\n      learning: "
+        },
+        {
+          "emoji": "🔊",
+          "category": "general",
+          "position": 1584,
+          "line": 44,
+          "context": "👨‍👩‍👧‍👦|👪/g,\r\n      \r\n      speech: /🗣️|🎙️|🔊|🔇|🔈|🎧|📢|📣/g,\r\n      \r\n      learning: /🖼️"
+        },
+        {
+          "emoji": "🔇",
+          "category": "general",
+          "position": 1587,
+          "line": 44,
+          "context": "👩‍👧‍👦|👪/g,\r\n      \r\n      speech: /🗣️|🎙️|🔊|🔇|🔈|🎧|📢|📣/g,\r\n      \r\n      learning: /🖼️|📖"
+        },
+        {
+          "emoji": "🔈",
+          "category": "general",
+          "position": 1590,
+          "line": 44,
+          "context": "👧‍👦|👪/g,\r\n      \r\n      speech: /🗣️|🎙️|🔊|🔇|🔈|🎧|📢|📣/g,\r\n      \r\n      learning: /🖼️|📖|🧠"
+        },
+        {
+          "emoji": "🎧",
+          "category": "general",
+          "position": 1593,
+          "line": 44,
+          "context": "👦|👪/g,\r\n      \r\n      speech: /🗣️|🎙️|🔊|🔇|🔈|🎧|📢|📣/g,\r\n      \r\n      learning: /🖼️|📖|🧠|❓|"
+        },
+        {
+          "emoji": "📢",
+          "category": "general",
+          "position": 1596,
+          "line": 44,
+          "context": "👪/g,\r\n      \r\n      speech: /🗣️|🎙️|🔊|🔇|🔈|🎧|📢|📣/g,\r\n      \r\n      learning: /🖼️|📖|🧠|❓|💭|"
+        },
+        {
+          "emoji": "📣",
+          "category": "general",
+          "position": 1599,
+          "line": 44,
+          "context": "g,\r\n      \r\n      speech: /🗣️|🎙️|🔊|🔇|🔈|🎧|📢|📣/g,\r\n      \r\n      learning: /🖼️|📖|🧠|❓|💭|🎓|"
+        },
+        {
+          "emoji": "🖼",
+          "category": "general",
+          "position": 1631,
+          "line": 46,
+          "context": "\udf99️|🔊|🔇|🔈|🎧|📢|📣/g,\r\n      \r\n      learning: /🖼️|📖|🧠|❓|💭|🎓|📚|✏️|📝/g,\r\n      \r\n      games"
+        },
+        {
+          "emoji": "📖",
+          "category": "general",
+          "position": 1635,
+          "line": 46,
+          "context": "\udd0a|🔇|🔈|🎧|📢|📣/g,\r\n      \r\n      learning: /🖼️|📖|🧠|❓|💭|🎓|📚|✏️|📝/g,\r\n      \r\n      games: /\ud83c"
+        },
+        {
+          "emoji": "❓",
+          "category": "general",
+          "position": 1641,
+          "line": 46,
+          "context": "\udd08|🎧|📢|📣/g,\r\n      \r\n      learning: /🖼️|📖|🧠|❓|💭|🎓|📚|✏️|📝/g,\r\n      \r\n      games: /🎮|🎯|\ud83c"
+        },
+        {
+          "emoji": "💭",
+          "category": "general",
+          "position": 1643,
+          "line": 46,
+          "context": "🎧|📢|📣/g,\r\n      \r\n      learning: /🖼️|📖|🧠|❓|💭|🎓|📚|✏️|📝/g,\r\n      \r\n      games: /🎮|🎯|🏆|"
+        },
+        {
+          "emoji": "🎓",
+          "category": "general",
+          "position": 1646,
+          "line": 46,
+          "context": "📢|📣/g,\r\n      \r\n      learning: /🖼️|📖|🧠|❓|💭|🎓|📚|✏️|📝/g,\r\n      \r\n      games: /🎮|🎯|🏆|🌟|"
+        },
+        {
+          "emoji": "📚",
+          "category": "general",
+          "position": 1649,
+          "line": 46,
+          "context": "📣/g,\r\n      \r\n      learning: /🖼️|📖|🧠|❓|💭|🎓|📚|✏️|📝/g,\r\n      \r\n      games: /🎮|🎯|🏆|🌟|👍|"
+        },
+        {
+          "emoji": "✏",
+          "category": "general",
+          "position": 1652,
+          "line": 46,
+          "context": "g,\r\n      \r\n      learning: /🖼️|📖|🧠|❓|💭|🎓|📚|✏️|📝/g,\r\n      \r\n      games: /🎮|🎯|🏆|🌟|👍|💪|"
+        },
+        {
+          "emoji": "📝",
+          "category": "general",
+          "position": 1655,
+          "line": 46,
+          "context": "\n      \r\n      learning: /🖼️|📖|🧠|❓|💭|🎓|📚|✏️|📝/g,\r\n      \r\n      games: /🎮|🎯|🏆|🌟|👍|💪|🎲|"
+        },
+        {
+          "emoji": "🎮",
+          "category": "general",
+          "position": 1684,
+          "line": 48,
+          "context": "|📖|🧠|❓|💭|🎓|📚|✏️|📝/g,\r\n      \r\n      games: /🎮|🎯|🏆|🌟|👍|💪|🎲|🃏|🎪/g,\r\n      \r\n      activ"
+        },
+        {
+          "emoji": "🎯",
+          "category": "general",
+          "position": 1687,
+          "line": 48,
+          "context": "|🧠|❓|💭|🎓|📚|✏️|📝/g,\r\n      \r\n      games: /🎮|🎯|🏆|🌟|👍|💪|🎲|🃏|🎪/g,\r\n      \r\n      activiti"
+        },
+        {
+          "emoji": "🏆",
+          "category": "general",
+          "position": 1690,
+          "line": 48,
+          "context": "|❓|💭|🎓|📚|✏️|📝/g,\r\n      \r\n      games: /🎮|🎯|🏆|🌟|👍|💪|🎲|🃏|🎪/g,\r\n      \r\n      activities:"
+        },
+        {
+          "emoji": "🌟",
+          "category": "general",
+          "position": 1693,
+          "line": 48,
+          "context": "💭|🎓|📚|✏️|📝/g,\r\n      \r\n      games: /🎮|🎯|🏆|🌟|👍|💪|🎲|🃏|🎪/g,\r\n      \r\n      activities: /\ud83c"
+        },
+        {
+          "emoji": "👍",
+          "category": "general",
+          "position": 1696,
+          "line": 48,
+          "context": "🎓|📚|✏️|📝/g,\r\n      \r\n      games: /🎮|🎯|🏆|🌟|👍|💪|🎲|🃏|🎪/g,\r\n      \r\n      activities: /🍎|\ud83c"
+        },
+        {
+          "emoji": "💪",
+          "category": "general",
+          "position": 1699,
+          "line": 48,
+          "context": "📚|✏️|📝/g,\r\n      \r\n      games: /🎮|🎯|🏆|🌟|👍|💪|🎲|🃏|🎪/g,\r\n      \r\n      activities: /🍎|🍌|\ud83d"
+        },
+        {
+          "emoji": "🎲",
+          "category": "general",
+          "position": 1702,
+          "line": 48,
+          "context": "✏️|📝/g,\r\n      \r\n      games: /🎮|🎯|🏆|🌟|👍|💪|🎲|🃏|🎪/g,\r\n      \r\n      activities: /🍎|🍌|🐱|\ud83d"
+        },
+        {
+          "emoji": "🎪",
+          "category": "general",
+          "position": 1708,
+          "line": 48,
+          "context": "g,\r\n      \r\n      games: /🎮|🎯|🏆|🌟|👍|💪|🎲|🃏|🎪/g,\r\n      \r\n      activities: /🍎|🍌|🐱|🐶|🏠|\ud83d"
+        },
+        {
+          "emoji": "🍎",
+          "category": "general",
+          "position": 1742,
+          "line": 50,
+          "context": "|🌟|👍|💪|🎲|🃏|🎪/g,\r\n      \r\n      activities: /🍎|🍌|🐱|🐶|🏠|🚗|⚽|📚|🎨|🧩|🎭/g,\r\n      \r\n      "
+        },
+        {
+          "emoji": "🍌",
+          "category": "general",
+          "position": 1745,
+          "line": 50,
+          "context": "|👍|💪|🎲|🃏|🎪/g,\r\n      \r\n      activities: /🍎|🍌|🐱|🐶|🏠|🚗|⚽|📚|🎨|🧩|🎭/g,\r\n      \r\n      per"
+        },
+        {
+          "emoji": "🐱",
+          "category": "general",
+          "position": 1748,
+          "line": 50,
+          "context": "|💪|🎲|🃏|🎪/g,\r\n      \r\n      activities: /🍎|🍌|🐱|🐶|🏠|🚗|⚽|📚|🎨|🧩|🎭/g,\r\n      \r\n      person"
+        },
+        {
+          "emoji": "🐶",
+          "category": "general",
+          "position": 1751,
+          "line": 50,
+          "context": "|🎲|🃏|🎪/g,\r\n      \r\n      activities: /🍎|🍌|🐱|🐶|🏠|🚗|⚽|📚|🎨|🧩|🎭/g,\r\n      \r\n      personal:"
+        },
+        {
+          "emoji": "🏠",
+          "category": "general",
+          "position": 1754,
+          "line": 50,
+          "context": "|🃏|🎪/g,\r\n      \r\n      activities: /🍎|🍌|🐱|🐶|🏠|🚗|⚽|📚|🎨|🧩|🎭/g,\r\n      \r\n      personal: /\ud83c"
+        },
+        {
+          "emoji": "🚗",
+          "category": "general",
+          "position": 1757,
+          "line": 50,
+          "context": "|🎪/g,\r\n      \r\n      activities: /🍎|🍌|🐱|🐶|🏠|🚗|⚽|📚|🎨|🧩|🎭/g,\r\n      \r\n      personal: /🎂|⚧"
+        },
+        {
+          "emoji": "⚽",
+          "category": "general",
+          "position": 1760,
+          "line": 50,
+          "context": "/g,\r\n      \r\n      activities: /🍎|🍌|🐱|🐶|🏠|🚗|⚽|📚|🎨|🧩|🎭/g,\r\n      \r\n      personal: /🎂|⚧|♂️"
+        },
+        {
+          "emoji": "📚",
+          "category": "general",
+          "position": 1762,
+          "line": 50,
+          "context": ",\r\n      \r\n      activities: /🍎|🍌|🐱|🐶|🏠|🚗|⚽|📚|🎨|🧩|🎭/g,\r\n      \r\n      personal: /🎂|⚧|♂️|♀"
+        },
+        {
+          "emoji": "🎨",
+          "category": "general",
+          "position": 1765,
+          "line": 50,
+          "context": "      \r\n      activities: /🍎|🍌|🐱|🐶|🏠|🚗|⚽|📚|🎨|🧩|🎭/g,\r\n      \r\n      personal: /🎂|⚧|♂️|♀️|\ud83d"
+        },
+        {
+          "emoji": "🎭",
+          "category": "general",
+          "position": 1771,
+          "line": 50,
+          "context": "\r\n      activities: /🍎|🍌|🐱|🐶|🏠|🚗|⚽|📚|🎨|🧩|🎭/g,\r\n      \r\n      personal: /🎂|⚧|♂️|♀️|👤|👥|\ud83d"
+        },
+        {
+          "emoji": "🎂",
+          "category": "general",
+          "position": 1803,
+          "line": 52,
+          "context": "|🏠|🚗|⚽|📚|🎨|🧩|🎭/g,\r\n      \r\n      personal: /🎂|⚧|♂️|♀️|👤|👥|📅|🕐/g,\r\n      \r\n      media: /▶"
+        },
+        {
+          "emoji": "⚧",
+          "category": "general",
+          "position": 1806,
+          "line": 52,
+          "context": "|🚗|⚽|📚|🎨|🧩|🎭/g,\r\n      \r\n      personal: /🎂|⚧|♂️|♀️|👤|👥|📅|🕐/g,\r\n      \r\n      media: /▶️|⏸"
+        },
+        {
+          "emoji": "♂",
+          "category": "general",
+          "position": 1808,
+          "line": 52,
+          "context": "\ude97|⚽|📚|🎨|🧩|🎭/g,\r\n      \r\n      personal: /🎂|⚧|♂️|♀️|👤|👥|📅|🕐/g,\r\n      \r\n      media: /▶️|⏸️|"
+        },
+        {
+          "emoji": "♀",
+          "category": "general",
+          "position": 1811,
+          "line": 52,
+          "context": "|📚|🎨|🧩|🎭/g,\r\n      \r\n      personal: /🎂|⚧|♂️|♀️|👤|👥|📅|🕐/g,\r\n      \r\n      media: /▶️|⏸️|⏹️|"
+        },
+        {
+          "emoji": "👤",
+          "category": "general",
+          "position": 1814,
+          "line": 52,
+          "context": "|🎨|🧩|🎭/g,\r\n      \r\n      personal: /🎂|⚧|♂️|♀️|👤|👥|📅|🕐/g,\r\n      \r\n      media: /▶️|⏸️|⏹️|⏪|⏩"
+        },
+        {
+          "emoji": "👥",
+          "category": "general",
+          "position": 1817,
+          "line": 52,
+          "context": "|🧩|🎭/g,\r\n      \r\n      personal: /🎂|⚧|♂️|♀️|👤|👥|📅|🕐/g,\r\n      \r\n      media: /▶️|⏸️|⏹️|⏪|⏩|🔁"
+        },
+        {
+          "emoji": "📅",
+          "category": "general",
+          "position": 1820,
+          "line": 52,
+          "context": "|🎭/g,\r\n      \r\n      personal: /🎂|⚧|♂️|♀️|👤|👥|📅|🕐/g,\r\n      \r\n      media: /▶️|⏸️|⏹️|⏪|⏩|🔁|🔄"
+        },
+        {
+          "emoji": "🕐",
+          "category": "general",
+          "position": 1823,
+          "line": 52,
+          "context": "/g,\r\n      \r\n      personal: /🎂|⚧|♂️|♀️|👤|👥|📅|🕐/g,\r\n      \r\n      media: /▶️|⏸️|⏹️|⏪|⏩|🔁|🔄|⏯️"
+        },
+        {
+          "emoji": "🔁",
+          "category": "general",
+          "position": 1865,
+          "line": 54,
+          "context": "\udc64|👥|📅|🕐/g,\r\n      \r\n      media: /▶️|⏸️|⏹️|⏪|⏩|🔁|🔄|⏯️|⏭️|⏮️/g,\r\n      \r\n      celebration: /🎉|"
+        },
+        {
+          "emoji": "🔄",
+          "category": "general",
+          "position": 1868,
+          "line": 54,
+          "context": "\udc65|📅|🕐/g,\r\n      \r\n      media: /▶️|⏸️|⏹️|⏪|⏩|🔁|🔄|⏯️|⏭️|⏮️/g,\r\n      \r\n      celebration: /🎉|🎊|"
+        },
+        {
+          "emoji": "🎉",
+          "category": "general",
+          "position": 1912,
+          "line": 56,
+          "context": "|⏩|🔁|🔄|⏯️|⏭️|⏮️/g,\r\n      \r\n      celebration: /🎉|🎊|✨|💫|🌈|🎈|🎁|🍰|🥳/g,\r\n      \r\n      // Com"
+        },
+        {
+          "emoji": "🎊",
+          "category": "general",
+          "position": 1915,
+          "line": 56,
+          "context": "🔁|🔄|⏯️|⏭️|⏮️/g,\r\n      \r\n      celebration: /🎉|🎊|✨|💫|🌈|🎈|🎁|🍰|🥳/g,\r\n      \r\n      // Comple"
+        },
+        {
+          "emoji": "✨",
+          "category": "general",
+          "position": 1918,
+          "line": 56,
+          "context": "🔄|⏯️|⏭️|⏮️/g,\r\n      \r\n      celebration: /🎉|🎊|✨|💫|🌈|🎈|🎁|🍰|🥳/g,\r\n      \r\n      // Complex e"
+        },
+        {
+          "emoji": "💫",
+          "category": "general",
+          "position": 1920,
+          "line": 56,
+          "context": "|⏯️|⏭️|⏮️/g,\r\n      \r\n      celebration: /🎉|🎊|✨|💫|🌈|🎈|🎁|🍰|🥳/g,\r\n      \r\n      // Complex emo"
+        },
+        {
+          "emoji": "🌈",
+          "category": "general",
+          "position": 1923,
+          "line": 56,
+          "context": "|⏭️|⏮️/g,\r\n      \r\n      celebration: /🎉|🎊|✨|💫|🌈|🎈|🎁|🍰|🥳/g,\r\n      \r\n      // Complex emoji "
+        },
+        {
+          "emoji": "🎈",
+          "category": "general",
+          "position": 1926,
+          "line": 56,
+          "context": "|⏮️/g,\r\n      \r\n      celebration: /🎉|🎊|✨|💫|🌈|🎈|🎁|🍰|🥳/g,\r\n      \r\n      // Complex emoji pat"
+        },
+        {
+          "emoji": "🎁",
+          "category": "general",
+          "position": 1929,
+          "line": 56,
+          "context": "/g,\r\n      \r\n      celebration: /🎉|🎊|✨|💫|🌈|🎈|🎁|🍰|🥳/g,\r\n      \r\n      // Complex emoji patter"
+        },
+        {
+          "emoji": "🍰",
+          "category": "general",
+          "position": 1932,
+          "line": 56,
+          "context": "\r\n      \r\n      celebration: /🎉|🎊|✨|💫|🌈|🎈|🎁|🍰|🥳/g,\r\n      \r\n      // Complex emoji patterns "
+        },
+        {
+          "emoji": "👨",
+          "category": "general",
+          "position": 2017,
+          "line": 59,
+          "context": "emoji patterns (multi-codepoint)\r\n      complex: /👨‍⚕️|👩‍⚕️|👨‍👩‍👧‍👦|👨‍💻|👩‍💻|👨‍🏫|👩‍🏫/g\r"
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 2020,
+          "line": 59,
+          "context": "ji patterns (multi-codepoint)\r\n      complex: /👨‍⚕️|👩‍⚕️|👨‍👩‍👧‍👦|👨‍💻|👩‍💻|👨‍🏫|👩‍🏫/g\r\n  "
+        },
+        {
+          "emoji": "👩",
+          "category": "general",
+          "position": 2023,
+          "line": 59,
+          "context": "patterns (multi-codepoint)\r\n      complex: /👨‍⚕️|👩‍⚕️|👨‍👩‍👧‍👦|👨‍💻|👩‍💻|👨‍🏫|👩‍🏫/g\r\n    }"
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 2026,
+          "line": 59,
+          "context": "terns (multi-codepoint)\r\n      complex: /👨‍⚕️|👩‍⚕️|👨‍👩‍👧‍👦|👨‍💻|👩‍💻|👨‍🏫|👩‍🏫/g\r\n    };\r\n"
+        },
+        {
+          "emoji": "👨",
+          "category": "general",
+          "position": 2029,
+          "line": 59,
+          "context": "ns (multi-codepoint)\r\n      complex: /👨‍⚕️|👩‍⚕️|👨‍👩‍👧‍👦|👨‍💻|👩‍💻|👨‍🏫|👩‍🏫/g\r\n    };\r\n  }"
+        },
+        {
+          "emoji": "👩",
+          "category": "general",
+          "position": 2032,
+          "line": 59,
+          "context": "(multi-codepoint)\r\n      complex: /👨‍⚕️|👩‍⚕️|👨‍👩‍👧‍👦|👨‍💻|👩‍💻|👨‍🏫|👩‍🏫/g\r\n    };\r\n  }\r\n\r"
+        },
+        {
+          "emoji": "👧",
+          "category": "general",
+          "position": 2035,
+          "line": 59,
+          "context": "lti-codepoint)\r\n      complex: /👨‍⚕️|👩‍⚕️|👨‍👩‍👧‍👦|👨‍💻|👩‍💻|👨‍🏫|👩‍🏫/g\r\n    };\r\n  }\r\n\r\n  "
+        },
+        {
+          "emoji": "👦",
+          "category": "general",
+          "position": 2038,
+          "line": 59,
+          "context": "-codepoint)\r\n      complex: /👨‍⚕️|👩‍⚕️|👨‍👩‍👧‍👦|👨‍💻|👩‍💻|👨‍🏫|👩‍🏫/g\r\n    };\r\n  }\r\n\r\n  /**"
+        },
+        {
+          "emoji": "👨",
+          "category": "general",
+          "position": 2041,
+          "line": 59,
+          "context": "depoint)\r\n      complex: /👨‍⚕️|👩‍⚕️|👨‍👩‍👧‍👦|👨‍💻|👩‍💻|👨‍🏫|👩‍🏫/g\r\n    };\r\n  }\r\n\r\n  /**\r\n "
+        },
+        {
+          "emoji": "💻",
+          "category": "general",
+          "position": 2044,
+          "line": 59,
+          "context": "oint)\r\n      complex: /👨‍⚕️|👩‍⚕️|👨‍👩‍👧‍👦|👨‍💻|👩‍💻|👨‍🏫|👩‍🏫/g\r\n    };\r\n  }\r\n\r\n  /**\r\n   *"
+        },
+        {
+          "emoji": "👩",
+          "category": "general",
+          "position": 2047,
+          "line": 59,
+          "context": "t)\r\n      complex: /👨‍⚕️|👩‍⚕️|👨‍👩‍👧‍👦|👨‍💻|👩‍💻|👨‍🏫|👩‍🏫/g\r\n    };\r\n  }\r\n\r\n  /**\r\n   * In"
+        },
+        {
+          "emoji": "💻",
+          "category": "general",
+          "position": 2050,
+          "line": 59,
+          "context": "\n      complex: /👨‍⚕️|👩‍⚕️|👨‍👩‍👧‍👦|👨‍💻|👩‍💻|👨‍🏫|👩‍🏫/g\r\n    };\r\n  }\r\n\r\n  /**\r\n   * Initi"
+        },
+        {
+          "emoji": "👨",
+          "category": "general",
+          "position": 2053,
+          "line": 59,
+          "context": "    complex: /👨‍⚕️|👩‍⚕️|👨‍👩‍👧‍👦|👨‍💻|👩‍💻|👨‍🏫|👩‍🏫/g\r\n    };\r\n  }\r\n\r\n  /**\r\n   * Initiali"
+        },
+        {
+          "emoji": "🏫",
+          "category": "general",
+          "position": 2056,
+          "line": 59,
+          "context": " complex: /👨‍⚕️|👩‍⚕️|👨‍👩‍👧‍👦|👨‍💻|👩‍💻|👨‍🏫|👩‍🏫/g\r\n    };\r\n  }\r\n\r\n  /**\r\n   * Initialize "
+        },
+        {
+          "emoji": "👩",
+          "category": "general",
+          "position": 2059,
+          "line": 59,
+          "context": "mplex: /👨‍⚕️|👩‍⚕️|👨‍👩‍👧‍👦|👨‍💻|👩‍💻|👨‍🏫|👩‍🏫/g\r\n    };\r\n  }\r\n\r\n  /**\r\n   * Initialize con"
+        },
+        {
+          "emoji": "🏫",
+          "category": "general",
+          "position": 2062,
+          "line": 59,
+          "context": "ex: /👨‍⚕️|👩‍⚕️|👨‍👩‍👧‍👦|👨‍💻|👩‍💻|👨‍🏫|👩‍🏫/g\r\n    };\r\n  }\r\n\r\n  /**\r\n   * Initialize contex"
+        },
+        {
+          "emoji": "👨",
+          "category": "general",
+          "position": 8324,
+          "line": 202,
+          "context": "dingCode.includes('<h1')) {\r\n      if (emoji === '👨‍⚕️' || emoji === '👩‍⚕️') return 'header-therap"
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 8327,
+          "line": 202,
+          "context": "gCode.includes('<h1')) {\r\n      if (emoji === '👨‍⚕️' || emoji === '👩‍⚕️') return 'header-therapist"
+        },
+        {
+          "emoji": "👩",
+          "category": "general",
+          "position": 8345,
+          "line": 202,
+          "context": "1')) {\r\n      if (emoji === '👨‍⚕️' || emoji === '👩‍⚕️') return 'header-therapist';\r\n      if (emoj"
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 8348,
+          "line": 202,
+          "context": ") {\r\n      if (emoji === '👨‍⚕️' || emoji === '👩‍⚕️') return 'header-therapist';\r\n      if (emoji ="
+        },
+        {
+          "emoji": "🗣",
+          "category": "general",
+          "position": 8402,
+          "line": 203,
+          "context": " return 'header-therapist';\r\n      if (emoji === '🗣️') return 'header-speech';\r\n    }\r\n    \r\n    //"
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 8580,
+          "line": 208,
+          "context": "ngCode.includes('stat-')) {\r\n      if (emoji === '👶') return 'stat-children';\r\n      if (emoji === "
+        },
+        {
+          "emoji": "📋",
+          "category": "general",
+          "position": 8631,
+          "line": 209,
+          "context": "\udc76') return 'stat-children';\r\n      if (emoji === '📋') return 'stat-sessions';\r\n      if (emoji === "
+        },
+        {
+          "emoji": "✅",
+          "category": "general",
+          "position": 8682,
+          "line": 210,
+          "context": "\udccb') return 'stat-sessions';\r\n      if (emoji === '✅') return 'stat-completed';\r\n      if (emoji === "
+        },
+        {
+          "emoji": "🎯",
+          "category": "general",
+          "position": 8733,
+          "line": 211,
+          "context": "') return 'stat-completed';\r\n      if (emoji === '🎯') return 'stat-accuracy';\r\n    }\r\n    \r\n    // "
+        },
+        {
+          "emoji": "📊",
+          "category": "general",
+          "position": 8904,
+          "line": 216,
+          "context": "dingCode.includes('nav')) {\r\n      if (emoji === '📊') return 'nav-overview';\r\n      if (emoji === '"
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 8954,
+          "line": 217,
+          "context": "📊') return 'nav-overview';\r\n      if (emoji === '👶') return 'nav-children';\r\n      if (emoji === '"
+        },
+        {
+          "emoji": "📋",
+          "category": "general",
+          "position": 9004,
+          "line": 218,
+          "context": "👶') return 'nav-children';\r\n      if (emoji === '📋') return 'nav-sessions';\r\n      if (emoji === '"
+        },
+        {
+          "emoji": "📈",
+          "category": "general",
+          "position": 9054,
+          "line": 219,
+          "context": "📋') return 'nav-sessions';\r\n      if (emoji === '📈') return 'nav-analytics';\r\n    }\r\n    \r\n    // "
+        },
+        {
+          "emoji": "📧",
+          "category": "general",
+          "position": 9228,
+          "line": 224,
+          "context": "ngCode.includes('input')) {\r\n      if (emoji === '📧') return 'form-email';\r\n      if (emoji === '👤"
+        },
+        {
+          "emoji": "👤",
+          "category": "general",
+          "position": 9276,
+          "line": 225,
+          "context": " '📧') return 'form-email';\r\n      if (emoji === '👤') return 'form-name';\r\n      if (emoji === '🎂'"
+        },
+        {
+          "emoji": "🎂",
+          "category": "general",
+          "position": 9323,
+          "line": 226,
+          "context": "= '👤') return 'form-name';\r\n      if (emoji === '🎂') return 'form-birth';\r\n      if (emoji === '⚧'"
+        },
+        {
+          "emoji": "⚧",
+          "category": "general",
+          "position": 9371,
+          "line": 227,
+          "context": " '🎂') return 'form-birth';\r\n      if (emoji === '⚧' || emoji === '♂️' || emoji === '♀️') return 'fo"
+        },
+        {
+          "emoji": "♂",
+          "category": "general",
+          "position": 9388,
+          "line": 227,
+          "context": "rm-birth';\r\n      if (emoji === '⚧' || emoji === '♂️' || emoji === '♀️') return 'form-gender';\r\n    "
+        },
+        {
+          "emoji": "♀",
+          "category": "general",
+          "position": 9406,
+          "line": 227,
+          "context": "if (emoji === '⚧' || emoji === '♂️' || emoji === '♀️') return 'form-gender';\r\n      if (emoji === '\ud83d"
+        },
+        {
+          "emoji": "📝",
+          "category": "general",
+          "position": 9455,
+          "line": 228,
+          "context": "'♀️') return 'form-gender';\r\n      if (emoji === '📝') return 'form-notes';\r\n    }\r\n    \r\n    // Act"
+        },
+        {
+          "emoji": "➕",
+          "category": "general",
+          "position": 9622,
+          "line": 233,
+          "context": "gCode.includes('button')) {\r\n      if (emoji === '➕') return 'action-add';\r\n      if (emoji === '✏️'"
+        },
+        {
+          "emoji": "✏",
+          "category": "general",
+          "position": 9669,
+          "line": 234,
+          "context": "= '➕') return 'action-add';\r\n      if (emoji === '✏️') return 'action-edit';\r\n      if (emoji === '\ud83d"
+        },
+        {
+          "emoji": "🗑",
+          "category": "general",
+          "position": 9718,
+          "line": 235,
+          "context": "'✏️') return 'action-edit';\r\n      if (emoji === '🗑️') return 'action-delete';\r\n      if (emoji ==="
+        },
+        {
+          "emoji": "⚠",
+          "category": "general",
+          "position": 9770,
+          "line": 236,
+          "context": "️') return 'action-delete';\r\n      if (emoji === '⚠️') return 'action-warning';\r\n    }\r\n    \r\n    //"
+        },
+        {
+          "emoji": "🗣",
+          "category": "general",
+          "position": 9962,
+          "line": 241,
+          "context": "ode.includes('activity')) {\r\n      if (emoji === '🗣️') return 'speech-repetition';\r\n      if (emoji"
+        },
+        {
+          "emoji": "🖼",
+          "category": "general",
+          "position": 10018,
+          "line": 242,
+          "context": "return 'speech-repetition';\r\n      if (emoji === '🖼️') return 'speech-picture';\r\n      if (emoji =="
+        },
+        {
+          "emoji": "❓",
+          "category": "general",
+          "position": 10071,
+          "line": 243,
+          "context": "') return 'speech-picture';\r\n      if (emoji === '❓') return 'speech-questions';\r\n      if (emoji =="
+        },
+        {
+          "emoji": "📖",
+          "category": "general",
+          "position": 10124,
+          "line": 244,
+          "context": " return 'speech-questions';\r\n      if (emoji === '📖') return 'speech-story';\r\n      if (emoji === '"
+        },
+        {
+          "emoji": "🔊",
+          "category": "general",
+          "position": 10381,
+          "line": 250,
+          "context": "ngCode.includes('voice')) {\r\n      if (emoji === '🔊') return 'audio-on';\r\n      if (emoji === '🔇')"
+        },
+        {
+          "emoji": "🔇",
+          "category": "general",
+          "position": 10427,
+          "line": 251,
+          "context": "== '🔊') return 'audio-on';\r\n      if (emoji === '🔇') return 'audio-off';\r\n      if (emoji === '🎙️"
+        },
+        {
+          "emoji": "🎙",
+          "category": "general",
+          "position": 10474,
+          "line": 252,
+          "context": "= '🔇') return 'audio-off';\r\n      if (emoji === '🎙️') return 'speech-microphone';\r\n    }\r\n    \r\n  "
+        },
+        {
+          "emoji": "✅",
+          "category": "general",
+          "position": 10698,
+          "line": 257,
+          "context": ".includes('celebration')) {\r\n      if (emoji === '✅') return 'feedback-success';\r\n      if (emoji =="
+        },
+        {
+          "emoji": "⚡",
+          "category": "general",
+          "position": 10751,
+          "line": 258,
+          "context": " return 'feedback-success';\r\n      if (emoji === '⚡') return 'feedback-partial';\r\n      if (emoji =="
+        },
+        {
+          "emoji": "❌",
+          "category": "general",
+          "position": 10804,
+          "line": 259,
+          "context": " return 'feedback-partial';\r\n      if (emoji === '❌') return 'feedback-fail';\r\n      if (emoji === '"
+        },
+        {
+          "emoji": "🏆",
+          "category": "general",
+          "position": 10854,
+          "line": 260,
+          "context": "❌') return 'feedback-fail';\r\n      if (emoji === '🏆' || emoji === '🌟' || emoji === '👍' || emoji ="
+        },
+        {
+          "emoji": "🌟",
+          "category": "general",
+          "position": 10872,
+          "line": 260,
+          "context": "ck-fail';\r\n      if (emoji === '🏆' || emoji === '🌟' || emoji === '👍' || emoji === '💪') return 'f"
+        },
+        {
+          "emoji": "👍",
+          "category": "general",
+          "position": 10890,
+          "line": 260,
+          "context": "f (emoji === '🏆' || emoji === '🌟' || emoji === '👍' || emoji === '💪') return 'feedback-celebratio"
+        },
+        {
+          "emoji": "💪",
+          "category": "general",
+          "position": 10908,
+          "line": 260,
+          "context": "|| emoji === '🌟' || emoji === '👍' || emoji === '💪') return 'feedback-celebration';\r\n    }\r\n    \r\n"
+        },
+        {
+          "emoji": "👨‍⚕️",
+          "category": "medical",
+          "position": 1326,
+          "line": 36,
+          "context": "fic therapeutic context patterns\r\n      medical: /👨‍⚕️|👩‍⚕️|🏥|⚕️|🩺|💊|🏥/g,\r\n      \r\n      inter"
+        },
+        {
+          "emoji": "👩‍⚕️",
+          "category": "medical",
+          "position": 1332,
+          "line": 36,
+          "context": "erapeutic context patterns\r\n      medical: /👨‍⚕️|👩‍⚕️|🏥|⚕️|🩺|💊|🏥/g,\r\n      \r\n      interface: "
+        },
+        {
+          "emoji": "🏥",
+          "category": "medical",
+          "position": 1338,
+          "line": 36,
+          "context": "tic context patterns\r\n      medical: /👨‍⚕️|👩‍⚕️|🏥|⚕️|🩺|💊|🏥/g,\r\n      \r\n      interface: /📊|📈"
+        },
+        {
+          "emoji": "⚕️",
+          "category": "medical",
+          "position": 1341,
+          "line": 36,
+          "context": " context patterns\r\n      medical: /👨‍⚕️|👩‍⚕️|🏥|⚕️|🩺|💊|🏥/g,\r\n      \r\n      interface: /📊|📈|📉"
+        },
+        {
+          "emoji": "🩺",
+          "category": "medical",
+          "position": 1344,
+          "line": 36,
+          "context": "ntext patterns\r\n      medical: /👨‍⚕️|👩‍⚕️|🏥|⚕️|🩺|💊|🏥/g,\r\n      \r\n      interface: /📊|📈|📉|📋"
+        },
+        {
+          "emoji": "💊",
+          "category": "medical",
+          "position": 1347,
+          "line": 36,
+          "context": "xt patterns\r\n      medical: /👨‍⚕️|👩‍⚕️|🏥|⚕️|🩺|💊|🏥/g,\r\n      \r\n      interface: /📊|📈|📉|📋|📝"
+        },
+        {
+          "emoji": "🏥",
+          "category": "medical",
+          "position": 1350,
+          "line": 36,
+          "context": "patterns\r\n      medical: /👨‍⚕️|👩‍⚕️|🏥|⚕️|🩺|💊|🏥/g,\r\n      \r\n      interface: /📊|📈|📉|📋|📝|📧"
+        },
+        {
+          "emoji": "👨‍⚕️",
+          "category": "medical",
+          "position": 2017,
+          "line": 59,
+          "context": "emoji patterns (multi-codepoint)\r\n      complex: /👨‍⚕️|👩‍⚕️|👨‍👩‍👧‍👦|👨‍💻|👩‍💻|👨‍🏫|👩‍🏫/g\r"
+        },
+        {
+          "emoji": "👩‍⚕️",
+          "category": "medical",
+          "position": 2023,
+          "line": 59,
+          "context": "patterns (multi-codepoint)\r\n      complex: /👨‍⚕️|👩‍⚕️|👨‍👩‍👧‍👦|👨‍💻|👩‍💻|👨‍🏫|👩‍🏫/g\r\n    }"
+        },
+        {
+          "emoji": "👨‍⚕️",
+          "category": "medical",
+          "position": 8324,
+          "line": 202,
+          "context": "dingCode.includes('<h1')) {\r\n      if (emoji === '👨‍⚕️' || emoji === '👩‍⚕️') return 'header-therap"
+        },
+        {
+          "emoji": "👩‍⚕️",
+          "category": "medical",
+          "position": 8345,
+          "line": 202,
+          "context": "1')) {\r\n      if (emoji === '👨‍⚕️' || emoji === '👩‍⚕️') return 'header-therapist';\r\n      if (emoj"
+        },
+        {
+          "emoji": "📊",
+          "category": "interface",
+          "position": 1383,
+          "line": 38,
+          "context": "\udc69‍⚕️|🏥|⚕️|🩺|💊|🏥/g,\r\n      \r\n      interface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n"
+        },
+        {
+          "emoji": "📈",
+          "category": "interface",
+          "position": 1386,
+          "line": 38,
+          "context": "️|🏥|⚕️|🩺|💊|🏥/g,\r\n      \r\n      interface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n   "
+        },
+        {
+          "emoji": "📉",
+          "category": "interface",
+          "position": 1389,
+          "line": 38,
+          "context": "\udfe5|⚕️|🩺|💊|🏥/g,\r\n      \r\n      interface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      "
+        },
+        {
+          "emoji": "📋",
+          "category": "interface",
+          "position": 1392,
+          "line": 38,
+          "context": "️|🩺|💊|🏥/g,\r\n      \r\n      interface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n "
+        },
+        {
+          "emoji": "📝",
+          "category": "interface",
+          "position": 1395,
+          "line": 38,
+          "context": "\ude7a|💊|🏥/g,\r\n      \r\n      interface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n    "
+        },
+        {
+          "emoji": "📧",
+          "category": "interface",
+          "position": 1398,
+          "line": 38,
+          "context": "\udc8a|🏥/g,\r\n      \r\n      interface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      a"
+        },
+        {
+          "emoji": "📱",
+          "category": "interface",
+          "position": 1401,
+          "line": 38,
+          "context": "\udfe5/g,\r\n      \r\n      interface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      acti"
+        },
+        {
+          "emoji": "💻",
+          "category": "interface",
+          "position": 1404,
+          "line": 38,
+          "context": ",\r\n      \r\n      interface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      actions"
+        },
+        {
+          "emoji": "🖥️",
+          "category": "interface",
+          "position": 1407,
+          "line": 38,
+          "context": "      \r\n      interface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      actions: /"
+        },
+        {
+          "emoji": "⚡",
+          "category": "interface",
+          "position": 1411,
+          "line": 38,
+          "context": "  \r\n      interface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      actions: /➕|➖|"
+        },
+        {
+          "emoji": "🔔",
+          "category": "interface",
+          "position": 1413,
+          "line": 38,
+          "context": "\r\n      interface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      actions: /➕|➖|✏️"
+        },
+        {
+          "emoji": "🔍",
+          "category": "interface",
+          "position": 1416,
+          "line": 38,
+          "context": "     interface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      actions: /➕|➖|✏️|🗑"
+        },
+        {
+          "emoji": "🔧",
+          "category": "interface",
+          "position": 1419,
+          "line": 38,
+          "context": "  interface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      actions: /➕|➖|✏️|🗑️|\ud83d"
+        },
+        {
+          "emoji": "⚙️",
+          "category": "interface",
+          "position": 1422,
+          "line": 38,
+          "context": "nterface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      actions: /➕|➖|✏️|🗑️|📤|\ud83d"
+        },
+        {
+          "emoji": "🛠️",
+          "category": "interface",
+          "position": 1425,
+          "line": 38,
+          "context": "rface: /📊|📈|📉|📋|📝|📧|📱|💻|🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      actions: /➕|➖|✏️|🗑️|📤|📥|✅"
+        },
+        {
+          "emoji": "📝",
+          "category": "interface",
+          "position": 1655,
+          "line": 46,
+          "context": "\n      \r\n      learning: /🖼️|📖|🧠|❓|💭|🎓|📚|✏️|📝/g,\r\n      \r\n      games: /🎮|🎯|🏆|🌟|👍|💪|🎲|"
+        },
+        {
+          "emoji": "💻",
+          "category": "interface",
+          "position": 2044,
+          "line": 59,
+          "context": "oint)\r\n      complex: /👨‍⚕️|👩‍⚕️|👨‍👩‍👧‍👦|👨‍💻|👩‍💻|👨‍🏫|👩‍🏫/g\r\n    };\r\n  }\r\n\r\n  /**\r\n   *"
+        },
+        {
+          "emoji": "💻",
+          "category": "interface",
+          "position": 2050,
+          "line": 59,
+          "context": "\n      complex: /👨‍⚕️|👩‍⚕️|👨‍👩‍👧‍👦|👨‍💻|👩‍💻|👨‍🏫|👩‍🏫/g\r\n    };\r\n  }\r\n\r\n  /**\r\n   * Initi"
+        },
+        {
+          "emoji": "📋",
+          "category": "interface",
+          "position": 8631,
+          "line": 209,
+          "context": "\udc76') return 'stat-children';\r\n      if (emoji === '📋') return 'stat-sessions';\r\n      if (emoji === "
+        },
+        {
+          "emoji": "📊",
+          "category": "interface",
+          "position": 8904,
+          "line": 216,
+          "context": "dingCode.includes('nav')) {\r\n      if (emoji === '📊') return 'nav-overview';\r\n      if (emoji === '"
+        },
+        {
+          "emoji": "📋",
+          "category": "interface",
+          "position": 9004,
+          "line": 218,
+          "context": "👶') return 'nav-children';\r\n      if (emoji === '📋') return 'nav-sessions';\r\n      if (emoji === '"
+        },
+        {
+          "emoji": "📈",
+          "category": "interface",
+          "position": 9054,
+          "line": 219,
+          "context": "📋') return 'nav-sessions';\r\n      if (emoji === '📈') return 'nav-analytics';\r\n    }\r\n    \r\n    // "
+        },
+        {
+          "emoji": "📧",
+          "category": "interface",
+          "position": 9228,
+          "line": 224,
+          "context": "ngCode.includes('input')) {\r\n      if (emoji === '📧') return 'form-email';\r\n      if (emoji === '👤"
+        },
+        {
+          "emoji": "📝",
+          "category": "interface",
+          "position": 9455,
+          "line": 228,
+          "context": "'♀️') return 'form-gender';\r\n      if (emoji === '📝') return 'form-notes';\r\n    }\r\n    \r\n    // Act"
+        },
+        {
+          "emoji": "⚡",
+          "category": "interface",
+          "position": 10751,
+          "line": 258,
+          "context": " return 'feedback-success';\r\n      if (emoji === '⚡') return 'feedback-partial';\r\n      if (emoji =="
+        },
+        {
+          "emoji": "➕",
+          "category": "actions",
+          "position": 1457,
+          "line": 40,
+          "context": "🖥️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      actions: /➕|➖|✏️|🗑️|📤|📥|✅|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n  "
+        },
+        {
+          "emoji": "➖",
+          "category": "actions",
+          "position": 1459,
+          "line": 40,
+          "context": "️|⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      actions: /➕|➖|✏️|🗑️|📤|📥|✅|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n    "
+        },
+        {
+          "emoji": "✏️",
+          "category": "actions",
+          "position": 1461,
+          "line": 40,
+          "context": "⚡|🔔|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      actions: /➕|➖|✏️|🗑️|📤|📥|✅|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n      "
+        },
+        {
+          "emoji": "🗑️",
+          "category": "actions",
+          "position": 1464,
+          "line": 40,
+          "context": "\udd14|🔍|🔧|⚙️|🛠️/g,\r\n      \r\n      actions: /➕|➖|✏️|🗑️|📤|📥|✅|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n      chi"
+        },
+        {
+          "emoji": "📤",
+          "category": "actions",
+          "position": 1468,
+          "line": 40,
+          "context": "|🔧|⚙️|🛠️/g,\r\n      \r\n      actions: /➕|➖|✏️|🗑️|📤|📥|✅|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n      childre"
+        },
+        {
+          "emoji": "📥",
+          "category": "actions",
+          "position": 1471,
+          "line": 40,
+          "context": "|⚙️|🛠️/g,\r\n      \r\n      actions: /➕|➖|✏️|🗑️|📤|📥|✅|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n      children: "
+        },
+        {
+          "emoji": "✅",
+          "category": "actions",
+          "position": 1474,
+          "line": 40,
+          "context": "|🛠️/g,\r\n      \r\n      actions: /➕|➖|✏️|🗑️|📤|📥|✅|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n      children: /👶"
+        },
+        {
+          "emoji": "❌",
+          "category": "actions",
+          "position": 1476,
+          "line": 40,
+          "context": "\udee0️/g,\r\n      \r\n      actions: /➕|➖|✏️|🗑️|📤|📥|✅|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n      children: /👶|\ud83d"
+        },
+        {
+          "emoji": "⚠️",
+          "category": "actions",
+          "position": 1478,
+          "line": 40,
+          "context": "/g,\r\n      \r\n      actions: /➕|➖|✏️|🗑️|📤|📥|✅|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n      children: /👶|👧|"
+        },
+        {
+          "emoji": "🚨",
+          "category": "actions",
+          "position": 1481,
+          "line": 40,
+          "context": "\r\n      \r\n      actions: /➕|➖|✏️|🗑️|📤|📥|✅|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n      children: /👶|👧|👦|"
+        },
+        {
+          "emoji": "🔴",
+          "category": "actions",
+          "position": 1484,
+          "line": 40,
+          "context": "     \r\n      actions: /➕|➖|✏️|🗑️|📤|📥|✅|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n      children: /👶|👧|👦|🧒|"
+        },
+        {
+          "emoji": "🟢",
+          "category": "actions",
+          "position": 1487,
+          "line": 40,
+          "context": "  \r\n      actions: /➕|➖|✏️|🗑️|📤|📥|✅|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n      children: /👶|👧|👦|🧒|👨‍"
+        },
+        {
+          "emoji": "🟡",
+          "category": "actions",
+          "position": 1490,
+          "line": 40,
+          "context": "\n      actions: /➕|➖|✏️|🗑️|📤|📥|✅|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n      children: /👶|👧|👦|🧒|👨‍👩‍"
+        },
+        {
+          "emoji": "✏️",
+          "category": "actions",
+          "position": 1652,
+          "line": 46,
+          "context": "g,\r\n      \r\n      learning: /🖼️|📖|🧠|❓|💭|🎓|📚|✏️|📝/g,\r\n      \r\n      games: /🎮|🎯|🏆|🌟|👍|💪|"
+        },
+        {
+          "emoji": "✅",
+          "category": "actions",
+          "position": 8682,
+          "line": 210,
+          "context": "\udccb') return 'stat-sessions';\r\n      if (emoji === '✅') return 'stat-completed';\r\n      if (emoji === "
+        },
+        {
+          "emoji": "➕",
+          "category": "actions",
+          "position": 9622,
+          "line": 233,
+          "context": "gCode.includes('button')) {\r\n      if (emoji === '➕') return 'action-add';\r\n      if (emoji === '✏️'"
+        },
+        {
+          "emoji": "✏️",
+          "category": "actions",
+          "position": 9669,
+          "line": 234,
+          "context": "= '➕') return 'action-add';\r\n      if (emoji === '✏️') return 'action-edit';\r\n      if (emoji === '\ud83d"
+        },
+        {
+          "emoji": "🗑️",
+          "category": "actions",
+          "position": 9718,
+          "line": 235,
+          "context": "'✏️') return 'action-edit';\r\n      if (emoji === '🗑️') return 'action-delete';\r\n      if (emoji ==="
+        },
+        {
+          "emoji": "⚠️",
+          "category": "actions",
+          "position": 9770,
+          "line": 236,
+          "context": "️') return 'action-delete';\r\n      if (emoji === '⚠️') return 'action-warning';\r\n    }\r\n    \r\n    //"
+        },
+        {
+          "emoji": "✅",
+          "category": "actions",
+          "position": 10698,
+          "line": 257,
+          "context": ".includes('celebration')) {\r\n      if (emoji === '✅') return 'feedback-success';\r\n      if (emoji =="
+        },
+        {
+          "emoji": "❌",
+          "category": "actions",
+          "position": 10804,
+          "line": 259,
+          "context": " return 'feedback-partial';\r\n      if (emoji === '❌') return 'feedback-fail';\r\n      if (emoji === '"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 1522,
+          "line": 42,
+          "context": "\udce5|✅|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n      children: /👶|👧|👦|🧒|👨‍👩‍👧‍👦|👪/g,\r\n      \r\n      speec"
+        },
+        {
+          "emoji": "👧",
+          "category": "children",
+          "position": 1525,
+          "line": 42,
+          "context": "|❌|⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n      children: /👶|👧|👦|🧒|👨‍👩‍👧‍👦|👪/g,\r\n      \r\n      speech: "
+        },
+        {
+          "emoji": "👦",
+          "category": "children",
+          "position": 1528,
+          "line": 42,
+          "context": "⚠️|🚨|🔴|🟢|🟡/g,\r\n      \r\n      children: /👶|👧|👦|🧒|👨‍👩‍👧‍👦|👪/g,\r\n      \r\n      speech: /🗣"
+        },
+        {
+          "emoji": "🧒",
+          "category": "children",
+          "position": 1531,
+          "line": 42,
+          "context": "🚨|🔴|🟢|🟡/g,\r\n      \r\n      children: /👶|👧|👦|🧒|👨‍👩‍👧‍👦|👪/g,\r\n      \r\n      speech: /🗣️|\ud83c"
+        },
+        {
+          "emoji": "👨‍👩‍👧‍👦",
+          "category": "children",
+          "position": 1534,
+          "line": 42,
+          "context": "🔴|🟢|🟡/g,\r\n      \r\n      children: /👶|👧|👦|🧒|👨‍👩‍👧‍👦|👪/g,\r\n      \r\n      speech: /🗣️|🎙️|"
+        },
+        {
+          "emoji": "👪",
+          "category": "children",
+          "position": 1546,
+          "line": 42,
+          "context": "\n      \r\n      children: /👶|👧|👦|🧒|👨‍👩‍👧‍👦|👪/g,\r\n      \r\n      speech: /🗣️|🎙️|🔊|🔇|🔈|🎧|"
+        },
+        {
+          "emoji": "👨‍👩‍👧‍👦",
+          "category": "children",
+          "position": 2029,
+          "line": 59,
+          "context": "ns (multi-codepoint)\r\n      complex: /👨‍⚕️|👩‍⚕️|👨‍👩‍👧‍👦|👨‍💻|👩‍💻|👨‍🏫|👩‍🏫/g\r\n    };\r\n  }"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 8580,
+          "line": 208,
+          "context": "ngCode.includes('stat-')) {\r\n      if (emoji === '👶') return 'stat-children';\r\n      if (emoji === "
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 8954,
+          "line": 217,
+          "context": "📊') return 'nav-overview';\r\n      if (emoji === '👶') return 'nav-children';\r\n      if (emoji === '"
+        },
+        {
+          "emoji": "🗣️",
+          "category": "speech",
+          "position": 1576,
+          "line": 44,
+          "context": "\udc67|👦|🧒|👨‍👩‍👧‍👦|👪/g,\r\n      \r\n      speech: /🗣️|🎙️|🔊|🔇|🔈|🎧|📢|📣/g,\r\n      \r\n      learni"
+        },
+        {
+          "emoji": "🎙️",
+          "category": "speech",
+          "position": 1580,
+          "line": 44,
+          "context": "|🧒|👨‍👩‍👧‍👦|👪/g,\r\n      \r\n      speech: /🗣️|🎙️|🔊|🔇|🔈|🎧|📢|📣/g,\r\n      \r\n      learning: "
+        },
+        {
+          "emoji": "🔊",
+          "category": "speech",
+          "position": 1584,
+          "line": 44,
+          "context": "👨‍👩‍👧‍👦|👪/g,\r\n      \r\n      speech: /🗣️|🎙️|🔊|🔇|🔈|🎧|📢|📣/g,\r\n      \r\n      learning: /🖼️"
+        },
+        {
+          "emoji": "🔇",
+          "category": "speech",
+          "position": 1587,
+          "line": 44,
+          "context": "👩‍👧‍👦|👪/g,\r\n      \r\n      speech: /🗣️|🎙️|🔊|🔇|🔈|🎧|📢|📣/g,\r\n      \r\n      learning: /🖼️|📖"
+        },
+        {
+          "emoji": "🔈",
+          "category": "speech",
+          "position": 1590,
+          "line": 44,
+          "context": "👧‍👦|👪/g,\r\n      \r\n      speech: /🗣️|🎙️|🔊|🔇|🔈|🎧|📢|📣/g,\r\n      \r\n      learning: /🖼️|📖|🧠"
+        },
+        {
+          "emoji": "🎧",
+          "category": "speech",
+          "position": 1593,
+          "line": 44,
+          "context": "👦|👪/g,\r\n      \r\n      speech: /🗣️|🎙️|🔊|🔇|🔈|🎧|📢|📣/g,\r\n      \r\n      learning: /🖼️|📖|🧠|❓|"
+        },
+        {
+          "emoji": "📢",
+          "category": "speech",
+          "position": 1596,
+          "line": 44,
+          "context": "👪/g,\r\n      \r\n      speech: /🗣️|🎙️|🔊|🔇|🔈|🎧|📢|📣/g,\r\n      \r\n      learning: /🖼️|📖|🧠|❓|💭|"
+        },
+        {
+          "emoji": "📣",
+          "category": "speech",
+          "position": 1599,
+          "line": 44,
+          "context": "g,\r\n      \r\n      speech: /🗣️|🎙️|🔊|🔇|🔈|🎧|📢|📣/g,\r\n      \r\n      learning: /🖼️|📖|🧠|❓|💭|🎓|"
+        },
+        {
+          "emoji": "🗣️",
+          "category": "speech",
+          "position": 8402,
+          "line": 203,
+          "context": " return 'header-therapist';\r\n      if (emoji === '🗣️') return 'header-speech';\r\n    }\r\n    \r\n    //"
+        },
+        {
+          "emoji": "🗣️",
+          "category": "speech",
+          "position": 9962,
+          "line": 241,
+          "context": "ode.includes('activity')) {\r\n      if (emoji === '🗣️') return 'speech-repetition';\r\n      if (emoji"
+        },
+        {
+          "emoji": "🔊",
+          "category": "speech",
+          "position": 10381,
+          "line": 250,
+          "context": "ngCode.includes('voice')) {\r\n      if (emoji === '🔊') return 'audio-on';\r\n      if (emoji === '🔇')"
+        },
+        {
+          "emoji": "🔇",
+          "category": "speech",
+          "position": 10427,
+          "line": 251,
+          "context": "== '🔊') return 'audio-on';\r\n      if (emoji === '🔇') return 'audio-off';\r\n      if (emoji === '🎙️"
+        },
+        {
+          "emoji": "🎙️",
+          "category": "speech",
+          "position": 10474,
+          "line": 252,
+          "context": "= '🔇') return 'audio-off';\r\n      if (emoji === '🎙️') return 'speech-microphone';\r\n    }\r\n    \r\n  "
+        },
+        {
+          "emoji": "🖼️",
+          "category": "learning",
+          "position": 1631,
+          "line": 46,
+          "context": "\udf99️|🔊|🔇|🔈|🎧|📢|📣/g,\r\n      \r\n      learning: /🖼️|📖|🧠|❓|💭|🎓|📚|✏️|📝/g,\r\n      \r\n      games"
+        },
+        {
+          "emoji": "📖",
+          "category": "learning",
+          "position": 1635,
+          "line": 46,
+          "context": "\udd0a|🔇|🔈|🎧|📢|📣/g,\r\n      \r\n      learning: /🖼️|📖|🧠|❓|💭|🎓|📚|✏️|📝/g,\r\n      \r\n      games: /\ud83c"
+        },
+        {
+          "emoji": "🧠",
+          "category": "learning",
+          "position": 1638,
+          "line": 46,
+          "context": "\udd07|🔈|🎧|📢|📣/g,\r\n      \r\n      learning: /🖼️|📖|🧠|❓|💭|🎓|📚|✏️|📝/g,\r\n      \r\n      games: /🎮|\ud83c"
+        },
+        {
+          "emoji": "❓",
+          "category": "learning",
+          "position": 1641,
+          "line": 46,
+          "context": "\udd08|🎧|📢|📣/g,\r\n      \r\n      learning: /🖼️|📖|🧠|❓|💭|🎓|📚|✏️|📝/g,\r\n      \r\n      games: /🎮|🎯|\ud83c"
+        },
+        {
+          "emoji": "💭",
+          "category": "learning",
+          "position": 1643,
+          "line": 46,
+          "context": "🎧|📢|📣/g,\r\n      \r\n      learning: /🖼️|📖|🧠|❓|💭|🎓|📚|✏️|📝/g,\r\n      \r\n      games: /🎮|🎯|🏆|"
+        },
+        {
+          "emoji": "🎓",
+          "category": "learning",
+          "position": 1646,
+          "line": 46,
+          "context": "📢|📣/g,\r\n      \r\n      learning: /🖼️|📖|🧠|❓|💭|🎓|📚|✏️|📝/g,\r\n      \r\n      games: /🎮|🎯|🏆|🌟|"
+        },
+        {
+          "emoji": "📚",
+          "category": "learning",
+          "position": 1649,
+          "line": 46,
+          "context": "📣/g,\r\n      \r\n      learning: /🖼️|📖|🧠|❓|💭|🎓|📚|✏️|📝/g,\r\n      \r\n      games: /🎮|🎯|🏆|🌟|👍|"
+        },
+        {
+          "emoji": "📚",
+          "category": "learning",
+          "position": 1762,
+          "line": 50,
+          "context": ",\r\n      \r\n      activities: /🍎|🍌|🐱|🐶|🏠|🚗|⚽|📚|🎨|🧩|🎭/g,\r\n      \r\n      personal: /🎂|⚧|♂️|♀"
+        },
+        {
+          "emoji": "🖼️",
+          "category": "learning",
+          "position": 10018,
+          "line": 242,
+          "context": "return 'speech-repetition';\r\n      if (emoji === '🖼️') return 'speech-picture';\r\n      if (emoji =="
+        },
+        {
+          "emoji": "❓",
+          "category": "learning",
+          "position": 10071,
+          "line": 243,
+          "context": "') return 'speech-picture';\r\n      if (emoji === '❓') return 'speech-questions';\r\n      if (emoji =="
+        },
+        {
+          "emoji": "📖",
+          "category": "learning",
+          "position": 10124,
+          "line": 244,
+          "context": " return 'speech-questions';\r\n      if (emoji === '📖') return 'speech-story';\r\n      if (emoji === '"
+        },
+        {
+          "emoji": "🧠",
+          "category": "learning",
+          "position": 10174,
+          "line": 245,
+          "context": "📖') return 'speech-story';\r\n      if (emoji === '🧠') return 'speech-category';\r\n    }\r\n    \r\n    /"
+        },
+        {
+          "emoji": "🎮",
+          "category": "games",
+          "position": 1684,
+          "line": 48,
+          "context": "|📖|🧠|❓|💭|🎓|📚|✏️|📝/g,\r\n      \r\n      games: /🎮|🎯|🏆|🌟|👍|💪|🎲|🃏|🎪/g,\r\n      \r\n      activ"
+        },
+        {
+          "emoji": "🎯",
+          "category": "games",
+          "position": 1687,
+          "line": 48,
+          "context": "|🧠|❓|💭|🎓|📚|✏️|📝/g,\r\n      \r\n      games: /🎮|🎯|🏆|🌟|👍|💪|🎲|🃏|🎪/g,\r\n      \r\n      activiti"
+        },
+        {
+          "emoji": "🏆",
+          "category": "games",
+          "position": 1690,
+          "line": 48,
+          "context": "|❓|💭|🎓|📚|✏️|📝/g,\r\n      \r\n      games: /🎮|🎯|🏆|🌟|👍|💪|🎲|🃏|🎪/g,\r\n      \r\n      activities:"
+        },
+        {
+          "emoji": "🌟",
+          "category": "games",
+          "position": 1693,
+          "line": 48,
+          "context": "💭|🎓|📚|✏️|📝/g,\r\n      \r\n      games: /🎮|🎯|🏆|🌟|👍|💪|🎲|🃏|🎪/g,\r\n      \r\n      activities: /\ud83c"
+        },
+        {
+          "emoji": "👍",
+          "category": "games",
+          "position": 1696,
+          "line": 48,
+          "context": "🎓|📚|✏️|📝/g,\r\n      \r\n      games: /🎮|🎯|🏆|🌟|👍|💪|🎲|🃏|🎪/g,\r\n      \r\n      activities: /🍎|\ud83c"
+        },
+        {
+          "emoji": "💪",
+          "category": "games",
+          "position": 1699,
+          "line": 48,
+          "context": "📚|✏️|📝/g,\r\n      \r\n      games: /🎮|🎯|🏆|🌟|👍|💪|🎲|🃏|🎪/g,\r\n      \r\n      activities: /🍎|🍌|\ud83d"
+        },
+        {
+          "emoji": "🎲",
+          "category": "games",
+          "position": 1702,
+          "line": 48,
+          "context": "✏️|📝/g,\r\n      \r\n      games: /🎮|🎯|🏆|🌟|👍|💪|🎲|🃏|🎪/g,\r\n      \r\n      activities: /🍎|🍌|🐱|\ud83d"
+        },
+        {
+          "emoji": "🃏",
+          "category": "games",
+          "position": 1705,
+          "line": 48,
+          "context": "📝/g,\r\n      \r\n      games: /🎮|🎯|🏆|🌟|👍|💪|🎲|🃏|🎪/g,\r\n      \r\n      activities: /🍎|🍌|🐱|🐶|\ud83c"
+        },
+        {
+          "emoji": "🎪",
+          "category": "games",
+          "position": 1708,
+          "line": 48,
+          "context": "g,\r\n      \r\n      games: /🎮|🎯|🏆|🌟|👍|💪|🎲|🃏|🎪/g,\r\n      \r\n      activities: /🍎|🍌|🐱|🐶|🏠|\ud83d"
+        },
+        {
+          "emoji": "🎯",
+          "category": "games",
+          "position": 8733,
+          "line": 211,
+          "context": "') return 'stat-completed';\r\n      if (emoji === '🎯') return 'stat-accuracy';\r\n    }\r\n    \r\n    // "
+        },
+        {
+          "emoji": "🏆",
+          "category": "games",
+          "position": 10854,
+          "line": 260,
+          "context": "❌') return 'feedback-fail';\r\n      if (emoji === '🏆' || emoji === '🌟' || emoji === '👍' || emoji ="
+        },
+        {
+          "emoji": "🌟",
+          "category": "games",
+          "position": 10872,
+          "line": 260,
+          "context": "ck-fail';\r\n      if (emoji === '🏆' || emoji === '🌟' || emoji === '👍' || emoji === '💪') return 'f"
+        },
+        {
+          "emoji": "👍",
+          "category": "games",
+          "position": 10890,
+          "line": 260,
+          "context": "f (emoji === '🏆' || emoji === '🌟' || emoji === '👍' || emoji === '💪') return 'feedback-celebratio"
+        },
+        {
+          "emoji": "💪",
+          "category": "games",
+          "position": 10908,
+          "line": 260,
+          "context": "|| emoji === '🌟' || emoji === '👍' || emoji === '💪') return 'feedback-celebration';\r\n    }\r\n    \r\n"
+        },
+        {
+          "emoji": "🍎",
+          "category": "activities",
+          "position": 1742,
+          "line": 50,
+          "context": "|🌟|👍|💪|🎲|🃏|🎪/g,\r\n      \r\n      activities: /🍎|🍌|🐱|🐶|🏠|🚗|⚽|📚|🎨|🧩|🎭/g,\r\n      \r\n      "
+        },
+        {
+          "emoji": "🍌",
+          "category": "activities",
+          "position": 1745,
+          "line": 50,
+          "context": "|👍|💪|🎲|🃏|🎪/g,\r\n      \r\n      activities: /🍎|🍌|🐱|🐶|🏠|🚗|⚽|📚|🎨|🧩|🎭/g,\r\n      \r\n      per"
+        },
+        {
+          "emoji": "🐱",
+          "category": "activities",
+          "position": 1748,
+          "line": 50,
+          "context": "|💪|🎲|🃏|🎪/g,\r\n      \r\n      activities: /🍎|🍌|🐱|🐶|🏠|🚗|⚽|📚|🎨|🧩|🎭/g,\r\n      \r\n      person"
+        },
+        {
+          "emoji": "🐶",
+          "category": "activities",
+          "position": 1751,
+          "line": 50,
+          "context": "|🎲|🃏|🎪/g,\r\n      \r\n      activities: /🍎|🍌|🐱|🐶|🏠|🚗|⚽|📚|🎨|🧩|🎭/g,\r\n      \r\n      personal:"
+        },
+        {
+          "emoji": "🏠",
+          "category": "activities",
+          "position": 1754,
+          "line": 50,
+          "context": "|🃏|🎪/g,\r\n      \r\n      activities: /🍎|🍌|🐱|🐶|🏠|🚗|⚽|📚|🎨|🧩|🎭/g,\r\n      \r\n      personal: /\ud83c"
+        },
+        {
+          "emoji": "🚗",
+          "category": "activities",
+          "position": 1757,
+          "line": 50,
+          "context": "|🎪/g,\r\n      \r\n      activities: /🍎|🍌|🐱|🐶|🏠|🚗|⚽|📚|🎨|🧩|🎭/g,\r\n      \r\n      personal: /🎂|⚧"
+        },
+        {
+          "emoji": "⚽",
+          "category": "activities",
+          "position": 1760,
+          "line": 50,
+          "context": "/g,\r\n      \r\n      activities: /🍎|🍌|🐱|🐶|🏠|🚗|⚽|📚|🎨|🧩|🎭/g,\r\n      \r\n      personal: /🎂|⚧|♂️"
+        },
+        {
+          "emoji": "🎨",
+          "category": "activities",
+          "position": 1765,
+          "line": 50,
+          "context": "      \r\n      activities: /🍎|🍌|🐱|🐶|🏠|🚗|⚽|📚|🎨|🧩|🎭/g,\r\n      \r\n      personal: /🎂|⚧|♂️|♀️|\ud83d"
+        },
+        {
+          "emoji": "🧩",
+          "category": "activities",
+          "position": 1768,
+          "line": 50,
+          "context": "   \r\n      activities: /🍎|🍌|🐱|🐶|🏠|🚗|⚽|📚|🎨|🧩|🎭/g,\r\n      \r\n      personal: /🎂|⚧|♂️|♀️|👤|\ud83d"
+        },
+        {
+          "emoji": "🎭",
+          "category": "activities",
+          "position": 1771,
+          "line": 50,
+          "context": "\r\n      activities: /🍎|🍌|🐱|🐶|🏠|🚗|⚽|📚|🎨|🧩|🎭/g,\r\n      \r\n      personal: /🎂|⚧|♂️|♀️|👤|👥|\ud83d"
+        },
+        {
+          "emoji": "🎂",
+          "category": "personal",
+          "position": 1803,
+          "line": 52,
+          "context": "|🏠|🚗|⚽|📚|🎨|🧩|🎭/g,\r\n      \r\n      personal: /🎂|⚧|♂️|♀️|👤|👥|📅|🕐/g,\r\n      \r\n      media: /▶"
+        },
+        {
+          "emoji": "⚧",
+          "category": "personal",
+          "position": 1806,
+          "line": 52,
+          "context": "|🚗|⚽|📚|🎨|🧩|🎭/g,\r\n      \r\n      personal: /🎂|⚧|♂️|♀️|👤|👥|📅|🕐/g,\r\n      \r\n      media: /▶️|⏸"
+        },
+        {
+          "emoji": "♂️",
+          "category": "personal",
+          "position": 1808,
+          "line": 52,
+          "context": "\ude97|⚽|📚|🎨|🧩|🎭/g,\r\n      \r\n      personal: /🎂|⚧|♂️|♀️|👤|👥|📅|🕐/g,\r\n      \r\n      media: /▶️|⏸️|"
+        },
+        {
+          "emoji": "♀️",
+          "category": "personal",
+          "position": 1811,
+          "line": 52,
+          "context": "|📚|🎨|🧩|🎭/g,\r\n      \r\n      personal: /🎂|⚧|♂️|♀️|👤|👥|📅|🕐/g,\r\n      \r\n      media: /▶️|⏸️|⏹️|"
+        },
+        {
+          "emoji": "👤",
+          "category": "personal",
+          "position": 1814,
+          "line": 52,
+          "context": "|🎨|🧩|🎭/g,\r\n      \r\n      personal: /🎂|⚧|♂️|♀️|👤|👥|📅|🕐/g,\r\n      \r\n      media: /▶️|⏸️|⏹️|⏪|⏩"
+        },
+        {
+          "emoji": "👥",
+          "category": "personal",
+          "position": 1817,
+          "line": 52,
+          "context": "|🧩|🎭/g,\r\n      \r\n      personal: /🎂|⚧|♂️|♀️|👤|👥|📅|🕐/g,\r\n      \r\n      media: /▶️|⏸️|⏹️|⏪|⏩|🔁"
+        },
+        {
+          "emoji": "📅",
+          "category": "personal",
+          "position": 1820,
+          "line": 52,
+          "context": "|🎭/g,\r\n      \r\n      personal: /🎂|⚧|♂️|♀️|👤|👥|📅|🕐/g,\r\n      \r\n      media: /▶️|⏸️|⏹️|⏪|⏩|🔁|🔄"
+        },
+        {
+          "emoji": "🕐",
+          "category": "personal",
+          "position": 1823,
+          "line": 52,
+          "context": "/g,\r\n      \r\n      personal: /🎂|⚧|♂️|♀️|👤|👥|📅|🕐/g,\r\n      \r\n      media: /▶️|⏸️|⏹️|⏪|⏩|🔁|🔄|⏯️"
+        },
+        {
+          "emoji": "👤",
+          "category": "personal",
+          "position": 9276,
+          "line": 225,
+          "context": " '📧') return 'form-email';\r\n      if (emoji === '👤') return 'form-name';\r\n      if (emoji === '🎂'"
+        },
+        {
+          "emoji": "🎂",
+          "category": "personal",
+          "position": 9323,
+          "line": 226,
+          "context": "= '👤') return 'form-name';\r\n      if (emoji === '🎂') return 'form-birth';\r\n      if (emoji === '⚧'"
+        },
+        {
+          "emoji": "⚧",
+          "category": "personal",
+          "position": 9371,
+          "line": 227,
+          "context": " '🎂') return 'form-birth';\r\n      if (emoji === '⚧' || emoji === '♂️' || emoji === '♀️') return 'fo"
+        },
+        {
+          "emoji": "♂️",
+          "category": "personal",
+          "position": 9388,
+          "line": 227,
+          "context": "rm-birth';\r\n      if (emoji === '⚧' || emoji === '♂️' || emoji === '♀️') return 'form-gender';\r\n    "
+        },
+        {
+          "emoji": "♀️",
+          "category": "personal",
+          "position": 9406,
+          "line": 227,
+          "context": "if (emoji === '⚧' || emoji === '♂️' || emoji === '♀️') return 'form-gender';\r\n      if (emoji === '\ud83d"
+        },
+        {
+          "emoji": "▶️",
+          "category": "media",
+          "position": 1852,
+          "line": 54,
+          "context": "/🎂|⚧|♂️|♀️|👤|👥|📅|🕐/g,\r\n      \r\n      media: /▶️|⏸️|⏹️|⏪|⏩|🔁|🔄|⏯️|⏭️|⏮️/g,\r\n      \r\n      cele"
+        },
+        {
+          "emoji": "⏸️",
+          "category": "media",
+          "position": 1855,
+          "line": 54,
+          "context": "|⚧|♂️|♀️|👤|👥|📅|🕐/g,\r\n      \r\n      media: /▶️|⏸️|⏹️|⏪|⏩|🔁|🔄|⏯️|⏭️|⏮️/g,\r\n      \r\n      celebra"
+        },
+        {
+          "emoji": "⏹️",
+          "category": "media",
+          "position": 1858,
+          "line": 54,
+          "context": "♂️|♀️|👤|👥|📅|🕐/g,\r\n      \r\n      media: /▶️|⏸️|⏹️|⏪|⏩|🔁|🔄|⏯️|⏭️|⏮️/g,\r\n      \r\n      celebratio"
+        },
+        {
+          "emoji": "⏪",
+          "category": "media",
+          "position": 1861,
+          "line": 54,
+          "context": "♀️|👤|👥|📅|🕐/g,\r\n      \r\n      media: /▶️|⏸️|⏹️|⏪|⏩|🔁|🔄|⏯️|⏭️|⏮️/g,\r\n      \r\n      celebration: "
+        },
+        {
+          "emoji": "⏩",
+          "category": "media",
+          "position": 1863,
+          "line": 54,
+          "context": "|👤|👥|📅|🕐/g,\r\n      \r\n      media: /▶️|⏸️|⏹️|⏪|⏩|🔁|🔄|⏯️|⏭️|⏮️/g,\r\n      \r\n      celebration: /\ud83c"
+        },
+        {
+          "emoji": "🔁",
+          "category": "media",
+          "position": 1865,
+          "line": 54,
+          "context": "\udc64|👥|📅|🕐/g,\r\n      \r\n      media: /▶️|⏸️|⏹️|⏪|⏩|🔁|🔄|⏯️|⏭️|⏮️/g,\r\n      \r\n      celebration: /🎉|"
+        },
+        {
+          "emoji": "🔄",
+          "category": "media",
+          "position": 1868,
+          "line": 54,
+          "context": "\udc65|📅|🕐/g,\r\n      \r\n      media: /▶️|⏸️|⏹️|⏪|⏩|🔁|🔄|⏯️|⏭️|⏮️/g,\r\n      \r\n      celebration: /🎉|🎊|"
+        },
+        {
+          "emoji": "⏯️",
+          "category": "media",
+          "position": 1871,
+          "line": 54,
+          "context": "\udcc5|🕐/g,\r\n      \r\n      media: /▶️|⏸️|⏹️|⏪|⏩|🔁|🔄|⏯️|⏭️|⏮️/g,\r\n      \r\n      celebration: /🎉|🎊|✨|\ud83d"
+        },
+        {
+          "emoji": "⏭️",
+          "category": "media",
+          "position": 1874,
+          "line": 54,
+          "context": "\udd50/g,\r\n      \r\n      media: /▶️|⏸️|⏹️|⏪|⏩|🔁|🔄|⏯️|⏭️|⏮️/g,\r\n      \r\n      celebration: /🎉|🎊|✨|💫|\ud83c"
+        },
+        {
+          "emoji": "⏮️",
+          "category": "media",
+          "position": 1877,
+          "line": 54,
+          "context": ",\r\n      \r\n      media: /▶️|⏸️|⏹️|⏪|⏩|🔁|🔄|⏯️|⏭️|⏮️/g,\r\n      \r\n      celebration: /🎉|🎊|✨|💫|🌈|\ud83c"
+        },
+        {
+          "emoji": "🎉",
+          "category": "celebration",
+          "position": 1912,
+          "line": 56,
+          "context": "|⏩|🔁|🔄|⏯️|⏭️|⏮️/g,\r\n      \r\n      celebration: /🎉|🎊|✨|💫|🌈|🎈|🎁|🍰|🥳/g,\r\n      \r\n      // Com"
+        },
+        {
+          "emoji": "🎊",
+          "category": "celebration",
+          "position": 1915,
+          "line": 56,
+          "context": "🔁|🔄|⏯️|⏭️|⏮️/g,\r\n      \r\n      celebration: /🎉|🎊|✨|💫|🌈|🎈|🎁|🍰|🥳/g,\r\n      \r\n      // Comple"
+        },
+        {
+          "emoji": "✨",
+          "category": "celebration",
+          "position": 1918,
+          "line": 56,
+          "context": "🔄|⏯️|⏭️|⏮️/g,\r\n      \r\n      celebration: /🎉|🎊|✨|💫|🌈|🎈|🎁|🍰|🥳/g,\r\n      \r\n      // Complex e"
+        },
+        {
+          "emoji": "💫",
+          "category": "celebration",
+          "position": 1920,
+          "line": 56,
+          "context": "|⏯️|⏭️|⏮️/g,\r\n      \r\n      celebration: /🎉|🎊|✨|💫|🌈|🎈|🎁|🍰|🥳/g,\r\n      \r\n      // Complex emo"
+        },
+        {
+          "emoji": "🌈",
+          "category": "celebration",
+          "position": 1923,
+          "line": 56,
+          "context": "|⏭️|⏮️/g,\r\n      \r\n      celebration: /🎉|🎊|✨|💫|🌈|🎈|🎁|🍰|🥳/g,\r\n      \r\n      // Complex emoji "
+        },
+        {
+          "emoji": "🎈",
+          "category": "celebration",
+          "position": 1926,
+          "line": 56,
+          "context": "|⏮️/g,\r\n      \r\n      celebration: /🎉|🎊|✨|💫|🌈|🎈|🎁|🍰|🥳/g,\r\n      \r\n      // Complex emoji pat"
+        },
+        {
+          "emoji": "🎁",
+          "category": "celebration",
+          "position": 1929,
+          "line": 56,
+          "context": "/g,\r\n      \r\n      celebration: /🎉|🎊|✨|💫|🌈|🎈|🎁|🍰|🥳/g,\r\n      \r\n      // Complex emoji patter"
+        },
+        {
+          "emoji": "🍰",
+          "category": "celebration",
+          "position": 1932,
+          "line": 56,
+          "context": "\r\n      \r\n      celebration: /🎉|🎊|✨|💫|🌈|🎈|🎁|🍰|🥳/g,\r\n      \r\n      // Complex emoji patterns "
+        },
+        {
+          "emoji": "🥳",
+          "category": "celebration",
+          "position": 1935,
+          "line": 56,
+          "context": "     \r\n      celebration: /🎉|🎊|✨|💫|🌈|🎈|🎁|🍰|🥳/g,\r\n      \r\n      // Complex emoji patterns (mu"
+        }
+      ]
+    },
+    {
+      "file": "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\EmojiReplacer\\__tests__\\AssetManager.test.js",
+      "emojis": [
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 7547,
+          "line": 194,
+          "context": "  const fallback = assetManager.getFallbackPhoto('👶');\r\n\r\n      expect(fallback).toBeDefined();\r\n  "
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 7916,
+          "line": 203,
+          "context": " const fallback1 = assetManager.getFallbackPhoto('👶');\r\n      const fallback2 = assetManager.getFal"
+        },
+        {
+          "emoji": "📋",
+          "category": "general",
+          "position": 7978,
+          "line": 204,
+          "context": " const fallback2 = assetManager.getFallbackPhoto('📋');\r\n\r\n      expect(fallback1.url).toBe(fallback"
+        },
+        {
+          "emoji": "📋",
+          "category": "interface",
+          "position": 7978,
+          "line": 204,
+          "context": " const fallback2 = assetManager.getFallbackPhoto('📋');\r\n\r\n      expect(fallback1.url).toBe(fallback"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 7547,
+          "line": 194,
+          "context": "  const fallback = assetManager.getFallbackPhoto('👶');\r\n\r\n      expect(fallback).toBeDefined();\r\n  "
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 7916,
+          "line": 203,
+          "context": " const fallback1 = assetManager.getFallbackPhoto('👶');\r\n      const fallback2 = assetManager.getFal"
+        }
+      ]
+    },
+    {
+      "file": "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\EmojiReplacer\\__tests__\\EmojiClassifier.test.js",
+      "emojis": [
+        {
+          "emoji": "👨",
+          "category": "general",
+          "position": 474,
+          "line": 17,
+          "context": "t classification = emojiClassifier.classifyEmoji('👨‍⚕️', '<div className=\"h1\">👨‍⚕️ Doctor</div>');"
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 477,
+          "line": 17,
+          "context": "lassification = emojiClassifier.classifyEmoji('👨‍⚕️', '<div className=\"h1\">👨‍⚕️ Doctor</div>');\r\n\r"
+        },
+        {
+          "emoji": "👨",
+          "category": "general",
+          "position": 503,
+          "line": 17,
+          "context": "ifier.classifyEmoji('👨‍⚕️', '<div className=\"h1\">👨‍⚕️ Doctor</div>');\r\n\r\n      expect(classificati"
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 506,
+          "line": 17,
+          "context": "er.classifyEmoji('👨‍⚕️', '<div className=\"h1\">👨‍⚕️ Doctor</div>');\r\n\r\n      expect(classification."
+        },
+        {
+          "emoji": "🗣",
+          "category": "general",
+          "position": 971,
+          "line": 27,
+          "context": "t classification = emojiClassifier.classifyEmoji('🗣️', '<div className=\"speech-activity\">🗣️ Speaki"
+        },
+        {
+          "emoji": "🗣",
+          "category": "general",
+          "position": 1011,
+          "line": 27,
+          "context": "ifyEmoji('🗣️', '<div className=\"speech-activity\">🗣️ Speaking</div>');\r\n\r\n      expect(classificati"
+        },
+        {
+          "emoji": "📊",
+          "category": "general",
+          "position": 1415,
+          "line": 36,
+          "context": "t classification = emojiClassifier.classifyEmoji('📊', '<div className=\"analytics\">📊 Charts</div>')"
+        },
+        {
+          "emoji": "📊",
+          "category": "general",
+          "position": 1448,
+          "line": 36,
+          "context": "r.classifyEmoji('📊', '<div className=\"analytics\">📊 Charts</div>');\r\n\r\n      expect(classification."
+        },
+        {
+          "emoji": "👨",
+          "category": "general",
+          "position": 7484,
+          "line": 188,
+          "context": "> {\r\n      const emojiList = [\r\n        { emoji: '👨‍⚕️', context: '<h1>👨‍⚕️ Doctor</h1>' },\r\n     "
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 7487,
+          "line": 188,
+          "context": "\r\n      const emojiList = [\r\n        { emoji: '👨‍⚕️', context: '<h1>👨‍⚕️ Doctor</h1>' },\r\n        "
+        },
+        {
+          "emoji": "👨",
+          "category": "general",
+          "position": 7506,
+          "line": 188,
+          "context": "List = [\r\n        { emoji: '👨‍⚕️', context: '<h1>👨‍⚕️ Doctor</h1>' },\r\n        { emoji: '📊', cont"
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 7509,
+          "line": 188,
+          "context": "t = [\r\n        { emoji: '👨‍⚕️', context: '<h1>👨‍⚕️ Doctor</h1>' },\r\n        { emoji: '📊', context"
+        },
+        {
+          "emoji": "📊",
+          "category": "general",
+          "position": 7547,
+          "line": 189,
+          "context": "xt: '<h1>👨‍⚕️ Doctor</h1>' },\r\n        { emoji: '📊', context: '<div class=\"analytics\">📊 Chart</di"
+        },
+        {
+          "emoji": "📊",
+          "category": "general",
+          "position": 7585,
+          "line": 189,
+          "context": "  { emoji: '📊', context: '<div class=\"analytics\">📊 Chart</div>' },\r\n        { emoji: '👶', context"
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 7623,
+          "line": 190,
+          "context": "\"analytics\">📊 Chart</div>' },\r\n        { emoji: '👶', context: '<span>👶 Child</span>' }\r\n      ];\r"
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 7644,
+          "line": 190,
+          "context": "/div>' },\r\n        { emoji: '👶', context: '<span>👶 Child</span>' }\r\n      ];\r\n      \r\n      const "
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 11139,
+          "line": 270,
+          "context": "t classification = emojiClassifier.classifyEmoji('👶', undefined);\r\n      \r\n      expect(classificat"
+        },
+        {
+          "emoji": "👨",
+          "category": "general",
+          "position": 11492,
+          "line": 278,
+          "context": "t classification = emojiClassifier.classifyEmoji('👨‍⚕️', longContext);\r\n      \r\n      expect(classi"
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 11495,
+          "line": 278,
+          "context": "lassification = emojiClassifier.classifyEmoji('👨‍⚕️', longContext);\r\n      \r\n      expect(classific"
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 11751,
+          "line": 285,
+          "context": " => {\r\n      const malformedContext = '<div><span>👶</div>';\r\n      const classification = emojiClas"
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 11823,
+          "line": 286,
+          "context": "t classification = emojiClassifier.classifyEmoji('👶', malformedContext);\r\n      \r\n      expect(clas"
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 12210,
+          "line": 298,
+          "context": "0; i++) {\r\n        emojiClassifier.classifyEmoji('👶', '<div>Child</div>');\r\n      }\r\n      \r\n      "
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 12622,
+          "line": 310,
+          "context": "ray(100).fill().map((_, i) => ({\r\n        emoji: '👶',\r\n        context: `<div>Child ${i}</div>`\r\n  "
+        },
+        {
+          "emoji": "👨‍⚕️",
+          "category": "medical",
+          "position": 474,
+          "line": 17,
+          "context": "t classification = emojiClassifier.classifyEmoji('👨‍⚕️', '<div className=\"h1\">👨‍⚕️ Doctor</div>');"
+        },
+        {
+          "emoji": "👨‍⚕️",
+          "category": "medical",
+          "position": 503,
+          "line": 17,
+          "context": "ifier.classifyEmoji('👨‍⚕️', '<div className=\"h1\">👨‍⚕️ Doctor</div>');\r\n\r\n      expect(classificati"
+        },
+        {
+          "emoji": "👨‍⚕️",
+          "category": "medical",
+          "position": 7484,
+          "line": 188,
+          "context": "> {\r\n      const emojiList = [\r\n        { emoji: '👨‍⚕️', context: '<h1>👨‍⚕️ Doctor</h1>' },\r\n     "
+        },
+        {
+          "emoji": "👨‍⚕️",
+          "category": "medical",
+          "position": 7506,
+          "line": 188,
+          "context": "List = [\r\n        { emoji: '👨‍⚕️', context: '<h1>👨‍⚕️ Doctor</h1>' },\r\n        { emoji: '📊', cont"
+        },
+        {
+          "emoji": "👨‍⚕️",
+          "category": "medical",
+          "position": 11492,
+          "line": 278,
+          "context": "t classification = emojiClassifier.classifyEmoji('👨‍⚕️', longContext);\r\n      \r\n      expect(classi"
+        },
+        {
+          "emoji": "📊",
+          "category": "interface",
+          "position": 1415,
+          "line": 36,
+          "context": "t classification = emojiClassifier.classifyEmoji('📊', '<div className=\"analytics\">📊 Charts</div>')"
+        },
+        {
+          "emoji": "📊",
+          "category": "interface",
+          "position": 1448,
+          "line": 36,
+          "context": "r.classifyEmoji('📊', '<div className=\"analytics\">📊 Charts</div>');\r\n\r\n      expect(classification."
+        },
+        {
+          "emoji": "📊",
+          "category": "interface",
+          "position": 7547,
+          "line": 189,
+          "context": "xt: '<h1>👨‍⚕️ Doctor</h1>' },\r\n        { emoji: '📊', context: '<div class=\"analytics\">📊 Chart</di"
+        },
+        {
+          "emoji": "📊",
+          "category": "interface",
+          "position": 7585,
+          "line": 189,
+          "context": "  { emoji: '📊', context: '<div class=\"analytics\">📊 Chart</div>' },\r\n        { emoji: '👶', context"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 7623,
+          "line": 190,
+          "context": "\"analytics\">📊 Chart</div>' },\r\n        { emoji: '👶', context: '<span>👶 Child</span>' }\r\n      ];\r"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 7644,
+          "line": 190,
+          "context": "/div>' },\r\n        { emoji: '👶', context: '<span>👶 Child</span>' }\r\n      ];\r\n      \r\n      const "
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 11139,
+          "line": 270,
+          "context": "t classification = emojiClassifier.classifyEmoji('👶', undefined);\r\n      \r\n      expect(classificat"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 11751,
+          "line": 285,
+          "context": " => {\r\n      const malformedContext = '<div><span>👶</div>';\r\n      const classification = emojiClas"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 11823,
+          "line": 286,
+          "context": "t classification = emojiClassifier.classifyEmoji('👶', malformedContext);\r\n      \r\n      expect(clas"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 12210,
+          "line": 298,
+          "context": "0; i++) {\r\n        emojiClassifier.classifyEmoji('👶', '<div>Child</div>');\r\n      }\r\n      \r\n      "
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 12622,
+          "line": 310,
+          "context": "ray(100).fill().map((_, i) => ({\r\n        emoji: '👶',\r\n        context: `<div>Child ${i}</div>`\r\n  "
+        },
+        {
+          "emoji": "🗣️",
+          "category": "speech",
+          "position": 971,
+          "line": 27,
+          "context": "t classification = emojiClassifier.classifyEmoji('🗣️', '<div className=\"speech-activity\">🗣️ Speaki"
+        },
+        {
+          "emoji": "🗣️",
+          "category": "speech",
+          "position": 1011,
+          "line": 27,
+          "context": "ifyEmoji('🗣️', '<div className=\"speech-activity\">🗣️ Speaking</div>');\r\n\r\n      expect(classificati"
+        }
+      ]
+    },
+    {
+      "file": "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\EmojiReplacer\\__tests__\\EmojiReplacer.test.js",
+      "emojis": [
+        {
+          "emoji": "👨",
+          "category": "general",
+          "position": 1018,
+          "line": 34,
+          "context": ".emoji);\r\n      expect(detectedEmojis).toContain('👨‍⚕️');\r\n      expect(detectedEmojis).toContain('"
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 1021,
+          "line": 34,
+          "context": "oji);\r\n      expect(detectedEmojis).toContain('👨‍⚕️');\r\n      expect(detectedEmojis).toContain('➕')"
+        },
+        {
+          "emoji": "➕",
+          "category": "general",
+          "position": 1068,
+          "line": 35,
+          "context": "👨‍⚕️');\r\n      expect(detectedEmojis).toContain('➕');\r\n      expect(detectedEmojis).toContain('👶')"
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 1114,
+          "line": 36,
+          "context": "in('➕');\r\n      expect(detectedEmojis).toContain('👶');\r\n      expect(detectedEmojis).toContain('📋'"
+        },
+        {
+          "emoji": "📋",
+          "category": "general",
+          "position": 1161,
+          "line": 37,
+          "context": "n('👶');\r\n      expect(detectedEmojis).toContain('📋');\r\n      expect(detectedEmojis).toContain('✅')"
+        },
+        {
+          "emoji": "✅",
+          "category": "general",
+          "position": 1208,
+          "line": 38,
+          "context": "n('📋');\r\n      expect(detectedEmojis).toContain('✅');\r\n      expect(detectedEmojis).toContain('📊')"
+        },
+        {
+          "emoji": "📊",
+          "category": "general",
+          "position": 1254,
+          "line": 39,
+          "context": "in('✅');\r\n      expect(detectedEmojis).toContain('📊');\r\n    });\r\n\r\n    test('should return empty ar"
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 1590,
+          "line": 48,
+          "context": "ositions', () => {\r\n      const testCode = 'Hello 👶 World 📋 Test';\r\n      const emojiInstances = e"
+        },
+        {
+          "emoji": "📋",
+          "category": "general",
+          "position": 1599,
+          "line": 48,
+          "context": ", () => {\r\n      const testCode = 'Hello 👶 World 📋 Test';\r\n      const emojiInstances = emojiRepla"
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 1772,
+          "line": 52,
+          "context": "(2);\r\n      expect(emojiInstances[0].emoji).toBe('👶');\r\n      expect(emojiInstances[0].position).to"
+        },
+        {
+          "emoji": "📋",
+          "category": "general",
+          "position": 1874,
+          "line": 54,
+          "context": "(6);\r\n      expect(emojiInstances[1].emoji).toBe('📋');\r\n      expect(emojiInstances[1].position).to"
+        },
+        {
+          "emoji": "👨",
+          "category": "general",
+          "position": 2041,
+          "line": 59,
+          "context": " emojis', () => {\r\n      const testCode = 'Doctor 👨‍⚕️ and 👩‍⚕️ nurse';\r\n      const emojiInstance"
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 2044,
+          "line": 59,
+          "context": "ojis', () => {\r\n      const testCode = 'Doctor 👨‍⚕️ and 👩‍⚕️ nurse';\r\n      const emojiInstances ="
+        },
+        {
+          "emoji": "👩",
+          "category": "general",
+          "position": 2051,
+          "line": 59,
+          "context": "() => {\r\n      const testCode = 'Doctor 👨‍⚕️ and 👩‍⚕️ nurse';\r\n      const emojiInstances = emojiR"
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 2054,
+          "line": 59,
+          "context": "=> {\r\n      const testCode = 'Doctor 👨‍⚕️ and 👩‍⚕️ nurse';\r\n      const emojiInstances = emojiRepl"
+        },
+        {
+          "emoji": "👨",
+          "category": "general",
+          "position": 2266,
+          "line": 63,
+          "context": "ojiInstances.some(instance => instance.emoji === '👨‍⚕️')).toBe(true);\r\n      expect(emojiInstances."
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 2269,
+          "line": 63,
+          "context": "Instances.some(instance => instance.emoji === '👨‍⚕️')).toBe(true);\r\n      expect(emojiInstances.som"
+        },
+        {
+          "emoji": "👩",
+          "category": "general",
+          "position": 2353,
+          "line": 64,
+          "context": "ojiInstances.some(instance => instance.emoji === '👩‍⚕️')).toBe(true);\r\n    });\r\n\r\n    test('should "
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 2356,
+          "line": 64,
+          "context": "Instances.some(instance => instance.emoji === '👩‍⚕️')).toBe(true);\r\n    });\r\n\r\n    test('should cla"
+        },
+        {
+          "emoji": "👨",
+          "category": "general",
+          "position": 2997,
+          "line": 80,
+          "context": " {\r\n      const headerCode = '<div className=\"h1\">👨‍⚕️ Therapist Console</div>';\r\n      const emoji"
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 3000,
+          "line": 80,
+          "context": "\n      const headerCode = '<div className=\"h1\">👨‍⚕️ Therapist Console</div>';\r\n      const emojiIns"
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 3281,
+          "line": 87,
+          "context": " () => {\r\n      const statCode = '<StatCard icon=\"👶\" label=\"Children\" value={5} />';\r\n      const e"
+        },
+        {
+          "emoji": "📊",
+          "category": "general",
+          "position": 3573,
+          "line": 94,
+          "context": "{\r\n      const navCode = '<button className=\"tab\">📊 Overview</button>';\r\n      const emojiInstances"
+        },
+        {
+          "emoji": "📧",
+          "category": "general",
+          "position": 3857,
+          "line": 101,
+          "context": "t formCode = '<label className=\"form-label\"><span>📧</span> Email</label>';\r\n      const emojiInstan"
+        },
+        {
+          "emoji": "👨",
+          "category": "general",
+          "position": 4223,
+          "line": 110,
+          "context": "iMapping = { context: 'header-therapist', emoji: '👨‍⚕️' };\r\n      const strategy = emojiReplacer.se"
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 4226,
+          "line": 110,
+          "context": "pping = { context: 'header-therapist', emoji: '👨‍⚕️' };\r\n      const strategy = emojiReplacer.selec"
+        },
+        {
+          "emoji": "📊",
+          "category": "general",
+          "position": 4556,
+          "line": 117,
+          "context": "emojiMapping = { context: 'nav-overview', emoji: '📊' };\r\n      const strategy = emojiReplacer.selec"
+        },
+        {
+          "emoji": "😀",
+          "category": "general",
+          "position": 4877,
+          "line": 124,
+          "context": "jiMapping = { context: 'unknown-context', emoji: '😀' };\r\n      const strategy = emojiReplacer.selec"
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 11386,
+          "line": 266,
+          "context": "stComponents = [\r\n        '<div onClick={handler}>👶 Click me</div>',\r\n        '<button className=\"b"
+        },
+        {
+          "emoji": "➕",
+          "category": "general",
+          "position": 11440,
+          "line": 267,
+          "context": "lick me</div>',\r\n        '<button className=\"btn\">➕ Add</button>',\r\n        '<span style={{color: \"r"
+        },
+        {
+          "emoji": "⚠",
+          "category": "general",
+          "position": 11496,
+          "line": 268,
+          "context": "/button>',\r\n        '<span style={{color: \"red\"}}>⚠️ Warning</span>',\r\n        '<h1>👨‍⚕️ Medical Pr"
+        },
+        {
+          "emoji": "👨",
+          "category": "general",
+          "position": 11530,
+          "line": 269,
+          "context": "{color: \"red\"}}>⚠️ Warning</span>',\r\n        '<h1>👨‍⚕️ Medical Professional</h1>'\r\n      ];\r\n\r\n    "
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 11533,
+          "line": 269,
+          "context": "lor: \"red\"}}>⚠️ Warning</span>',\r\n        '<h1>👨‍⚕️ Medical Professional</h1>'\r\n      ];\r\n\r\n      f"
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 12705,
+          "line": 302,
+          "context": " async () => {\r\n      const malformedHTML = '<div>👶 <span>📋 </div>';\r\n      const result = await e"
+        },
+        {
+          "emoji": "📋",
+          "category": "general",
+          "position": 12714,
+          "line": 302,
+          "context": " => {\r\n      const malformedHTML = '<div>👶 <span>📋 </div>';\r\n      const result = await emojiRepla"
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 13027,
+          "line": 310,
+          "context": "\n      const longComponent = 'A'.repeat(10000) + '👶' + 'B'.repeat(10000);\r\n      const result = awa"
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 13389,
+          "line": 319,
+          "context": "emojis', async () => {\r\n      const manyEmojis = '👶'.repeat(100);\r\n      const result = await emoji"
+        },
+        {
+          "emoji": "👨‍⚕️",
+          "category": "medical",
+          "position": 1018,
+          "line": 34,
+          "context": ".emoji);\r\n      expect(detectedEmojis).toContain('👨‍⚕️');\r\n      expect(detectedEmojis).toContain('"
+        },
+        {
+          "emoji": "👨‍⚕️",
+          "category": "medical",
+          "position": 2041,
+          "line": 59,
+          "context": " emojis', () => {\r\n      const testCode = 'Doctor 👨‍⚕️ and 👩‍⚕️ nurse';\r\n      const emojiInstance"
+        },
+        {
+          "emoji": "👩‍⚕️",
+          "category": "medical",
+          "position": 2051,
+          "line": 59,
+          "context": "() => {\r\n      const testCode = 'Doctor 👨‍⚕️ and 👩‍⚕️ nurse';\r\n      const emojiInstances = emojiR"
+        },
+        {
+          "emoji": "👨‍⚕️",
+          "category": "medical",
+          "position": 2266,
+          "line": 63,
+          "context": "ojiInstances.some(instance => instance.emoji === '👨‍⚕️')).toBe(true);\r\n      expect(emojiInstances."
+        },
+        {
+          "emoji": "👩‍⚕️",
+          "category": "medical",
+          "position": 2353,
+          "line": 64,
+          "context": "ojiInstances.some(instance => instance.emoji === '👩‍⚕️')).toBe(true);\r\n    });\r\n\r\n    test('should "
+        },
+        {
+          "emoji": "👨‍⚕️",
+          "category": "medical",
+          "position": 2997,
+          "line": 80,
+          "context": " {\r\n      const headerCode = '<div className=\"h1\">👨‍⚕️ Therapist Console</div>';\r\n      const emoji"
+        },
+        {
+          "emoji": "👨‍⚕️",
+          "category": "medical",
+          "position": 4223,
+          "line": 110,
+          "context": "iMapping = { context: 'header-therapist', emoji: '👨‍⚕️' };\r\n      const strategy = emojiReplacer.se"
+        },
+        {
+          "emoji": "👨‍⚕️",
+          "category": "medical",
+          "position": 11530,
+          "line": 269,
+          "context": "{color: \"red\"}}>⚠️ Warning</span>',\r\n        '<h1>👨‍⚕️ Medical Professional</h1>'\r\n      ];\r\n\r\n    "
+        },
+        {
+          "emoji": "📋",
+          "category": "interface",
+          "position": 1161,
+          "line": 37,
+          "context": "n('👶');\r\n      expect(detectedEmojis).toContain('📋');\r\n      expect(detectedEmojis).toContain('✅')"
+        },
+        {
+          "emoji": "📊",
+          "category": "interface",
+          "position": 1254,
+          "line": 39,
+          "context": "in('✅');\r\n      expect(detectedEmojis).toContain('📊');\r\n    });\r\n\r\n    test('should return empty ar"
+        },
+        {
+          "emoji": "📋",
+          "category": "interface",
+          "position": 1599,
+          "line": 48,
+          "context": ", () => {\r\n      const testCode = 'Hello 👶 World 📋 Test';\r\n      const emojiInstances = emojiRepla"
+        },
+        {
+          "emoji": "📋",
+          "category": "interface",
+          "position": 1874,
+          "line": 54,
+          "context": "(6);\r\n      expect(emojiInstances[1].emoji).toBe('📋');\r\n      expect(emojiInstances[1].position).to"
+        },
+        {
+          "emoji": "📊",
+          "category": "interface",
+          "position": 3573,
+          "line": 94,
+          "context": "{\r\n      const navCode = '<button className=\"tab\">📊 Overview</button>';\r\n      const emojiInstances"
+        },
+        {
+          "emoji": "📧",
+          "category": "interface",
+          "position": 3857,
+          "line": 101,
+          "context": "t formCode = '<label className=\"form-label\"><span>📧</span> Email</label>';\r\n      const emojiInstan"
+        },
+        {
+          "emoji": "📊",
+          "category": "interface",
+          "position": 4556,
+          "line": 117,
+          "context": "emojiMapping = { context: 'nav-overview', emoji: '📊' };\r\n      const strategy = emojiReplacer.selec"
+        },
+        {
+          "emoji": "📋",
+          "category": "interface",
+          "position": 12714,
+          "line": 302,
+          "context": " => {\r\n      const malformedHTML = '<div>👶 <span>📋 </div>';\r\n      const result = await emojiRepla"
+        },
+        {
+          "emoji": "➕",
+          "category": "actions",
+          "position": 1068,
+          "line": 35,
+          "context": "👨‍⚕️');\r\n      expect(detectedEmojis).toContain('➕');\r\n      expect(detectedEmojis).toContain('👶')"
+        },
+        {
+          "emoji": "✅",
+          "category": "actions",
+          "position": 1208,
+          "line": 38,
+          "context": "n('📋');\r\n      expect(detectedEmojis).toContain('✅');\r\n      expect(detectedEmojis).toContain('📊')"
+        },
+        {
+          "emoji": "➕",
+          "category": "actions",
+          "position": 11440,
+          "line": 267,
+          "context": "lick me</div>',\r\n        '<button className=\"btn\">➕ Add</button>',\r\n        '<span style={{color: \"r"
+        },
+        {
+          "emoji": "⚠️",
+          "category": "actions",
+          "position": 11496,
+          "line": 268,
+          "context": "/button>',\r\n        '<span style={{color: \"red\"}}>⚠️ Warning</span>',\r\n        '<h1>👨‍⚕️ Medical Pr"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 1114,
+          "line": 36,
+          "context": "in('➕');\r\n      expect(detectedEmojis).toContain('👶');\r\n      expect(detectedEmojis).toContain('📋'"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 1590,
+          "line": 48,
+          "context": "ositions', () => {\r\n      const testCode = 'Hello 👶 World 📋 Test';\r\n      const emojiInstances = e"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 1772,
+          "line": 52,
+          "context": "(2);\r\n      expect(emojiInstances[0].emoji).toBe('👶');\r\n      expect(emojiInstances[0].position).to"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 3281,
+          "line": 87,
+          "context": " () => {\r\n      const statCode = '<StatCard icon=\"👶\" label=\"Children\" value={5} />';\r\n      const e"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 11386,
+          "line": 266,
+          "context": "stComponents = [\r\n        '<div onClick={handler}>👶 Click me</div>',\r\n        '<button className=\"b"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 12705,
+          "line": 302,
+          "context": " async () => {\r\n      const malformedHTML = '<div>👶 <span>📋 </div>';\r\n      const result = await e"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 13027,
+          "line": 310,
+          "context": "\n      const longComponent = 'A'.repeat(10000) + '👶' + 'B'.repeat(10000);\r\n      const result = awa"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 13389,
+          "line": 319,
+          "context": "emojis', async () => {\r\n      const manyEmojis = '👶'.repeat(100);\r\n      const result = await emoji"
+        }
+      ]
+    },
+    {
+      "file": "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\EmojiReplacer\\__tests__\\integration.test.js",
+      "emojis": [
+        {
+          "emoji": "👨",
+          "category": "general",
+          "position": 1521,
+          "line": 47,
+          "context": "me=\"header\">\r\n                <div className=\"h1\">👨‍⚕️ Therapist Console</div>\r\n                <bu"
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 1524,
+          "line": 47,
+          "context": "\"header\">\r\n                <div className=\"h1\">👨‍⚕️ Therapist Console</div>\r\n                <butto"
+        },
+        {
+          "emoji": "➕",
+          "category": "general",
+          "position": 1603,
+          "line": 48,
+          "context": "               <button className=\"btn btnPrimary\">➕ Add Child</button>\r\n              </div>\r\n      "
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 1739,
+          "line": 52,
+          "context": "me=\"stats-grid\">\r\n                <StatCard icon=\"👶\" label=\"Total Children\" value={5} />\r\n         "
+        },
+        {
+          "emoji": "📋",
+          "category": "general",
+          "position": 1812,
+          "line": 53,
+          "context": "en\" value={5} />\r\n                <StatCard icon=\"📋\" label=\"Total Sessions\" value={10} />\r\n        "
+        },
+        {
+          "emoji": "✅",
+          "category": "general",
+          "position": 1886,
+          "line": 54,
+          "context": "s\" value={10} />\r\n                <StatCard icon=\"✅\" label=\"Completed\" value={8} />\r\n               "
+        },
+        {
+          "emoji": "🎯",
+          "category": "general",
+          "position": 1953,
+          "line": 55,
+          "context": "ed\" value={8} />\r\n                <StatCard icon=\"🎯\" label=\"Weekly Accuracy\" value=\"85%\" />\r\n      "
+        },
+        {
+          "emoji": "📊",
+          "category": "general",
+          "position": 2097,
+          "line": 59,
+          "context": "  <div className=\"tabs\">\r\n                <button>📊 Overview</button>\r\n                <button>👶 C"
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 2143,
+          "line": 60,
+          "context": "ton>📊 Overview</button>\r\n                <button>👶 Children</button>\r\n                <button>📋 S"
+        },
+        {
+          "emoji": "📋",
+          "category": "general",
+          "position": 2189,
+          "line": 61,
+          "context": "ton>👶 Children</button>\r\n                <button>📋 Sessions</button>\r\n                <button>📈 A"
+        },
+        {
+          "emoji": "📈",
+          "category": "general",
+          "position": 2235,
+          "line": 62,
+          "context": "ton>📋 Sessions</button>\r\n                <button>📈 Analytics</button>\r\n              </div>\r\n     "
+        },
+        {
+          "emoji": "👨",
+          "category": "general",
+          "position": 2795,
+          "line": 78,
+          "context": "');\r\n      expect(result.component).not.toMatch(/[👨‍⚕️➕👶📋✅🎯📊📈]/);\r\n    });\r\n\r\n    test('should"
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 2798,
+          "line": 78,
+          "context": "\r\n      expect(result.component).not.toMatch(/[👨‍⚕️➕👶📋✅🎯📊📈]/);\r\n    });\r\n\r\n    test('should pr"
+        },
+        {
+          "emoji": "➕",
+          "category": "general",
+          "position": 2800,
+          "line": 78,
+          "context": "      expect(result.component).not.toMatch(/[👨‍⚕️➕👶📋✅🎯📊📈]/);\r\n    });\r\n\r\n    test('should proc"
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 2801,
+          "line": 78,
+          "context": "     expect(result.component).not.toMatch(/[👨‍⚕️➕👶📋✅🎯📊📈]/);\r\n    });\r\n\r\n    test('should proce"
+        },
+        {
+          "emoji": "📋",
+          "category": "general",
+          "position": 2803,
+          "line": 78,
+          "context": "   expect(result.component).not.toMatch(/[👨‍⚕️➕👶📋✅🎯📊📈]/);\r\n    });\r\n\r\n    test('should process"
+        },
+        {
+          "emoji": "✅",
+          "category": "general",
+          "position": 2805,
+          "line": 78,
+          "context": " expect(result.component).not.toMatch(/[👨‍⚕️➕👶📋✅🎯📊📈]/);\r\n    });\r\n\r\n    test('should process S"
+        },
+        {
+          "emoji": "🎯",
+          "category": "general",
+          "position": 2806,
+          "line": 78,
+          "context": "expect(result.component).not.toMatch(/[👨‍⚕️➕👶📋✅🎯📊📈]/);\r\n    });\r\n\r\n    test('should process Sp"
+        },
+        {
+          "emoji": "📊",
+          "category": "general",
+          "position": 2808,
+          "line": 78,
+          "context": "pect(result.component).not.toMatch(/[👨‍⚕️➕👶📋✅🎯📊📈]/);\r\n    });\r\n\r\n    test('should process Spee"
+        },
+        {
+          "emoji": "📈",
+          "category": "general",
+          "position": 2810,
+          "line": 78,
+          "context": "ct(result.component).not.toMatch(/[👨‍⚕️➕👶📋✅🎯📊📈]/);\r\n    });\r\n\r\n    test('should process Speech"
+        },
+        {
+          "emoji": "🗣",
+          "category": "general",
+          "position": 3137,
+          "line": 87,
+          "context": "me=\"header\">\r\n                <div className=\"h1\">🗣️ Speech Therapy</div>\r\n                <button "
+        },
+        {
+          "emoji": "🔊",
+          "category": "general",
+          "position": 3219,
+          "line": 88,
+          "context": "          <button className=\"btn\">{tts.enabled ? \"🔊 Voice On\" : \"🔇 Voice Off\"}</button>\r\n         "
+        },
+        {
+          "emoji": "🔇",
+          "category": "general",
+          "position": 3235,
+          "line": 88,
+          "context": "n className=\"btn\">{tts.enabled ? \"🔊 Voice On\" : \"🔇 Voice Off\"}</button>\r\n              </div>\r\n   "
+        },
+        {
+          "emoji": "🗣",
+          "category": "general",
+          "position": 3384,
+          "line": 92,
+          "context": "ties\">\r\n                <div className=\"activity\">🗣️ Repeat</div>\r\n                <div className=\""
+        },
+        {
+          "emoji": "🖼",
+          "category": "general",
+          "position": 3444,
+          "line": 93,
+          "context": "</div>\r\n                <div className=\"activity\">🖼️ Picture</div>\r\n                <div className="
+        },
+        {
+          "emoji": "❓",
+          "category": "general",
+          "position": 3505,
+          "line": 94,
+          "context": "</div>\r\n                <div className=\"activity\">❓ Q&A</div>\r\n                <div className=\"activ"
+        },
+        {
+          "emoji": "📖",
+          "category": "general",
+          "position": 3560,
+          "line": 95,
+          "context": "</div>\r\n                <div className=\"activity\">📖 Story</div>\r\n                <div className=\"ac"
+        },
+        {
+          "emoji": "🎙",
+          "category": "general",
+          "position": 3742,
+          "line": 100,
+          "context": "v className=\"recording\">\r\n                <button>🎙️ Start Recording</button>\r\n                <but"
+        },
+        {
+          "emoji": "✅",
+          "category": "general",
+          "position": 3928,
+          "line": 105,
+          "context": "iv className=\"feedback\">\r\n                <button>✅ Success</button>\r\n                <button>⚡ Part"
+        },
+        {
+          "emoji": "⚡",
+          "category": "general",
+          "position": 3972,
+          "line": 106,
+          "context": "utton>✅ Success</button>\r\n                <button>⚡ Partial</button>\r\n                <button>❌ Fail"
+        },
+        {
+          "emoji": "❌",
+          "category": "general",
+          "position": 4016,
+          "line": 107,
+          "context": "utton>⚡ Partial</button>\r\n                <button>❌ Fail</button>\r\n              </div>\r\n           "
+        },
+        {
+          "emoji": "🗣",
+          "category": "general",
+          "position": 4442,
+          "line": 121,
+          "context": "ain\r\n      expect(result.component).not.toMatch(/[🗣️🔊🔇🖼️❓📖🧠🎙️⏹️✅⚡❌]/);\r\n    });\r\n  });\r\n\r\n  d"
+        },
+        {
+          "emoji": "🔊",
+          "category": "general",
+          "position": 4445,
+          "line": 121,
+          "context": "\r\n      expect(result.component).not.toMatch(/[🗣️🔊🔇🖼️❓📖🧠🎙️⏹️✅⚡❌]/);\r\n    });\r\n  });\r\n\r\n  desc"
+        },
+        {
+          "emoji": "🔇",
+          "category": "general",
+          "position": 4447,
+          "line": 121,
+          "context": "      expect(result.component).not.toMatch(/[🗣️🔊🔇🖼️❓📖🧠🎙️⏹️✅⚡❌]/);\r\n    });\r\n  });\r\n\r\n  descri"
+        },
+        {
+          "emoji": "🖼",
+          "category": "general",
+          "position": 4449,
+          "line": 121,
+          "context": "    expect(result.component).not.toMatch(/[🗣️🔊🔇🖼️❓📖🧠🎙️⏹️✅⚡❌]/);\r\n    });\r\n  });\r\n\r\n  describe"
+        },
+        {
+          "emoji": "❓",
+          "category": "general",
+          "position": 4452,
+          "line": 121,
+          "context": " expect(result.component).not.toMatch(/[🗣️🔊🔇🖼️❓📖🧠🎙️⏹️✅⚡❌]/);\r\n    });\r\n  });\r\n\r\n  describe('A"
+        },
+        {
+          "emoji": "📖",
+          "category": "general",
+          "position": 4453,
+          "line": 121,
+          "context": "expect(result.component).not.toMatch(/[🗣️🔊🔇🖼️❓📖🧠🎙️⏹️✅⚡❌]/);\r\n    });\r\n  });\r\n\r\n  describe('As"
+        },
+        {
+          "emoji": "🎙",
+          "category": "general",
+          "position": 4457,
+          "line": 121,
+          "context": "ct(result.component).not.toMatch(/[🗣️🔊🔇🖼️❓📖🧠🎙️⏹️✅⚡❌]/);\r\n    });\r\n  });\r\n\r\n  describe('Asset "
+        },
+        {
+          "emoji": "✅",
+          "category": "general",
+          "position": 4462,
+          "line": 121,
+          "context": "sult.component).not.toMatch(/[🗣️🔊🔇🖼️❓📖🧠🎙️⏹️✅⚡❌]/);\r\n    });\r\n  });\r\n\r\n  describe('Asset Retri"
+        },
+        {
+          "emoji": "⚡",
+          "category": "general",
+          "position": 4463,
+          "line": 121,
+          "context": "ult.component).not.toMatch(/[🗣️🔊🔇🖼️❓📖🧠🎙️⏹️✅⚡❌]/);\r\n    });\r\n  });\r\n\r\n  describe('Asset Retrie"
+        },
+        {
+          "emoji": "❌",
+          "category": "general",
+          "position": 4464,
+          "line": 121,
+          "context": "lt.component).not.toMatch(/[🗣️🔊🔇🖼️❓📖🧠🎙️⏹️✅⚡❌]/);\r\n    });\r\n  });\r\n\r\n  describe('Asset Retriev"
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 6184,
+          "line": 165,
+          "context": "${Array(50).fill().map((_, i) => `<div key=\"${i}\">👶 Child ${i}</div>`).join('\\n')}\r\n            </d"
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 6743,
+          "line": 181,
+          "context": " async () => {\r\n      const testComponent = '<div>👶 📋 ✅</div>';\r\n      \r\n      // First run\r\n     "
+        },
+        {
+          "emoji": "📋",
+          "category": "general",
+          "position": 6746,
+          "line": 181,
+          "context": "ync () => {\r\n      const testComponent = '<div>👶 📋 ✅</div>';\r\n      \r\n      // First run\r\n      co"
+        },
+        {
+          "emoji": "✅",
+          "category": "general",
+          "position": 6749,
+          "line": 181,
+          "context": " () => {\r\n      const testComponent = '<div>👶 📋 ✅</div>';\r\n      \r\n      // First run\r\n      const"
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 7391,
+          "line": 199,
+          "context": "c () => {\r\n      const malformedComponent = '<div>👶 <span>📋 </div>'; // Missing closing span tag\r\n"
+        },
+        {
+          "emoji": "📋",
+          "category": "general",
+          "position": 7400,
+          "line": 199,
+          "context": "\r\n      const malformedComponent = '<div>👶 <span>📋 </div>'; // Missing closing span tag\r\n      \r\n "
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 7669,
+          "line": 205,
+          "context": "e);\r\n      expect(result.component).not.toMatch(/[👶📋]/);\r\n    });\r\n\r\n    test('should handle compo"
+        },
+        {
+          "emoji": "📋",
+          "category": "general",
+          "position": 7671,
+          "line": 205,
+          "context": ";\r\n      expect(result.component).not.toMatch(/[👶📋]/);\r\n    });\r\n\r\n    test('should handle compone"
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 7831,
+          "line": 211,
+          "context": "ponent = `\r\n        <div>\r\n          Regular text 👶 more text\r\n          <span>Some HTML 📋 content"
+        },
+        {
+          "emoji": "📋",
+          "category": "general",
+          "position": 7871,
+          "line": 212,
+          "context": "ular text 👶 more text\r\n          <span>Some HTML 📋 content</span>\r\n          {/* Comment with emoj"
+        },
+        {
+          "emoji": "🎯",
+          "category": "general",
+          "position": 7923,
+          "line": 213,
+          "context": " content</span>\r\n          {/* Comment with emoji 🎯 */}\r\n          \"String with emoji ✅\"\r\n        <"
+        },
+        {
+          "emoji": "✅",
+          "category": "general",
+          "position": 7960,
+          "line": 214,
+          "context": "t with emoji 🎯 */}\r\n          \"String with emoji ✅\"\r\n        </div>\r\n      `;\r\n\r\n      const result"
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 8492,
+          "line": 230,
+          "context": "++) {\r\n        const component = `<div>Test ${i}: 👶 📋 ✅ 🎯</div>`;\r\n        stressTestPromises.pus"
+        },
+        {
+          "emoji": "📋",
+          "category": "general",
+          "position": 8495,
+          "line": 230,
+          "context": " {\r\n        const component = `<div>Test ${i}: 👶 📋 ✅ 🎯</div>`;\r\n        stressTestPromises.push(p"
+        },
+        {
+          "emoji": "✅",
+          "category": "general",
+          "position": 8498,
+          "line": 230,
+          "context": "\n        const component = `<div>Test ${i}: 👶 📋 ✅ 🎯</div>`;\r\n        stressTestPromises.push(proc"
+        },
+        {
+          "emoji": "🎯",
+          "category": "general",
+          "position": 8500,
+          "line": 230,
+          "context": "       const component = `<div>Test ${i}: 👶 📋 ✅ 🎯</div>`;\r\n        stressTestPromises.push(proces"
+        },
+        {
+          "emoji": "👨",
+          "category": "general",
+          "position": 11194,
+          "line": 293,
+          "context": "on = emojiReplacer.emojiClassifier.classifyEmoji('👨‍⚕️', '<h1>Doctor</h1>');\r\n      \r\n      expect("
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 11197,
+          "line": 293,
+          "context": "= emojiReplacer.emojiClassifier.classifyEmoji('👨‍⚕️', '<h1>Doctor</h1>');\r\n      \r\n      expect(ass"
+        },
+        {
+          "emoji": "👨‍⚕️",
+          "category": "medical",
+          "position": 1521,
+          "line": 47,
+          "context": "me=\"header\">\r\n                <div className=\"h1\">👨‍⚕️ Therapist Console</div>\r\n                <bu"
+        },
+        {
+          "emoji": "👨‍⚕️",
+          "category": "medical",
+          "position": 2795,
+          "line": 78,
+          "context": "');\r\n      expect(result.component).not.toMatch(/[👨‍⚕️➕👶📋✅🎯📊📈]/);\r\n    });\r\n\r\n    test('should"
+        },
+        {
+          "emoji": "👨‍⚕️",
+          "category": "medical",
+          "position": 11194,
+          "line": 293,
+          "context": "on = emojiReplacer.emojiClassifier.classifyEmoji('👨‍⚕️', '<h1>Doctor</h1>');\r\n      \r\n      expect("
+        },
+        {
+          "emoji": "📋",
+          "category": "interface",
+          "position": 1812,
+          "line": 53,
+          "context": "en\" value={5} />\r\n                <StatCard icon=\"📋\" label=\"Total Sessions\" value={10} />\r\n        "
+        },
+        {
+          "emoji": "📊",
+          "category": "interface",
+          "position": 2097,
+          "line": 59,
+          "context": "  <div className=\"tabs\">\r\n                <button>📊 Overview</button>\r\n                <button>👶 C"
+        },
+        {
+          "emoji": "📋",
+          "category": "interface",
+          "position": 2189,
+          "line": 61,
+          "context": "ton>👶 Children</button>\r\n                <button>📋 Sessions</button>\r\n                <button>📈 A"
+        },
+        {
+          "emoji": "📈",
+          "category": "interface",
+          "position": 2235,
+          "line": 62,
+          "context": "ton>📋 Sessions</button>\r\n                <button>📈 Analytics</button>\r\n              </div>\r\n     "
+        },
+        {
+          "emoji": "📋",
+          "category": "interface",
+          "position": 2803,
+          "line": 78,
+          "context": "   expect(result.component).not.toMatch(/[👨‍⚕️➕👶📋✅🎯📊📈]/);\r\n    });\r\n\r\n    test('should process"
+        },
+        {
+          "emoji": "📊",
+          "category": "interface",
+          "position": 2808,
+          "line": 78,
+          "context": "pect(result.component).not.toMatch(/[👨‍⚕️➕👶📋✅🎯📊📈]/);\r\n    });\r\n\r\n    test('should process Spee"
+        },
+        {
+          "emoji": "📈",
+          "category": "interface",
+          "position": 2810,
+          "line": 78,
+          "context": "ct(result.component).not.toMatch(/[👨‍⚕️➕👶📋✅🎯📊📈]/);\r\n    });\r\n\r\n    test('should process Speech"
+        },
+        {
+          "emoji": "⚡",
+          "category": "interface",
+          "position": 3972,
+          "line": 106,
+          "context": "utton>✅ Success</button>\r\n                <button>⚡ Partial</button>\r\n                <button>❌ Fail"
+        },
+        {
+          "emoji": "⚡",
+          "category": "interface",
+          "position": 4463,
+          "line": 121,
+          "context": "ult.component).not.toMatch(/[🗣️🔊🔇🖼️❓📖🧠🎙️⏹️✅⚡❌]/);\r\n    });\r\n  });\r\n\r\n  describe('Asset Retrie"
+        },
+        {
+          "emoji": "📋",
+          "category": "interface",
+          "position": 6746,
+          "line": 181,
+          "context": "ync () => {\r\n      const testComponent = '<div>👶 📋 ✅</div>';\r\n      \r\n      // First run\r\n      co"
+        },
+        {
+          "emoji": "📋",
+          "category": "interface",
+          "position": 7400,
+          "line": 199,
+          "context": "\r\n      const malformedComponent = '<div>👶 <span>📋 </div>'; // Missing closing span tag\r\n      \r\n "
+        },
+        {
+          "emoji": "📋",
+          "category": "interface",
+          "position": 7671,
+          "line": 205,
+          "context": ";\r\n      expect(result.component).not.toMatch(/[👶📋]/);\r\n    });\r\n\r\n    test('should handle compone"
+        },
+        {
+          "emoji": "📋",
+          "category": "interface",
+          "position": 7871,
+          "line": 212,
+          "context": "ular text 👶 more text\r\n          <span>Some HTML 📋 content</span>\r\n          {/* Comment with emoj"
+        },
+        {
+          "emoji": "📋",
+          "category": "interface",
+          "position": 8495,
+          "line": 230,
+          "context": " {\r\n        const component = `<div>Test ${i}: 👶 📋 ✅ 🎯</div>`;\r\n        stressTestPromises.push(p"
+        },
+        {
+          "emoji": "➕",
+          "category": "actions",
+          "position": 1603,
+          "line": 48,
+          "context": "               <button className=\"btn btnPrimary\">➕ Add Child</button>\r\n              </div>\r\n      "
+        },
+        {
+          "emoji": "✅",
+          "category": "actions",
+          "position": 1886,
+          "line": 54,
+          "context": "s\" value={10} />\r\n                <StatCard icon=\"✅\" label=\"Completed\" value={8} />\r\n               "
+        },
+        {
+          "emoji": "➕",
+          "category": "actions",
+          "position": 2800,
+          "line": 78,
+          "context": "      expect(result.component).not.toMatch(/[👨‍⚕️➕👶📋✅🎯📊📈]/);\r\n    });\r\n\r\n    test('should proc"
+        },
+        {
+          "emoji": "✅",
+          "category": "actions",
+          "position": 2805,
+          "line": 78,
+          "context": " expect(result.component).not.toMatch(/[👨‍⚕️➕👶📋✅🎯📊📈]/);\r\n    });\r\n\r\n    test('should process S"
+        },
+        {
+          "emoji": "✅",
+          "category": "actions",
+          "position": 3928,
+          "line": 105,
+          "context": "iv className=\"feedback\">\r\n                <button>✅ Success</button>\r\n                <button>⚡ Part"
+        },
+        {
+          "emoji": "❌",
+          "category": "actions",
+          "position": 4016,
+          "line": 107,
+          "context": "utton>⚡ Partial</button>\r\n                <button>❌ Fail</button>\r\n              </div>\r\n           "
+        },
+        {
+          "emoji": "✅",
+          "category": "actions",
+          "position": 4462,
+          "line": 121,
+          "context": "sult.component).not.toMatch(/[🗣️🔊🔇🖼️❓📖🧠🎙️⏹️✅⚡❌]/);\r\n    });\r\n  });\r\n\r\n  describe('Asset Retri"
+        },
+        {
+          "emoji": "❌",
+          "category": "actions",
+          "position": 4464,
+          "line": 121,
+          "context": "lt.component).not.toMatch(/[🗣️🔊🔇🖼️❓📖🧠🎙️⏹️✅⚡❌]/);\r\n    });\r\n  });\r\n\r\n  describe('Asset Retriev"
+        },
+        {
+          "emoji": "✅",
+          "category": "actions",
+          "position": 6749,
+          "line": 181,
+          "context": " () => {\r\n      const testComponent = '<div>👶 📋 ✅</div>';\r\n      \r\n      // First run\r\n      const"
+        },
+        {
+          "emoji": "✅",
+          "category": "actions",
+          "position": 7960,
+          "line": 214,
+          "context": "t with emoji 🎯 */}\r\n          \"String with emoji ✅\"\r\n        </div>\r\n      `;\r\n\r\n      const result"
+        },
+        {
+          "emoji": "✅",
+          "category": "actions",
+          "position": 8498,
+          "line": 230,
+          "context": "\n        const component = `<div>Test ${i}: 👶 📋 ✅ 🎯</div>`;\r\n        stressTestPromises.push(proc"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 1739,
+          "line": 52,
+          "context": "me=\"stats-grid\">\r\n                <StatCard icon=\"👶\" label=\"Total Children\" value={5} />\r\n         "
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 2143,
+          "line": 60,
+          "context": "ton>📊 Overview</button>\r\n                <button>👶 Children</button>\r\n                <button>📋 S"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 2801,
+          "line": 78,
+          "context": "     expect(result.component).not.toMatch(/[👨‍⚕️➕👶📋✅🎯📊📈]/);\r\n    });\r\n\r\n    test('should proce"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 6184,
+          "line": 165,
+          "context": "${Array(50).fill().map((_, i) => `<div key=\"${i}\">👶 Child ${i}</div>`).join('\\n')}\r\n            </d"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 6743,
+          "line": 181,
+          "context": " async () => {\r\n      const testComponent = '<div>👶 📋 ✅</div>';\r\n      \r\n      // First run\r\n     "
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 7391,
+          "line": 199,
+          "context": "c () => {\r\n      const malformedComponent = '<div>👶 <span>📋 </div>'; // Missing closing span tag\r\n"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 7669,
+          "line": 205,
+          "context": "e);\r\n      expect(result.component).not.toMatch(/[👶📋]/);\r\n    });\r\n\r\n    test('should handle compo"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 7831,
+          "line": 211,
+          "context": "ponent = `\r\n        <div>\r\n          Regular text 👶 more text\r\n          <span>Some HTML 📋 content"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 8492,
+          "line": 230,
+          "context": "++) {\r\n        const component = `<div>Test ${i}: 👶 📋 ✅ 🎯</div>`;\r\n        stressTestPromises.pus"
+        },
+        {
+          "emoji": "🗣️",
+          "category": "speech",
+          "position": 3137,
+          "line": 87,
+          "context": "me=\"header\">\r\n                <div className=\"h1\">🗣️ Speech Therapy</div>\r\n                <button "
+        },
+        {
+          "emoji": "🔊",
+          "category": "speech",
+          "position": 3219,
+          "line": 88,
+          "context": "          <button className=\"btn\">{tts.enabled ? \"🔊 Voice On\" : \"🔇 Voice Off\"}</button>\r\n         "
+        },
+        {
+          "emoji": "🔇",
+          "category": "speech",
+          "position": 3235,
+          "line": 88,
+          "context": "n className=\"btn\">{tts.enabled ? \"🔊 Voice On\" : \"🔇 Voice Off\"}</button>\r\n              </div>\r\n   "
+        },
+        {
+          "emoji": "🗣️",
+          "category": "speech",
+          "position": 3384,
+          "line": 92,
+          "context": "ties\">\r\n                <div className=\"activity\">🗣️ Repeat</div>\r\n                <div className=\""
+        },
+        {
+          "emoji": "🎙️",
+          "category": "speech",
+          "position": 3742,
+          "line": 100,
+          "context": "v className=\"recording\">\r\n                <button>🎙️ Start Recording</button>\r\n                <but"
+        },
+        {
+          "emoji": "🗣️",
+          "category": "speech",
+          "position": 4442,
+          "line": 121,
+          "context": "ain\r\n      expect(result.component).not.toMatch(/[🗣️🔊🔇🖼️❓📖🧠🎙️⏹️✅⚡❌]/);\r\n    });\r\n  });\r\n\r\n  d"
+        },
+        {
+          "emoji": "🔊",
+          "category": "speech",
+          "position": 4445,
+          "line": 121,
+          "context": "\r\n      expect(result.component).not.toMatch(/[🗣️🔊🔇🖼️❓📖🧠🎙️⏹️✅⚡❌]/);\r\n    });\r\n  });\r\n\r\n  desc"
+        },
+        {
+          "emoji": "🔇",
+          "category": "speech",
+          "position": 4447,
+          "line": 121,
+          "context": "      expect(result.component).not.toMatch(/[🗣️🔊🔇🖼️❓📖🧠🎙️⏹️✅⚡❌]/);\r\n    });\r\n  });\r\n\r\n  descri"
+        },
+        {
+          "emoji": "🎙️",
+          "category": "speech",
+          "position": 4457,
+          "line": 121,
+          "context": "ct(result.component).not.toMatch(/[🗣️🔊🔇🖼️❓📖🧠🎙️⏹️✅⚡❌]/);\r\n    });\r\n  });\r\n\r\n  describe('Asset "
+        },
+        {
+          "emoji": "🖼️",
+          "category": "learning",
+          "position": 3444,
+          "line": 93,
+          "context": "</div>\r\n                <div className=\"activity\">🖼️ Picture</div>\r\n                <div className="
+        },
+        {
+          "emoji": "❓",
+          "category": "learning",
+          "position": 3505,
+          "line": 94,
+          "context": "</div>\r\n                <div className=\"activity\">❓ Q&A</div>\r\n                <div className=\"activ"
+        },
+        {
+          "emoji": "📖",
+          "category": "learning",
+          "position": 3560,
+          "line": 95,
+          "context": "</div>\r\n                <div className=\"activity\">📖 Story</div>\r\n                <div className=\"ac"
+        },
+        {
+          "emoji": "🧠",
+          "category": "learning",
+          "position": 3618,
+          "line": 96,
+          "context": "</div>\r\n                <div className=\"activity\">🧠 Category</div>\r\n              </div>\r\n         "
+        },
+        {
+          "emoji": "🖼️",
+          "category": "learning",
+          "position": 4449,
+          "line": 121,
+          "context": "    expect(result.component).not.toMatch(/[🗣️🔊🔇🖼️❓📖🧠🎙️⏹️✅⚡❌]/);\r\n    });\r\n  });\r\n\r\n  describe"
+        },
+        {
+          "emoji": "❓",
+          "category": "learning",
+          "position": 4452,
+          "line": 121,
+          "context": " expect(result.component).not.toMatch(/[🗣️🔊🔇🖼️❓📖🧠🎙️⏹️✅⚡❌]/);\r\n    });\r\n  });\r\n\r\n  describe('A"
+        },
+        {
+          "emoji": "📖",
+          "category": "learning",
+          "position": 4453,
+          "line": 121,
+          "context": "expect(result.component).not.toMatch(/[🗣️🔊🔇🖼️❓📖🧠🎙️⏹️✅⚡❌]/);\r\n    });\r\n  });\r\n\r\n  describe('As"
+        },
+        {
+          "emoji": "🧠",
+          "category": "learning",
+          "position": 4455,
+          "line": 121,
+          "context": "pect(result.component).not.toMatch(/[🗣️🔊🔇🖼️❓📖🧠🎙️⏹️✅⚡❌]/);\r\n    });\r\n  });\r\n\r\n  describe('Asse"
+        },
+        {
+          "emoji": "🎯",
+          "category": "games",
+          "position": 1953,
+          "line": 55,
+          "context": "ed\" value={8} />\r\n                <StatCard icon=\"🎯\" label=\"Weekly Accuracy\" value=\"85%\" />\r\n      "
+        },
+        {
+          "emoji": "🎯",
+          "category": "games",
+          "position": 2806,
+          "line": 78,
+          "context": "expect(result.component).not.toMatch(/[👨‍⚕️➕👶📋✅🎯📊📈]/);\r\n    });\r\n\r\n    test('should process Sp"
+        },
+        {
+          "emoji": "🎯",
+          "category": "games",
+          "position": 7923,
+          "line": 213,
+          "context": " content</span>\r\n          {/* Comment with emoji 🎯 */}\r\n          \"String with emoji ✅\"\r\n        <"
+        },
+        {
+          "emoji": "🎯",
+          "category": "games",
+          "position": 8500,
+          "line": 230,
+          "context": "       const component = `<div>Test ${i}: 👶 📋 ✅ 🎯</div>`;\r\n        stressTestPromises.push(proces"
+        },
+        {
+          "emoji": "⏹️",
+          "category": "media",
+          "position": 3796,
+          "line": 101,
+          "context": "Start Recording</button>\r\n                <button>⏹️ Stop Recording</button>\r\n              </div>\r\n"
+        },
+        {
+          "emoji": "⏹️",
+          "category": "media",
+          "position": 4460,
+          "line": 121,
+          "context": "result.component).not.toMatch(/[🗣️🔊🔇🖼️❓📖🧠🎙️⏹️✅⚡❌]/);\r\n    });\r\n  });\r\n\r\n  describe('Asset Ret"
+        }
+      ]
+    },
+    {
+      "file": "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\EmojiReplacer\\__tests__\\setup.js",
+      "emojis": [
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 1296,
+          "line": 52,
+          "context": "kEmojiMapping = (overrides = {}) => ({\r\n  emoji: '👶',\r\n  context: 'test-context',\r\n  position: 0,\r\n"
+        },
+        {
+          "emoji": "👨",
+          "category": "general",
+          "position": 1857,
+          "line": 76,
+          "context": " className=\"header\">\r\n        <div className=\"h1\">👨‍⚕️ Test Console</div>\r\n        <button classNam"
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 1860,
+          "line": 76,
+          "context": "assName=\"header\">\r\n        <div className=\"h1\">👨‍⚕️ Test Console</div>\r\n        <button className=\""
+        },
+        {
+          "emoji": "➕",
+          "category": "general",
+          "position": 1938,
+          "line": 78,
+          "context": "   <button className=\"btn btnPrimary\">\r\n          ➕ Add Item\r\n        </button>\r\n      </div>\r\n     "
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 2051,
+          "line": 83,
+          "context": " className=\"stats-grid\">\r\n        <StatCard icon=\"👶\" label=\"Children\" value={5} />\r\n        <StatCa"
+        },
+        {
+          "emoji": "📋",
+          "category": "general",
+          "position": 2110,
+          "line": 84,
+          "context": "=\"Children\" value={5} />\r\n        <StatCard icon=\"📋\" label=\"Sessions\" value={10} />\r\n        <StatC"
+        },
+        {
+          "emoji": "✅",
+          "category": "general",
+          "position": 2170,
+          "line": 85,
+          "context": "\"Sessions\" value={10} />\r\n        <StatCard icon=\"✅\" label=\"Completed\" value={8} />\r\n      </div>\r\n "
+        },
+        {
+          "emoji": "📊",
+          "category": "general",
+          "position": 2273,
+          "line": 89,
+          "context": "  \r\n      <div className=\"tabs\">\r\n        <button>📊 Overview</button>\r\n        <button>👶 Children<"
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 2311,
+          "line": 90,
+          "context": "    <button>📊 Overview</button>\r\n        <button>👶 Children</button>\r\n        <button>📋 Sessions<"
+        },
+        {
+          "emoji": "📋",
+          "category": "general",
+          "position": 2349,
+          "line": 91,
+          "context": "    <button>👶 Children</button>\r\n        <button>📋 Sessions</button>\r\n      </div>\r\n    </div>\r\n  "
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 2884,
+          "line": 117,
+          "context": "generateRandomEmoji = () => {\r\n  const emojis = ['👶', '📋', '✅', '🎯', '📊', '👨‍⚕️', '🗣️', '🎙️',"
+        },
+        {
+          "emoji": "📋",
+          "category": "general",
+          "position": 2890,
+          "line": 117,
+          "context": "teRandomEmoji = () => {\r\n  const emojis = ['👶', '📋', '✅', '🎯', '📊', '👨‍⚕️', '🗣️', '🎙️', '⚡', "
+        },
+        {
+          "emoji": "✅",
+          "category": "general",
+          "position": 2896,
+          "line": 117,
+          "context": "omEmoji = () => {\r\n  const emojis = ['👶', '📋', '✅', '🎯', '📊', '👨‍⚕️', '🗣️', '🎙️', '⚡', '❌'];\r"
+        },
+        {
+          "emoji": "🎯",
+          "category": "general",
+          "position": 2901,
+          "line": 117,
+          "context": "ji = () => {\r\n  const emojis = ['👶', '📋', '✅', '🎯', '📊', '👨‍⚕️', '🗣️', '🎙️', '⚡', '❌'];\r\n  re"
+        },
+        {
+          "emoji": "📊",
+          "category": "general",
+          "position": 2907,
+          "line": 117,
+          "context": ") => {\r\n  const emojis = ['👶', '📋', '✅', '🎯', '📊', '👨‍⚕️', '🗣️', '🎙️', '⚡', '❌'];\r\n  return e"
+        },
+        {
+          "emoji": "👨",
+          "category": "general",
+          "position": 2913,
+          "line": 117,
+          "context": "\r\n  const emojis = ['👶', '📋', '✅', '🎯', '📊', '👨‍⚕️', '🗣️', '🎙️', '⚡', '❌'];\r\n  return emojis["
+        },
+        {
+          "emoji": "⚕",
+          "category": "general",
+          "position": 2916,
+          "line": 117,
+          "context": " const emojis = ['👶', '📋', '✅', '🎯', '📊', '👨‍⚕️', '🗣️', '🎙️', '⚡', '❌'];\r\n  return emojis[Mat"
+        },
+        {
+          "emoji": "🗣",
+          "category": "general",
+          "position": 2922,
+          "line": 117,
+          "context": " emojis = ['👶', '📋', '✅', '🎯', '📊', '👨‍⚕️', '🗣️', '🎙️', '⚡', '❌'];\r\n  return emojis[Math.floo"
+        },
+        {
+          "emoji": "🎙",
+          "category": "general",
+          "position": 2929,
+          "line": 117,
+          "context": " = ['👶', '📋', '✅', '🎯', '📊', '👨‍⚕️', '🗣️', '🎙️', '⚡', '❌'];\r\n  return emojis[Math.floor(Math."
+        },
+        {
+          "emoji": "⚡",
+          "category": "general",
+          "position": 2936,
+          "line": 117,
+          "context": "', '📋', '✅', '🎯', '📊', '👨‍⚕️', '🗣️', '🎙️', '⚡', '❌'];\r\n  return emojis[Math.floor(Math.random("
+        },
+        {
+          "emoji": "❌",
+          "category": "general",
+          "position": 2941,
+          "line": 117,
+          "context": "\udccb', '✅', '🎯', '📊', '👨‍⚕️', '🗣️', '🎙️', '⚡', '❌'];\r\n  return emojis[Math.floor(Math.random() * e"
+        },
+        {
+          "emoji": "👨‍⚕️",
+          "category": "medical",
+          "position": 1857,
+          "line": 76,
+          "context": " className=\"header\">\r\n        <div className=\"h1\">👨‍⚕️ Test Console</div>\r\n        <button classNam"
+        },
+        {
+          "emoji": "👨‍⚕️",
+          "category": "medical",
+          "position": 2913,
+          "line": 117,
+          "context": "\r\n  const emojis = ['👶', '📋', '✅', '🎯', '📊', '👨‍⚕️', '🗣️', '🎙️', '⚡', '❌'];\r\n  return emojis["
+        },
+        {
+          "emoji": "📋",
+          "category": "interface",
+          "position": 2110,
+          "line": 84,
+          "context": "=\"Children\" value={5} />\r\n        <StatCard icon=\"📋\" label=\"Sessions\" value={10} />\r\n        <StatC"
+        },
+        {
+          "emoji": "📊",
+          "category": "interface",
+          "position": 2273,
+          "line": 89,
+          "context": "  \r\n      <div className=\"tabs\">\r\n        <button>📊 Overview</button>\r\n        <button>👶 Children<"
+        },
+        {
+          "emoji": "📋",
+          "category": "interface",
+          "position": 2349,
+          "line": 91,
+          "context": "    <button>👶 Children</button>\r\n        <button>📋 Sessions</button>\r\n      </div>\r\n    </div>\r\n  "
+        },
+        {
+          "emoji": "📋",
+          "category": "interface",
+          "position": 2890,
+          "line": 117,
+          "context": "teRandomEmoji = () => {\r\n  const emojis = ['👶', '📋', '✅', '🎯', '📊', '👨‍⚕️', '🗣️', '🎙️', '⚡', "
+        },
+        {
+          "emoji": "📊",
+          "category": "interface",
+          "position": 2907,
+          "line": 117,
+          "context": ") => {\r\n  const emojis = ['👶', '📋', '✅', '🎯', '📊', '👨‍⚕️', '🗣️', '🎙️', '⚡', '❌'];\r\n  return e"
+        },
+        {
+          "emoji": "⚡",
+          "category": "interface",
+          "position": 2936,
+          "line": 117,
+          "context": "', '📋', '✅', '🎯', '📊', '👨‍⚕️', '🗣️', '🎙️', '⚡', '❌'];\r\n  return emojis[Math.floor(Math.random("
+        },
+        {
+          "emoji": "➕",
+          "category": "actions",
+          "position": 1938,
+          "line": 78,
+          "context": "   <button className=\"btn btnPrimary\">\r\n          ➕ Add Item\r\n        </button>\r\n      </div>\r\n     "
+        },
+        {
+          "emoji": "✅",
+          "category": "actions",
+          "position": 2170,
+          "line": 85,
+          "context": "\"Sessions\" value={10} />\r\n        <StatCard icon=\"✅\" label=\"Completed\" value={8} />\r\n      </div>\r\n "
+        },
+        {
+          "emoji": "✅",
+          "category": "actions",
+          "position": 2896,
+          "line": 117,
+          "context": "omEmoji = () => {\r\n  const emojis = ['👶', '📋', '✅', '🎯', '📊', '👨‍⚕️', '🗣️', '🎙️', '⚡', '❌'];\r"
+        },
+        {
+          "emoji": "❌",
+          "category": "actions",
+          "position": 2941,
+          "line": 117,
+          "context": "\udccb', '✅', '🎯', '📊', '👨‍⚕️', '🗣️', '🎙️', '⚡', '❌'];\r\n  return emojis[Math.floor(Math.random() * e"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 1296,
+          "line": 52,
+          "context": "kEmojiMapping = (overrides = {}) => ({\r\n  emoji: '👶',\r\n  context: 'test-context',\r\n  position: 0,\r\n"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 2051,
+          "line": 83,
+          "context": " className=\"stats-grid\">\r\n        <StatCard icon=\"👶\" label=\"Children\" value={5} />\r\n        <StatCa"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 2311,
+          "line": 90,
+          "context": "    <button>📊 Overview</button>\r\n        <button>👶 Children</button>\r\n        <button>📋 Sessions<"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 2884,
+          "line": 117,
+          "context": "generateRandomEmoji = () => {\r\n  const emojis = ['👶', '📋', '✅', '🎯', '📊', '👨‍⚕️', '🗣️', '🎙️',"
+        },
+        {
+          "emoji": "🗣️",
+          "category": "speech",
+          "position": 2922,
+          "line": 117,
+          "context": " emojis = ['👶', '📋', '✅', '🎯', '📊', '👨‍⚕️', '🗣️', '🎙️', '⚡', '❌'];\r\n  return emojis[Math.floo"
+        },
+        {
+          "emoji": "🎙️",
+          "category": "speech",
+          "position": 2929,
+          "line": 117,
+          "context": " = ['👶', '📋', '✅', '🎯', '📊', '👨‍⚕️', '🗣️', '🎙️', '⚡', '❌'];\r\n  return emojis[Math.floor(Math."
+        },
+        {
+          "emoji": "🎯",
+          "category": "games",
+          "position": 2901,
+          "line": 117,
+          "context": "ji = () => {\r\n  const emojis = ['👶', '📋', '✅', '🎯', '📊', '👨‍⚕️', '🗣️', '🎙️', '⚡', '❌'];\r\n  re"
+        }
+      ]
+    },
+    {
+      "file": "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\EmojiReplacer\\__tests__\\ValidationService.test.js",
+      "emojis": [
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 5164,
+          "line": 154,
+          "context": "\r\n      `;\r\n      const replacements = [{ emoji: '👶', replacedWith: '/test.jpg' }];\r\n      \r\n      "
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 5715,
+          "line": 168,
+          "context": "     <div className=\"container\">\r\n          <span>👶</span>\r\n          <img src=\"/test.jpg\" alt=\"Tes"
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 6406,
+          "line": 189,
+          "context": "\r\n      `;\r\n      const replacements = [{ emoji: '👶', replacedWith: '/test.jpg' }];\r\n      \r\n      "
+        },
+        {
+          "emoji": "👶",
+          "category": "general",
+          "position": 7036,
+          "line": 206,
+          "context": "\r\n      `;\r\n      const replacements = [{ emoji: '👶', replacedWith: '/test1.jpg' }]; // Only 1 repl"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 5164,
+          "line": 154,
+          "context": "\r\n      `;\r\n      const replacements = [{ emoji: '👶', replacedWith: '/test.jpg' }];\r\n      \r\n      "
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 5715,
+          "line": 168,
+          "context": "     <div className=\"container\">\r\n          <span>👶</span>\r\n          <img src=\"/test.jpg\" alt=\"Tes"
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 6406,
+          "line": 189,
+          "context": "\r\n      `;\r\n      const replacements = [{ emoji: '👶', replacedWith: '/test.jpg' }];\r\n      \r\n      "
+        },
+        {
+          "emoji": "👶",
+          "category": "children",
+          "position": 7036,
+          "line": 206,
+          "context": "\r\n      `;\r\n      const replacements = [{ emoji: '👶', replacedWith: '/test1.jpg' }]; // Only 1 repl"
+        }
+      ]
+    },
+    {
+      "file": "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\StickerManager.js",
+      "emojis": [
+        {
+          "emoji": "🐦",
+          "category": "general",
+          "position": 800,
+          "line": 30,
+          "context": "},\r\n          { id: 'bird', name: 'Bird', emoji: '🐦' },\r\n          { id: 'bee', name: 'Bee', emoji:"
+        },
+        {
+          "emoji": "🐝",
+          "category": "general",
+          "position": 852,
+          "line": 31,
+          "context": "' },\r\n          { id: 'bee', name: 'Bee', emoji: '🐝' },\r\n          { id: 'ladybug', name: 'Ladybug'"
+        },
+        {
+          "emoji": "🐞",
+          "category": "general",
+          "position": 912,
+          "line": 32,
+          "context": "        { id: 'ladybug', name: 'Ladybug', emoji: '🐞' },\r\n          { id: 'fish', name: 'Fish', emoj"
+        },
+        {
+          "emoji": "🐠",
+          "category": "general",
+          "position": 966,
+          "line": 33,
+          "context": "},\r\n          { id: 'fish', name: 'Fish', emoji: '🐠' },\r\n          { id: 'turtle', name: 'Turtle', "
+        },
+        {
+          "emoji": "🐢",
+          "category": "general",
+          "position": 1024,
+          "line": 34,
+          "context": "          { id: 'turtle', name: 'Turtle', emoji: '🐢' },\r\n          { id: 'rabbit', name: 'Rabbit', "
+        },
+        {
+          "emoji": "🐰",
+          "category": "general",
+          "position": 1082,
+          "line": 35,
+          "context": "          { id: 'rabbit', name: 'Rabbit', emoji: '🐰' },\r\n        ],\r\n        nature: [\r\n          {"
+        },
+        {
+          "emoji": "🌸",
+          "category": "general",
+          "position": 1171,
+          "line": 38,
+          "context": "          { id: 'flower', name: 'Flower', emoji: '🌸' },\r\n          { id: 'tree', name: 'Tree', emoj"
+        },
+        {
+          "emoji": "🌳",
+          "category": "general",
+          "position": 1225,
+          "line": 39,
+          "context": "},\r\n          { id: 'tree', name: 'Tree', emoji: '🌳' },\r\n          { id: 'leaf', name: 'Leaf', emoj"
+        },
+        {
+          "emoji": "🍃",
+          "category": "general",
+          "position": 1279,
+          "line": 40,
+          "context": "},\r\n          { id: 'leaf', name: 'Leaf', emoji: '🍃' },\r\n          { id: 'mushroom', name: 'Mushroo"
+        },
+        {
+          "emoji": "🍄",
+          "category": "general",
+          "position": 1341,
+          "line": 41,
+          "context": "      { id: 'mushroom', name: 'Mushroom', emoji: '🍄' },\r\n          { id: 'cactus', name: 'Cactus', "
+        },
+        {
+          "emoji": "🌵",
+          "category": "general",
+          "position": 1399,
+          "line": 42,
+          "context": "          { id: 'cactus', name: 'Cactus', emoji: '🌵' },\r\n          { id: 'sunflower', name: 'Sunflo"
+        },
+        {
+          "emoji": "🌻",
+          "category": "general",
+          "position": 1463,
+          "line": 43,
+          "context": "    { id: 'sunflower', name: 'Sunflower', emoji: '🌻' },\r\n          { id: 'rainbow', name: 'Rainbow'"
+        },
+        {
+          "emoji": "🌈",
+          "category": "general",
+          "position": 1523,
+          "line": 44,
+          "context": "        { id: 'rainbow', name: 'Rainbow', emoji: '🌈' },\r\n        ],\r\n        objects: [\r\n          "
+        },
+        {
+          "emoji": "❤",
+          "category": "general",
+          "position": 1664,
+          "line": 48,
+          "context": "\r\n          { id: 'heart', name: 'Heart', emoji: '❤️' },\r\n          { id: 'balloon', name: 'Balloon'"
+        },
+        {
+          "emoji": "🎈",
+          "category": "general",
+          "position": 1724,
+          "line": 49,
+          "context": "        { id: 'balloon', name: 'Balloon', emoji: '🎈' },\r\n          { id: 'gift', name: 'Gift', emoj"
+        },
+        {
+          "emoji": "🎁",
+          "category": "general",
+          "position": 1778,
+          "line": 50,
+          "context": "},\r\n          { id: 'gift', name: 'Gift', emoji: '🎁' },\r\n          { id: 'cloud', name: 'Cloud', em"
+        },
+        {
+          "emoji": "☁",
+          "category": "general",
+          "position": 1834,
+          "line": 51,
+          "context": "\r\n          { id: 'cloud', name: 'Cloud', emoji: '☁️' },\r\n          { id: 'sun', name: 'Sun', emoji:"
+        },
+        {
+          "emoji": "☀",
+          "category": "general",
+          "position": 1886,
+          "line": 52,
+          "context": "' },\r\n          { id: 'sun', name: 'Sun', emoji: '☀️' },\r\n          { id: 'moon', name: 'Moon', emoj"
+        },
+        {
+          "emoji": "🌙",
+          "category": "general",
+          "position": 1940,
+          "line": 53,
+          "context": "},\r\n          { id: 'moon', name: 'Moon', emoji: '🌙' },\r\n        ],\r\n      };\r\n\r\n      // Flatten a"
+        },
+        {
+          "emoji": "🌈",
+          "category": "celebration",
+          "position": 1523,
+          "line": 44,
+          "context": "        { id: 'rainbow', name: 'Rainbow', emoji: '🌈' },\r\n        ],\r\n        objects: [\r\n          "
+        },
+        {
+          "emoji": "🎈",
+          "category": "celebration",
+          "position": 1724,
+          "line": 49,
+          "context": "        { id: 'balloon', name: 'Balloon', emoji: '🎈' },\r\n          { id: 'gift', name: 'Gift', emoj"
+        },
+        {
+          "emoji": "🎁",
+          "category": "celebration",
+          "position": 1778,
+          "line": 50,
+          "context": "},\r\n          { id: 'gift', name: 'Gift', emoji: '🎁' },\r\n          { id: 'cloud', name: 'Cloud', em"
+        }
+      ]
+    }
+  ],
+  "cleanFiles": [
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\api\\auth.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\api\\gameImages.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\api\\games.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\api\\ja.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\api\\patients.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\api\\speech.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\App.css",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\App.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\ChildFriendlyButton.css",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\ChildFriendlyButton.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\ChildFriendlyCard.css",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\ChildFriendlyCard.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\Confetti.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\DifficultyIndicator.css",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\DifficultyIndicator.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\GameCard.css",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\GameInterface.css",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\GameInterface.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\GameMetadataDisplay.css",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\GameMetadataDisplay.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\GameOptionMedia.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\GameSelector.css",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\GameSelector.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\GenericGame.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\Layout.css",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\Layout.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\MagicalEffects.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\NotificationsCenter.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\OptionCard.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\ProgressIndicator.css",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\ProgressIndicator.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\ProgressRing.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\ProtectedRoute.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\ResponsiveContainer.css",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\ResponsiveContainer.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\Skeleton.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\StickerLayer.css",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\StickerLayer.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\summarypanel.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\ui\\PatternToken.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\ui\\UiIcon.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\__tests__\\DifficultyIndicator.test.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\__tests__\\GameInterface.basic.test.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\__tests__\\GameInterface.integration.test.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\__tests__\\GameInterface.verification.test.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\__tests__\\Layout.sticker.test.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\__tests__\\StickerLayer.integration.test.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\components\\__tests__\\StickerSystem.verification.test.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\hooks\\useAuth.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\hooks\\useChild.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\hooks\\useToast.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\index.css",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\main.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\pages\\Dashboard.css",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\pages\\Dashboard.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\pages\\ForgotPassword.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\pages\\GameRouter.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\pages\\games\\MatchingGame.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\pages\\games\\MemoryMatchGame.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\pages\\games\\ObjectDiscovery.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\pages\\games\\ProblemSolving.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\pages\\games\\SceneDescriptionGame.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\pages\\games\\SpeechTherapy.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\pages\\Help.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\pages\\JaGame.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\pages\\LandingPage.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\pages\\login.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\pages\\ProfilePage.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\pages\\Settings.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\pages\\Signup.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\pages\\TherapistConsole.css",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\pages\\TherapistConsole.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\pages\\__tests__\\TherapistConsole.enhanced.test.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\pages\\__tests__\\TherapistConsole.gameIntegration.test.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\EmojiReplacer\\AccessibilityValidator.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\EmojiReplacer\\AssetManager.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\EmojiReplacer\\ErrorHandlingService.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\EmojiReplacer\\GameMetadataService.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\EmojiReplacer\\index.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\EmojiReplacer\\SystemConfiguration.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\EmojiReplacer\\SystemIntegration.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\EmojiReplacer\\TherapeuticAuditService.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\EmojiReplacer\\types.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\EmojiReplacer\\ValidationService.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\EmojiReplacer\\__tests__\\AssetManager.errorHandling.property.test.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\EmojiReplacer\\__tests__\\GameMetadataService.dataCollection.property.test.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\EmojiReplacer\\__tests__\\GameMetadataService.metadata.property.test.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\EmojiReplacer\\__tests__\\GameMetadataService.test.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\EmojiReplacer\\__tests__\\ValidationService.property.test.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\GameImageManager.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\GameMetadataService.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\__tests__\\GameMetadataService.ageValidation.test.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\__tests__\\GameMetadataService.difficultyIndicator.test.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\__tests__\\GameMetadataService.difficultyManagement.test.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\__tests__\\GameMetadataSystem.checkpoint.test.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\__tests__\\GameMetadataSystem.integration.test.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\services\\__tests__\\StickerManager.test.js",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\styles\\app.css",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\styles\\games.css",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\styles\\therapist-console.css",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\theme\\designSystem.css",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\theme\\DesignSystemProvider.jsx",
+    "C:\\Users\\Saaz\\Desktop\\Dhayan-FYP-main\\frontend\\src\\theme\\designTokens.js"
+  ],
+  "errors": [],
+  "summary": {
+    "totalFiles": 212,
+    "scannedFiles": 114,
+    "cleanFiles": 103,
+    "filesWithEmojis": 11,
+    "totalEmojis": 705,
+    "errors": 0,
+    "cleanPercentage": "90.4"
+  }
+}

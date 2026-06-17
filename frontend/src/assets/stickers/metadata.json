@@ -1,0 +1,219 @@
+{
+  "version": "1.0.0",
+  "description": "Therapeutic sticker asset library for child-friendly UI",
+  "categories": {
+    "animals": {
+      "name": "Animals",
+      "description": "Cute and friendly animal stickers",
+      "stickers": [
+        {
+          "id": "butterfly",
+          "name": "Butterfly",
+          "emoji": "🦋",
+          "therapeutic_value": "Transformation, growth, beauty",
+          "age_appropriate": "3-12"
+        },
+        {
+          "id": "bird",
+          "name": "Bird",
+          "emoji": "🐦",
+          "therapeutic_value": "Freedom, joy, communication",
+          "age_appropriate": "3-12"
+        },
+        {
+          "id": "bee",
+          "name": "Bee",
+          "emoji": "🐝",
+          "therapeutic_value": "Teamwork, productivity, sweetness",
+          "age_appropriate": "3-12"
+        },
+        {
+          "id": "ladybug",
+          "name": "Ladybug",
+          "emoji": "🐞",
+          "therapeutic_value": "Good luck, positivity, protection",
+          "age_appropriate": "3-12"
+        },
+        {
+          "id": "fish",
+          "name": "Fish",
+          "emoji": "🐠",
+          "therapeutic_value": "Calm, flow, adaptability",
+          "age_appropriate": "3-12"
+        },
+        {
+          "id": "turtle",
+          "name": "Turtle",
+          "emoji": "🐢",
+          "therapeutic_value": "Patience, protection, grounding",
+          "age_appropriate": "3-12"
+        },
+        {
+          "id": "rabbit",
+          "name": "Rabbit",
+          "emoji": "🐰",
+          "therapeutic_value": "Gentleness, alertness, playfulness",
+          "age_appropriate": "3-12"
+        }
+      ]
+    },
+    "nature": {
+      "name": "Nature",
+      "description": "Natural elements and plants",
+      "stickers": [
+        {
+          "id": "flower",
+          "name": "Flower",
+          "emoji": "🌸",
+          "therapeutic_value": "Beauty, growth, renewal",
+          "age_appropriate": "3-12"
+        },
+        {
+          "id": "tree",
+          "name": "Tree",
+          "emoji": "🌳",
+          "therapeutic_value": "Strength, stability, growth",
+          "age_appropriate": "3-12"
+        },
+        {
+          "id": "leaf",
+          "name": "Leaf",
+          "emoji": "🍃",
+          "therapeutic_value": "Nature, freshness, change",
+          "age_appropriate": "3-12"
+        },
+        {
+          "id": "mushroom",
+          "name": "Mushroom",
+          "emoji": "🍄",
+          "therapeutic_value": "Magic, wonder, growth",
+          "age_appropriate": "3-12"
+        },
+        {
+          "id": "cactus",
+          "name": "Cactus",
+          "emoji": "🌵",
+          "therapeutic_value": "Resilience, strength, adaptation",
+          "age_appropriate": "3-12"
+        },
+        {
+          "id": "sunflower",
+          "name": "Sunflower",
+          "emoji": "🌻",
+          "therapeutic_value": "Happiness, positivity, warmth",
+          "age_appropriate": "3-12"
+        },
+        {
+          "id": "rainbow",
+          "name": "Rainbow",
+          "emoji": "🌈",
+          "therapeutic_value": "Hope, diversity, joy",
+          "age_appropriate": "3-12"
+        }
+      ]
+    },
+    "objects": {
+      "name": "Objects",
+      "description": "Symbolic and decorative objects",
+      "stickers": [
+        {
+          "id": "star",
+          "name": "Star",
+          "emoji": "⭐",
+          "therapeutic_value": "Achievement, excellence, guidance",
+          "age_appropriate": "3-12"
+        },
+        {
+          "id": "heart",
+          "name": "Heart",
+          "emoji": "❤️",
+          "therapeutic_value": "Love, compassion, connection",
+          "age_appropriate": "3-12"
+        },
+        {
+          "id": "balloon",
+          "name": "Balloon",
+          "emoji": "🎈",
+          "therapeutic_value": "Celebration, joy, lightness",
+          "age_appropriate": "3-12"
+        },
+        {
+          "id": "gift",
+          "name": "Gift",
+          "emoji": "🎁",
+          "therapeutic_value": "Reward, surprise, generosity",
+          "age_appropriate": "3-12"
+        },
+        {
+          "id": "cloud",
+          "name": "Cloud",
+          "emoji": "☁️",
+          "therapeutic_value": "Dreams, imagination, peace",
+          "age_appropriate": "3-12"
+        },
+        {
+          "id": "sun",
+          "name": "Sun",
+          "emoji": "☀️",
+          "therapeutic_value": "Warmth, energy, positivity",
+          "age_appropriate": "3-12"
+        },
+        {
+          "id": "moon",
+          "name": "Moon",
+          "emoji": "🌙",
+          "therapeutic_value": "Calm, rest, reflection",
+          "age_appropriate": "3-12"
+        }
+      ]
+    }
+  },
+  "placement_zones": [
+    {
+      "name": "Top Left",
+      "x": 20,
+      "y": 20,
+      "description": "Upper left corner of content area"
+    },
+    {
+      "name": "Top Right",
+      "x": 80,
+      "y": 20,
+      "description": "Upper right corner of content area"
+    },
+    {
+      "name": "Bottom Left",
+      "x": 20,
+      "y": 80,
+      "description": "Lower left corner of content area"
+    },
+    {
+      "name": "Bottom Right",
+      "x": 80,
+      "y": 80,
+      "description": "Lower right corner of content area"
+    }
+  ],
+  "responsive_sizes": {
+    "mobile": {
+      "min": 50,
+      "max": 80,
+      "description": "Mobile devices (320px - 640px)"
+    },
+    "tablet": {
+      "min": 80,
+      "max": 100,
+      "description": "Tablet devices (641px - 1024px)"
+    },
+    "desktop": {
+      "min": 100,
+      "max": 120,
+      "description": "Desktop devices (1025px+)"
+    }
+  },
+  "accessibility": {
+    "aria_hidden": true,
+    "role": "presentation",
+    "description": "Decorative stickers for visual engagement"
+  }
+}

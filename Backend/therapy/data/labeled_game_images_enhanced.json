@@ -1,0 +1,1508 @@
+{
+  "version": 3,
+  "description": "Curated labels and metadata for DHYAN games. No emoji in UI; images from Lorem Flickr with object tags for accurate photos. [AI Enhanced]",
+  "memory_match": [
+    {
+      "name": "Apple",
+      "label": "apple",
+      "category": "food",
+      "color": [
+        255,
+        100,
+        100
+      ],
+      "loremflickr_tags": [
+        "apple",
+        "fruit"
+      ],
+      "commons_file": "Red_Apple.jpg",
+      "metadata": {
+        "description": "Fruit: apple",
+        "ai_description": "A yummy, red fruit that grows on trees.",
+        "ai_search_terms": [
+          "red fruit",
+          "juicy apple",
+          "autumn fruit"
+        ],
+        "therapy_context": "The item 'apple' is beneficial for speech therapy as it helps children practice the 'a' sound and introduces them to basic vocabulary related to food and nature.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/apple?lock=1",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?red,fruit,juicy,apple"
+    },
+    {
+      "name": "Banana",
+      "label": "banana",
+      "category": "food",
+      "color": [
+        255,
+        255,
+        100
+      ],
+      "loremflickr_tags": [
+        "banana",
+        "fruit"
+      ],
+      "commons_file": "Banana-Single.jpg",
+      "metadata": {
+        "description": "Fruit: banana",
+        "ai_description": "A banana is a yummy, yellow fruit that grows on trees.",
+        "ai_search_terms": [
+          "yellow fruit",
+          "curvy fruit",
+          "monkey food"
+        ],
+        "therapy_context": "The banana item is useful for therapy because it can help children practice the 'b' sound, learn about food categories, and develop vocabulary related to everyday objects.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/banana?lock=2",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?yellow,fruit,curvy,fruit"
+    },
+    {
+      "name": "Cat",
+      "label": "cat",
+      "category": "animal",
+      "color": [
+        255,
+        180,
+        100
+      ],
+      "loremflickr_tags": [
+        "cat",
+        "kitten"
+      ],
+      "commons_file": "Cat03.jpg",
+      "metadata": {
+        "description": "Animal: domestic cat",
+        "ai_description": "The cat is a furry animal that says meow.",
+        "ai_search_terms": [
+          "domestic cat",
+          "kitty",
+          "feline",
+          "pet cat"
+        ],
+        "therapy_context": "The cat item is useful for speech therapy as it can help children practice the 'c' and 't' sounds, and also encourage vocabulary development by discussing the cat's characteristics, such as its fur, whiskers, and meowing sound.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/cat?lock=3",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?domestic,cat,kitty"
+    },
+    {
+      "name": "Dog",
+      "label": "dog",
+      "category": "animal",
+      "color": [
+        200,
+        150,
+        100
+      ],
+      "loremflickr_tags": [
+        "dog",
+        "puppy"
+      ],
+      "commons_file": "YellowLabradorLooking_new.jpg",
+      "metadata": {
+        "description": "Animal: dog",
+        "ai_description": "The dog is a friendly animal that wags its tail and barks loudly.",
+        "ai_search_terms": [
+          "cute dog",
+          "dog picture",
+          "pet dog",
+          "dog cartoon"
+        ],
+        "therapy_context": "The dog item is useful for therapy because it can help children practice animal sounds, such as barking, and work on vocabulary related to pets and animals, which is a common and relatable topic for kids.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/dog?lock=4",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?cute,dog,dog,picture"
+    },
+    {
+      "name": "Car",
+      "label": "car",
+      "category": "vehicle",
+      "color": [
+        100,
+        150,
+        255
+      ],
+      "loremflickr_tags": [
+        "car",
+        "automobile"
+      ],
+      "metadata": {
+        "description": "Vehicle: passenger car",
+        "ai_description": "A car is a fun vehicle that takes us places.",
+        "ai_search_terms": [
+          "toy car",
+          "red car",
+          "car picture"
+        ],
+        "therapy_context": "The car item is good for therapy because it can help children practice vocabulary and sentence formation related to transportation and everyday life, while also encouraging imaginative play and storytelling.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/car?lock=5",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?toy,car,red,car"
+    },
+    {
+      "name": "Ball",
+      "label": "soccer_ball",
+      "category": "toy",
+      "color": [
+        100,
+        255,
+        100
+      ],
+      "loremflickr_tags": [
+        "soccer",
+        "ball"
+      ],
+      "metadata": {
+        "description": "Toy: ball",
+        "ai_description": "A ball is a fun toy that bounces and rolls.",
+        "ai_search_terms": [
+          "bouncing ball",
+          "colorful ball",
+          "child playing ball"
+        ],
+        "therapy_context": "The ball is a great tool for speech therapy because it can be used to practice vocabulary related to actions like throwing, catching, and rolling, as well as to work on turn-taking and social skills during interactive games.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/soccer_ball?lock=6",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?bouncing,ball,colorful,ball"
+    },
+    {
+      "name": "Flower",
+      "label": "flower",
+      "category": "nature",
+      "color": [
+        255,
+        150,
+        200
+      ],
+      "loremflickr_tags": [
+        "flower",
+        "bloom"
+      ],
+      "metadata": {
+        "description": "Nature: flower",
+        "ai_description": "A flower is a pretty thing that grows in the ground and smells nice.",
+        "ai_search_terms": [
+          "colorful flower",
+          "flower in garden",
+          "simple flower picture"
+        ],
+        "therapy_context": "The flower item is useful in child speech therapy as it can help children practice vocabulary related to nature and encourage conversation about colors, smells, and growth, which can aid in developing their descriptive language skills.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/flower?lock=11",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?colorful,flower,flower,in,garden"
+    },
+    {
+      "name": "Tree",
+      "label": "tree",
+      "category": "nature",
+      "color": [
+        100,
+        200,
+        100
+      ],
+      "loremflickr_tags": [
+        "tree",
+        "forest"
+      ],
+      "metadata": {
+        "description": "Nature: tree",
+        "ai_description": "A tree is a big plant with a trunk, branches, and leaves that grows in the ground.",
+        "ai_search_terms": [
+          "oak tree",
+          "pine tree",
+          "tree with apples",
+          "big tree"
+        ],
+        "therapy_context": "The tree item is good for therapy because it can help children practice vocabulary related to nature, describe its parts, and use verbs like 'grows' and 'sways' to improve their language skills.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/tree?lock=10",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?oak,tree,pine,tree"
+    },
+    {
+      "name": "House",
+      "label": "house",
+      "category": "building",
+      "color": [
+        200,
+        150,
+        150
+      ],
+      "loremflickr_tags": [
+        "house",
+        "house"
+      ],
+      "commons_file": "House.jpg",
+      "metadata": {
+        "description": "Building: house",
+        "ai_description": "A house is a place where people live.",
+        "ai_search_terms": [
+          "home",
+          "residence",
+          "building",
+          "dwelling"
+        ],
+        "therapy_context": "The house item is useful in speech therapy as it can be used to target vocabulary related to everyday life, encourage storytelling and sequencing skills, and help children describe familiar objects and scenes.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/house?lock=13",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?home,residence"
+    },
+    {
+      "name": "Sun",
+      "label": "sun",
+      "category": "nature",
+      "color": [
+        255,
+        220,
+        100
+      ],
+      "loremflickr_tags": [
+        "sun",
+        "sky"
+      ],
+      "metadata": {
+        "description": "Nature: sun",
+        "ai_description": "The sun is a big, bright ball in the sky that gives us warmth and light.",
+        "ai_search_terms": [
+          "sun icon",
+          "sun cartoon",
+          "sunny day",
+          "sun symbol"
+        ],
+        "therapy_context": "The sun item is beneficial for child speech therapy as it can be used to target vocabulary related to nature, weather, and basic concepts, while also encouraging conversation and storytelling about daily experiences and routines.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/sun?lock=12",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?sun,icon,sun,cartoon"
+    },
+    {
+      "name": "Moon",
+      "label": "moon",
+      "category": "nature",
+      "color": [
+        150,
+        150,
+        200
+      ],
+      "loremflickr_tags": [
+        "moon",
+        "night"
+      ],
+      "metadata": {
+        "description": "Nature: moon",
+        "ai_description": "The moon is a big rock that shines in the sky at night.",
+        "ai_search_terms": [
+          "full moon",
+          "crescent moon",
+          "moon phases",
+          "lunar surface"
+        ],
+        "therapy_context": "The moon is a great item for speech therapy because it can be used to practice vocabulary related to space, astronomy, and the environment, as well as to work on descriptive language skills and storytelling abilities.",
+        "difficulty_level": "intermediate"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/moon?lock=14",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?full,moon,crescent,moon"
+    },
+    {
+      "name": "Heart",
+      "label": "heart",
+      "category": "shape",
+      "color": [
+        255,
+        100,
+        150
+      ],
+      "loremflickr_tags": [
+        "heart-shape",
+        "valentine"
+      ],
+      "metadata": {
+        "description": "Shape: heart",
+        "ai_description": "A heart is a special shape that looks like the one that beats in our chest.",
+        "ai_search_terms": [
+          "heart symbol",
+          "valentine heart",
+          "red heart shape"
+        ],
+        "therapy_context": "The heart shape is useful in speech therapy for teaching vocabulary, following directions, and describing shapes, which helps children develop their language skills and hand-eye coordination.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/heart?lock=23",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?heart,symbol,valentine,heart"
+    },
+    {
+      "name": "Star",
+      "label": "star",
+      "category": "shape",
+      "color": [
+        255,
+        220,
+        150
+      ],
+      "loremflickr_tags": [
+        "star-shape",
+        "geometric"
+      ],
+      "metadata": {
+        "description": "Nature: star",
+        "ai_description": "A star is a special shape with points that twinkles in the sky at night.",
+        "ai_search_terms": [
+          "star shape",
+          "five point star",
+          "yellow star"
+        ],
+        "therapy_context": "The star shape is a good item for therapy because it helps children practice the /s/ and /t/ sounds, and can be used to target vocabulary and following directions skills.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/star?lock=15",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?star,shape,five,point,star"
+    },
+    {
+      "name": "Fish",
+      "label": "fish",
+      "category": "animal",
+      "color": [
+        100,
+        200,
+        255
+      ],
+      "loremflickr_tags": [
+        "tropical-fish",
+        "aquarium"
+      ],
+      "metadata": {
+        "description": "Animal: fish",
+        "ai_description": "The fish is a colorful animal that lives in the water.",
+        "ai_search_terms": [
+          "goldfish",
+          "ocean fish",
+          "tropical fish",
+          "fish aquarium"
+        ],
+        "therapy_context": "The fish item is good for therapy because it can help children practice articulation of the 'f' and 'sh' sounds, and expand their vocabulary related to animals and their habitats.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/fish?lock=16",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?goldfish,ocean,fish"
+    },
+    {
+      "name": "Bird",
+      "label": "bird",
+      "category": "animal",
+      "color": [
+        255,
+        200,
+        100
+      ],
+      "loremflickr_tags": [
+        "bird",
+        "wildlife"
+      ],
+      "metadata": {
+        "description": "Animal: bird",
+        "ai_description": "The bird is a pretty animal that can fly high in the sky.",
+        "ai_search_terms": [
+          "flying bird",
+          "colorful bird",
+          "bird in tree",
+          "happy bird"
+        ],
+        "therapy_context": "The bird item is beneficial for speech therapy as it can help children practice vocabulary related to animals, describe its characteristics, and use verbs like 'fly' to improve their sentence structure and communication skills.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/bird?lock=17",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?flying,bird,colorful,bird"
+    },
+    {
+      "name": "Book",
+      "label": "book",
+      "category": "object",
+      "color": [
+        150,
+        100,
+        50
+      ],
+      "loremflickr_tags": [
+        "book",
+        "reading"
+      ],
+      "metadata": {
+        "description": "Object: book",
+        "ai_description": "A book is something we read to learn new things and have fun.",
+        "ai_search_terms": [
+          "picture book",
+          "storybook",
+          "childrens book",
+          "reading book"
+        ],
+        "therapy_context": "Using a book in therapy helps children practice language skills like reading, vocabulary, and storytelling, which are essential for communication and social development.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/book?lock=7",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?picture,book,storybook"
+    },
+    {
+      "name": "Clock",
+      "label": "clock",
+      "category": "object",
+      "color": [
+        200,
+        200,
+        200
+      ],
+      "loremflickr_tags": [
+        "clock",
+        "time"
+      ],
+      "metadata": {
+        "description": "Object: clock",
+        "ai_description": "A clock is a thing that shows us the time.",
+        "ai_search_terms": [
+          "analog clock",
+          "kid's clock",
+          "wall clock",
+          "clock face"
+        ],
+        "therapy_context": "The clock is a useful item in speech therapy as it helps children learn about time concepts, sequencing, and vocabulary related to daily routines and schedules.",
+        "difficulty_level": "intermediate"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/clock?lock=18",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?analog,clock,kid's,clock"
+    }
+  ],
+  "object_discovery": [
+    {
+      "name": "Chair",
+      "label": "chair",
+      "category": "furniture",
+      "color": [
+        139,
+        90,
+        43
+      ],
+      "loremflickr_tags": [
+        "chair",
+        "furniture"
+      ],
+      "commons_file": "Wooden_chair.jpg",
+      "metadata": {
+        "description": "Furniture: chair",
+        "ai_description": "A chair is a piece of furniture where you can sit.",
+        "ai_search_terms": [
+          "kids chair",
+          "living room chair",
+          "wooden chair",
+          "plastic chair"
+        ],
+        "therapy_context": "The chair is a common object that can help children practice vocabulary and sentence formation, such as 'I am sitting in a chair' or 'The chair is under the table'.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/chair?lock=8",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?kids,chair,living,room,chair"
+    },
+    {
+      "name": "Table",
+      "label": "table",
+      "category": "furniture",
+      "color": [
+        160,
+        120,
+        80
+      ],
+      "loremflickr_tags": [
+        "table",
+        "furniture"
+      ],
+      "commons_file": "Dining_table.jpg",
+      "metadata": {
+        "description": "Furniture: table",
+        "ai_description": "A table is a piece of furniture where we can sit and play.",
+        "ai_search_terms": [
+          "kid's table",
+          "wooden table",
+          "small table",
+          "children's furniture"
+        ],
+        "therapy_context": "The table is a great item for therapy because it can be used to practice vocabulary related to furniture and everyday objects, and to work on sentence structure and storytelling skills through pretend play.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/table?lock=9",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?kid's,table,wooden,table"
+    },
+    {
+      "name": "Bed",
+      "label": "bed",
+      "category": "furniture",
+      "color": [
+        100,
+        150,
+        200
+      ],
+      "loremflickr_tags": [
+        "bed",
+        "bedroom"
+      ],
+      "commons_file": "Bed.jpg",
+      "metadata": {
+        "description": "Furniture: bed",
+        "ai_description": "A bed is a piece of furniture where you sleep at night.",
+        "ai_search_terms": [
+          "kids bed",
+          "toddler bed",
+          "bedroom furniture",
+          "place to sleep"
+        ],
+        "therapy_context": "The bed item is useful for therapy because it helps children practice vocabulary related to daily routines and home environments, and can be used to target goals such as naming objects, following directions, and answering questions.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/bed?lock=19",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?kids,bed,toddler,bed"
+    },
+    {
+      "name": "Phone",
+      "label": "phone",
+      "category": "electronics",
+      "color": [
+        50,
+        50,
+        50
+      ],
+      "loremflickr_tags": [
+        "phone",
+        "smartphone"
+      ],
+      "commons_file": "Smartphone.jpg",
+      "metadata": {
+        "description": "Electronics: phone",
+        "ai_description": "A phone is a device we use to talk to our friends and family who are far away.",
+        "ai_search_terms": [
+          "mobile phone",
+          "cell phone",
+          "telephone",
+          "smartphone"
+        ],
+        "therapy_context": "The phone is a great item for speech therapy because it can help children practice vocabulary related to communication, such as making calls, sending messages, and talking to others.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/phone?lock=20",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?mobile,phone,cell,phone"
+    },
+    {
+      "name": "Computer",
+      "label": "computer",
+      "category": "electronics",
+      "color": [
+        80,
+        80,
+        80
+      ],
+      "loremflickr_tags": [
+        "laptop",
+        "computer"
+      ],
+      "commons_file": "Laptop.jpg",
+      "metadata": {
+        "description": "Electronics: computer",
+        "ai_description": "A computer is a machine that can play games and show pictures.",
+        "ai_search_terms": [
+          "laptop",
+          "desktop",
+          "pc",
+          "screen"
+        ],
+        "therapy_context": "The computer is a great item for therapy because it can be used to practice vocabulary related to technology and electronics, as well as to work on descriptive language skills by talking about its different parts and functions.",
+        "difficulty_level": "intermediate"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/computer?lock=21",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?laptop,desktop"
+    },
+    {
+      "name": "Shoe",
+      "label": "shoe",
+      "category": "clothing",
+      "color": [
+        200,
+        100,
+        100
+      ],
+      "loremflickr_tags": [
+        "shoe",
+        "sneakers"
+      ],
+      "commons_file": "Sneakers.jpg",
+      "metadata": {
+        "description": "Clothing: shoe",
+        "ai_description": "A shoe is something you wear on your foot.",
+        "ai_search_terms": [
+          "kid's shoe",
+          "sneaker",
+          "footwear",
+          "boot"
+        ],
+        "therapy_context": "The shoe item is useful in therapy for teaching vocabulary related to clothing and everyday objects, and can be used in activities to practice sentence formation and descriptive language skills.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/shoe?lock=22",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?kid's,shoe,sneaker"
+    },
+    {
+      "name": "Shirt",
+      "label": "shirt",
+      "category": "clothing",
+      "color": [
+        100,
+        150,
+        255
+      ],
+      "loremflickr_tags": [
+        "shirt",
+        "clothing"
+      ],
+      "metadata": {
+        "description": "Clothing: shirt",
+        "ai_description": "A shirt is something we wear on our body to keep warm and look nice.",
+        "ai_search_terms": [
+          "t-shirt",
+          "kids shirt",
+          "boy wearing shirt",
+          "girl wearing shirt"
+        ],
+        "therapy_context": "The item 'shirt' is useful in speech therapy as it can be used to practice vocabulary related to clothing, and to work on descriptive language skills such as identifying colors, sizes, and styles.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/shirt?lock=23",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?t-shirt,kids,shirt"
+    },
+    {
+      "name": "Hat",
+      "label": "hat",
+      "category": "clothing",
+      "color": [
+        50,
+        50,
+        50
+      ],
+      "loremflickr_tags": [
+        "hat",
+        "cap"
+      ],
+      "commons_file": "Baseball_cap.jpg",
+      "metadata": {
+        "description": "Clothing: hat",
+        "ai_description": "A hat is something you wear on your head to keep you warm or protect you from the sun.",
+        "ai_search_terms": [
+          "kid wearing hat",
+          "colorful hat",
+          "baseball cap"
+        ],
+        "therapy_context": "The item 'hat' is useful for speech therapy because it can be used to practice vocabulary related to clothing, and to work on descriptive language skills such as describing the color, shape, or size of the hat.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/hat?lock=24",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?kid,wearing,hat,colorful,hat"
+    },
+    {
+      "name": "Cup",
+      "label": "cup",
+      "category": "kitchen",
+      "color": [
+        255,
+        255,
+        240
+      ],
+      "loremflickr_tags": [
+        "cup",
+        "mug"
+      ],
+      "commons_file": "Coffee_cup.jpg",
+      "metadata": {
+        "description": "Kitchen: cup",
+        "ai_description": "A cup is something we use to drink water or juice.",
+        "ai_search_terms": [
+          "plastic cup",
+          "child drinking cup",
+          "colorful cup"
+        ],
+        "therapy_context": "The cup is a familiar object that can help children practice vocabulary and sentence construction, such as 'I drink from a cup' or 'The cup is red'.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/cup?lock=25",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?plastic,cup,child,drinking,cup"
+    },
+    {
+      "name": "Plate",
+      "label": "plate",
+      "category": "kitchen",
+      "color": [
+        255,
+        255,
+        255
+      ],
+      "loremflickr_tags": [
+        "plate",
+        "dish"
+      ],
+      "commons_file": "Dinner_plate.jpg",
+      "metadata": {
+        "description": "Kitchen: plate",
+        "ai_description": "A plate is what we eat food from.",
+        "ai_search_terms": [
+          "ceramic plate",
+          "kid's plate",
+          "dinner plate"
+        ],
+        "therapy_context": "The plate is a common kitchen item that can help children practice vocabulary and sentence structure related to mealtime and daily routines, promoting language development and communication skills.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/plate?lock=26",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?ceramic,plate,kid's,plate"
+    },
+    {
+      "name": "Spoon",
+      "label": "spoon",
+      "category": "kitchen",
+      "color": [
+        200,
+        200,
+        200
+      ],
+      "loremflickr_tags": [
+        "spoon",
+        "silverware"
+      ],
+      "commons_file": "Spoon.jpg",
+      "metadata": {
+        "description": "Kitchen: spoon",
+        "ai_description": "A spoon is a tool we use to eat yummy food like cereal and soup.",
+        "ai_search_terms": [
+          "kitchen spoon",
+          "eating utensil",
+          "silverware",
+          "table spoon"
+        ],
+        "therapy_context": "The spoon is a familiar object that can help children practice vocabulary and articulation skills, such as saying the 'sp' sound, and can also be used in role-playing activities to target social skills and following directions.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/spoon?lock=27",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?kitchen,spoon,eating,utensil"
+    },
+    {
+      "name": "Bottle",
+      "label": "bottle",
+      "category": "kitchen",
+      "color": [
+        150,
+        220,
+        255
+      ],
+      "loremflickr_tags": [
+        "bottle",
+        "water"
+      ],
+      "commons_file": "Water_bottle.jpg",
+      "metadata": {
+        "description": "Kitchen: bottle",
+        "ai_description": "A bottle is a container where we keep our favorite drinks.",
+        "ai_search_terms": [
+          "plastic bottle",
+          "water bottle",
+          "juice bottle",
+          "soda bottle"
+        ],
+        "therapy_context": "The bottle item is useful in therapy for teaching vocabulary related to everyday objects and actions, such as drinking, and can help children practice pronunciation of the 'b' sound.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/bottle?lock=28",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?plastic,bottle,water,bottle"
+    },
+    {
+      "name": "Bag",
+      "label": "bag",
+      "category": "accessory",
+      "color": [
+        255,
+        100,
+        100
+      ],
+      "loremflickr_tags": [
+        "backpack",
+        "bag"
+      ],
+      "commons_file": "Backpack.jpg",
+      "metadata": {
+        "description": "Accessory: bag",
+        "ai_description": "A bag is something you can carry your things in.",
+        "ai_search_terms": [
+          "backpack",
+          "luggage",
+          "purse",
+          "tote"
+        ],
+        "therapy_context": "The bag item can help children practice vocabulary related to everyday objects, categorization skills by sorting items into the bag, and expressive language by describing what is inside the bag.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/bag?lock=29",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?backpack,luggage"
+    },
+    {
+      "name": "Key",
+      "label": "key",
+      "category": "object",
+      "color": [
+        255,
+        215,
+        0
+      ],
+      "loremflickr_tags": [
+        "key",
+        "keys"
+      ],
+      "commons_file": "Key.jpg",
+      "metadata": {
+        "description": "Object: key",
+        "ai_description": "A key is used to unlock doors and start cars.",
+        "ai_search_terms": [
+          "house key",
+          "car key",
+          "door key",
+          "metal key"
+        ],
+        "therapy_context": "The key is a common object that can help children practice vocabulary, articulation, and problem-solving skills, such as describing its function, shape, and size, and using it in role-playing activities.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/key?lock=30",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?house,key,car,key"
+    },
+    {
+      "name": "Umbrella",
+      "label": "umbrella",
+      "category": "object",
+      "color": [
+        255,
+        100,
+        150
+      ],
+      "loremflickr_tags": [
+        "umbrella",
+        "rain"
+      ],
+      "metadata": {
+        "description": "Object: umbrella",
+        "ai_description": "An umbrella is something we use to keep us dry in the rain.",
+        "ai_search_terms": [
+          "rain umbrella",
+          "kid holding umbrella",
+          "colorful umbrella"
+        ],
+        "therapy_context": "The umbrella is a great object for therapy because it can help children practice vocabulary and sentence structure related to weather, outdoor activities, and everyday objects.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/umbrella?lock=31",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?rain,umbrella,kid,holding,umbrella"
+    }
+  ],
+  "scene_description": [
+    {
+      "title": "Birthday Party",
+      "label": "birthday_party",
+      "level": 1,
+      "color": [
+        255,
+        200,
+        220
+      ],
+      "expected": "A birthday party with children, balloons, a cake with candles, decorations, and presents",
+      "elements": [
+        "birthday",
+        "party",
+        "children",
+        "balloons",
+        "cake",
+        "candles",
+        "presents",
+        "decorations"
+      ],
+      "loremflickr_tags": [
+        "birthday",
+        "party",
+        "cake"
+      ],
+      "metadata": {
+        "tags": [
+          "celebration",
+          "social",
+          "party"
+        ],
+        "description": "Scene: birthday celebration",
+        "ai_description": "A fun celebration with friends, cake, and gifts to mark a special day.",
+        "ai_search_terms": [
+          "kid's birthday party",
+          "party hats and balloons",
+          "cake with candles"
+        ],
+        "therapy_context": "This item is beneficial for speech therapy as it can stimulate conversations about social events, emotions, and relationships, while also promoting vocabulary expansion and storytelling skills.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/birthday_party?lock=40",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?kid's,birthday,party,party,hats,and,balloons"
+    },
+    {
+      "title": "Zoo Visit",
+      "label": "zoo",
+      "level": 1,
+      "color": [
+        150,
+        200,
+        150
+      ],
+      "expected": "A zoo with various animals like elephants, lions, monkeys in enclosures, and visitors watching",
+      "elements": [
+        "zoo",
+        "animals",
+        "elephants",
+        "lions",
+        "monkeys",
+        "visitors",
+        "enclosures"
+      ],
+      "loremflickr_tags": [
+        "zoo",
+        "animals"
+      ],
+      "metadata": {
+        "tags": [
+          "animals",
+          "outdoor",
+          "educational"
+        ],
+        "description": "Scene: zoo",
+        "ai_description": "Let's go to the zoo and see all the fun animals!",
+        "ai_search_terms": [
+          "zoo animals for kids",
+          "children at zoo",
+          "fun zoo trip"
+        ],
+        "therapy_context": "The zoo visit item is beneficial for speech therapy as it encourages children to practice vocabulary related to animals, their sounds, and habitats, while also promoting storytelling and sequencing skills.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/zoo?lock=41",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?zoo,animals,for,kids,children,at,zoo"
+    },
+    {
+      "title": "Supermarket",
+      "label": "supermarket",
+      "level": 2,
+      "color": [
+        255,
+        220,
+        180
+      ],
+      "expected": "A supermarket with aisles of products, shopping carts, checkout counters, and people buying groceries",
+      "elements": [
+        "supermarket",
+        "aisles",
+        "products",
+        "shopping",
+        "carts",
+        "checkout",
+        "people"
+      ],
+      "loremflickr_tags": [
+        "supermarket",
+        "grocery"
+      ],
+      "metadata": {
+        "tags": [
+          "shopping",
+          "daily_life",
+          "food"
+        ],
+        "description": "Scene: supermarket",
+        "ai_description": "A supermarket is a big store where we buy food and toys.",
+        "ai_search_terms": [
+          "grocery store",
+          "market",
+          "shopping store",
+          "food store"
+        ],
+        "therapy_context": "The supermarket item is good for therapy because it can help children practice vocabulary related to everyday life, such as food, shopping, and community helpers, which can improve their communication skills and ability to describe familiar places and activities.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/supermarket?lock=42",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?grocery,store,market"
+    },
+    {
+      "title": "Doctor Office",
+      "label": "doctor_office",
+      "level": 2,
+      "color": [
+        200,
+        220,
+        255
+      ],
+      "expected": "A doctor's office with a patient on a bed, doctor with stethoscope, medical equipment, and waiting area",
+      "elements": [
+        "doctor",
+        "patient",
+        "medical",
+        "stethoscope",
+        "equipment",
+        "office",
+        "health"
+      ],
+      "loremflickr_tags": [
+        "doctor",
+        "hospital"
+      ],
+      "metadata": {
+        "tags": [
+          "health",
+          "profession",
+          "indoor"
+        ],
+        "description": "Scene: medical office",
+        "ai_description": "A place where doctors help people feel better.",
+        "ai_search_terms": [
+          "pediatrician office",
+          "medical clinic",
+          "nurse station",
+          "hospital room"
+        ],
+        "therapy_context": "The Doctor Office item is beneficial for speech therapy as it can be used to target vocabulary related to health and wellness, as well as to practice role-playing and social skills, such as making appointments, describing symptoms, and following doctor's instructions.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/doctor_office?lock=43",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?pediatrician,office,medical,clinic"
+    },
+    {
+      "title": "Farm Life",
+      "label": "farm",
+      "level": 2,
+      "color": [
+        180,
+        220,
+        150
+      ],
+      "expected": "A farm with barn, tractor, farm animals like cows, chickens, horses, and farmers working",
+      "elements": [
+        "farm",
+        "barn",
+        "tractor",
+        "animals",
+        "cows",
+        "chickens",
+        "horses",
+        "farmers"
+      ],
+      "loremflickr_tags": [
+        "farm",
+        "barn"
+      ],
+      "metadata": {
+        "tags": [
+          "rural",
+          "animals",
+          "work"
+        ],
+        "description": "Scene: farm",
+        "ai_description": "A fun place where animals live and people grow food.",
+        "ai_search_terms": [
+          "rural scenery",
+          "farm animals",
+          "country landscape",
+          "barnyard"
+        ],
+        "therapy_context": "Farm Life is a great item for therapy because it can help children practice vocabulary related to animals, food, and rural life, while also encouraging storytelling and descriptive language skills.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/farm?lock=44",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?rural,scenery,farm,animals"
+    },
+    {
+      "title": "City Traffic",
+      "label": "city_traffic",
+      "level": 3,
+      "color": [
+        180,
+        180,
+        200
+      ],
+      "expected": "A busy city street with cars, buses, traffic lights, pedestrians crossing, buildings, and shops",
+      "elements": [
+        "city",
+        "traffic",
+        "cars",
+        "buses",
+        "pedestrians",
+        "buildings",
+        "shops",
+        "street"
+      ],
+      "loremflickr_tags": [
+        "city",
+        "traffic"
+      ],
+      "metadata": {
+        "tags": [
+          "urban",
+          "transport",
+          "busy"
+        ],
+        "description": "Scene: urban traffic",
+        "ai_description": "This is a busy city with lots of cars, buses, and trucks moving around.",
+        "ai_search_terms": [
+          "city street",
+          "traffic lights",
+          "cars and buses",
+          "urban traffic scene"
+        ],
+        "therapy_context": "The City Traffic item is useful for therapy because it can help children practice vocabulary related to transportation, describe scenes, and work on sequencing events, all while engaging with a familiar and interesting topic.",
+        "difficulty_level": "intermediate"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/city_traffic?lock=45",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?city,street,traffic,lights"
+    },
+    {
+      "title": "Sports Day",
+      "label": "sports_day",
+      "level": 3,
+      "color": [
+        255,
+        200,
+        150
+      ],
+      "expected": "A sports day event with children running races, jumping, throwing balls, trophies, and cheering crowd",
+      "elements": [
+        "sports",
+        "running",
+        "races",
+        "jumping",
+        "trophies",
+        "competition",
+        "children"
+      ],
+      "loremflickr_tags": [
+        "sports",
+        "running"
+      ],
+      "metadata": {
+        "tags": [
+          "sports",
+          "competition",
+          "outdoor"
+        ],
+        "description": "Scene: sports event",
+        "ai_description": "Sports Day is a fun event where kids play games and run around with friends.",
+        "ai_search_terms": [
+          "kids playing soccer",
+          "school sports event",
+          "children running track"
+        ],
+        "therapy_context": "This item is helpful for therapy because it encourages kids to talk about their favorite sports, teams, or athletes, and can stimulate conversations about teamwork, winning, and losing.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/sports_day?lock=46",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?kids,playing,soccer,school,sports,event"
+    },
+    {
+      "title": "Construction Site",
+      "label": "construction",
+      "level": 3,
+      "color": [
+        220,
+        180,
+        150
+      ],
+      "expected": "A construction site with workers, cranes, cement mixers, hard hats, building materials, and safety equipment",
+      "elements": [
+        "construction",
+        "workers",
+        "cranes",
+        "building",
+        "machinery",
+        "safety",
+        "work"
+      ],
+      "loremflickr_tags": [
+        "construction",
+        "crane"
+      ],
+      "metadata": {
+        "tags": [
+          "work",
+          "building",
+          "machinery"
+        ],
+        "description": "Scene: construction",
+        "ai_description": "A construction site is where big machines build houses and roads.",
+        "ai_search_terms": [
+          "building site",
+          "worksite",
+          "road construction",
+          "digging machines"
+        ],
+        "therapy_context": "The construction site item can help children develop vocabulary related to occupations, vehicles, and community places, which is essential for improving their communication skills and ability to describe everyday scenes.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/construction",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?building,site,worksite"
+    }
+  ],
+  "problem_solving": [
+    {
+      "title": "Rainy Day",
+      "label": "rainy_day",
+      "level": 1,
+      "color": [
+        150,
+        180,
+        220
+      ],
+      "question": "It's raining and you need to go outside. What do you take?",
+      "answer": "umbrella",
+      "options": [
+        "umbrella",
+        "sunscreen",
+        "sunglasses",
+        "fan"
+      ],
+      "hint": "It keeps you dry when water falls from the sky",
+      "tags": [
+        "weather",
+        "daily_life",
+        "choice"
+      ],
+      "loremflickr_tags": [
+        "rain",
+        "umbrella"
+      ],
+      "metadata": {
+        "description": "Scenario: rain / umbrella",
+        "ai_description": "Rainy Day is a fun time when you stay inside and play while the rain falls outside.",
+        "ai_search_terms": [
+          "rainy weather",
+          "umbrella",
+          "raindrops"
+        ],
+        "therapy_context": "The Rainy Day item helps children in speech therapy by encouraging them to describe weather, talk about their favorite indoor activities, and practice vocabulary related to rain and water.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/rainy_day",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?rainy,weather,umbrella"
+    },
+    {
+      "title": "Hungry Puppy",
+      "label": "hungry_puppy",
+      "level": 1,
+      "color": [
+        255,
+        220,
+        180
+      ],
+      "question": "The puppy is hungry. What should you give it?",
+      "answer": "dog food",
+      "options": [
+        "dog food",
+        "chocolate",
+        "candy",
+        "soap"
+      ],
+      "hint": "Animals need special food made for them",
+      "tags": [
+        "animals",
+        "care",
+        "safety"
+      ],
+      "loremflickr_tags": [
+        "puppy",
+        "dog"
+      ],
+      "metadata": {
+        "description": "Scenario: feeding a dog",
+        "ai_description": "The hungry puppy needs food to eat.",
+        "ai_search_terms": [
+          "cute puppy",
+          "puppy eating",
+          "dog food"
+        ],
+        "therapy_context": "The Hungry Puppy game item is useful for therapy as it can help children practice vocabulary related to animals, food, and basic needs, while also encouraging imaginative play and storytelling skills.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/hungry_puppy",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?cute,puppy,puppy,eating"
+    },
+    {
+      "title": "Cold Weather",
+      "label": "cold_weather",
+      "level": 2,
+      "color": [
+        200,
+        220,
+        255
+      ],
+      "question": "It's very cold outside. What should you wear?",
+      "answer": "warm jacket",
+      "options": [
+        "warm jacket",
+        "swimsuit",
+        "shorts",
+        "t-shirt"
+      ],
+      "hint": "You need thick clothes to stay warm",
+      "tags": [
+        "weather",
+        "clothing",
+        "safety"
+      ],
+      "loremflickr_tags": [
+        "winter",
+        "snow"
+      ],
+      "metadata": {
+        "description": "Scenario: cold weather",
+        "ai_description": "Cold weather is when it is chilly or snowy outside.",
+        "ai_search_terms": [
+          "winter",
+          "snowflakes",
+          "frosty morning",
+          "ice skates"
+        ],
+        "therapy_context": "The item 'Cold Weather' is beneficial for speech therapy as it can stimulate conversations about seasonal changes, clothing, and activities, helping children develop their vocabulary and sentence structure.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/cold_weather",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?winter,snowflakes"
+    },
+    {
+      "title": "Broken Toy",
+      "label": "broken_toy",
+      "level": 2,
+      "color": [
+        255,
+        200,
+        200
+      ],
+      "question": "Your toy is broken. What should you do?",
+      "answer": "ask adult for help",
+      "options": [
+        "ask adult for help",
+        "throw it away",
+        "hide it",
+        "buy new one"
+      ],
+      "hint": "Grown-ups can help fix things",
+      "tags": [
+        "problem_solving",
+        "help",
+        "responsibility"
+      ],
+      "loremflickr_tags": [
+        "toy",
+        "child"
+      ],
+      "metadata": {
+        "description": "Scenario: broken toy",
+        "ai_description": "A broken toy is a toy that is no longer working and needs to be fixed.",
+        "ai_search_terms": [
+          "broken doll",
+          "toy repair",
+          "damaged toy car"
+        ],
+        "therapy_context": "The broken toy item can help children in speech therapy practice vocabulary related to everyday objects, actions, and problem-solving, while also encouraging storytelling and descriptive language skills.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/broken_toy",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?broken,doll,toy,repair"
+    },
+    {
+      "title": "Lost in Store",
+      "label": "lost_in_store",
+      "level": 3,
+      "color": [
+        255,
+        220,
+        200
+      ],
+      "question": "You can't find your parents in a store. What should you do?",
+      "answer": "tell store worker",
+      "options": [
+        "tell store worker",
+        "leave the store",
+        "cry quietly",
+        "ask stranger"
+      ],
+      "hint": "Store employees wear uniforms and can help",
+      "tags": [
+        "safety",
+        "emergency",
+        "social"
+      ],
+      "loremflickr_tags": [
+        "supermarket",
+        "shopping"
+      ],
+      "metadata": {
+        "description": "Scenario: lost in store",
+        "ai_description": "A boy is looking for his mom in a big store.",
+        "ai_search_terms": [
+          "kid in supermarket",
+          "boy searching for mom",
+          "lost child in mall"
+        ],
+        "therapy_context": "This item helps children practice vocabulary related to everyday situations and can stimulate conversations about feelings and problem-solving.",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/lost_in_store",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?kid,in,supermarket,boy,searching,for,mom"
+    },
+    {
+      "title": "Fire Safety",
+      "label": "fire_safety",
+      "level": 3,
+      "color": [
+        255,
+        180,
+        150
+      ],
+      "question": "You see a small fire in the kitchen. What should you do first?",
+      "answer": "tell adult immediately",
+      "options": [
+        "tell adult immediately",
+        "pour water",
+        "blow on it",
+        "ignore it"
+      ],
+      "hint": "Fires are dangerous - always get a grown-up",
+      "tags": [
+        "safety",
+        "emergency",
+        "fire"
+      ],
+      "loremflickr_tags": [
+        "kitchen",
+        "fire"
+      ],
+      "metadata": {
+        "description": "Scenario: fire safety",
+        "ai_description": "Learn about fire safety to stay safe in case of a fire emergency",
+        "ai_search_terms": [
+          "firefighter",
+          "fire truck",
+          "fire extinguisher",
+          "stop drop and roll"
+        ],
+        "therapy_context": "This item is good for therapy because it helps children learn vocabulary and concepts related to safety, and can be used to target goals such as following directions, identifying safety signs, and sequencing events",
+        "difficulty_level": "beginner"
+      },
+      "fallback_image_url": "https://loremflickr.com/320/320/fire_safety",
+      "enhanced_image_url": "https://source.unsplash.com/320x320/?firefighter,fire,truck"
+    }
+  ]
+}

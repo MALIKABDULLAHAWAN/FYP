@@ -1,0 +1,493 @@
+/**
+ * ENHANCED VOICE AGENT STYLES
+ * Beautiful visual feedback for voice interaction
+ */
+
+/* ==================== MAIN CONTAINER ==================== */
+.voice-agent {
+  position: fixed;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Positions */
+.voice-agent--bottom-right {
+  bottom: 20px;
+  right: 20px;
+}
+
+.voice-agent--bottom-left {
+  bottom: 20px;
+  left: 20px;
+}
+
+.voice-agent--top-right {
+  top: 20px;
+  right: 20px;
+}
+
+.voice-agent--top-left {
+  top: 20px;
+  left: 20px;
+}
+
+/* ==================== MAIN BUTTON ==================== */
+.voice-agent__button {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, var(--agent-color, #4ECDC4) 0%, #44A08D 100%);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.2),
+    0 0 0 4px rgba(255, 255, 255, 0.1),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.voice-agent__button:hover {
+  transform: scale(1.05);
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.25),
+    0 0 0 6px rgba(255, 255, 255, 0.15),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.1);
+}
+
+.voice-agent__button:active {
+  transform: scale(0.95);
+}
+
+.voice-agent__button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Button glow effect */
+.voice-agent__button::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.voice-agent__button:hover::before {
+  opacity: 1;
+}
+
+/* ==================== STATUS INDICATORS ==================== */
+.voice-agent__status {
+  font-size: 12px;
+  font-weight: 500;
+  color: #2D3436;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 4px 12px;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+  transition: all 0.3s;
+}
+
+/* Active states */
+.voice-agent--active .voice-agent__button {
+  background: linear-gradient(135deg, #FF6B6B 0%, #EE5A6F 100%);
+  animation: pulse-glow 1.5s ease-in-out infinite;
+}
+
+.voice-agent--listening .voice-agent__button {
+  background: linear-gradient(135deg, #45B7D1 0%, #3498DB 100%);
+  animation: pulse-ring 1s ease-in-out infinite;
+}
+
+.voice-agent--speaking .voice-agent__button {
+  background: linear-gradient(135deg, #96CEB4 0%, #88D8B0 100%);
+}
+
+/* ==================== RIPPLE EFFECT ==================== */
+.voice-agent__ripple {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.voice-agent__ripple span {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid var(--agent-color, #4ECDC4);
+  opacity: 0;
+  animation: ripple 2s ease-out infinite;
+}
+
+.voice-agent__ripple span:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+.voice-agent__ripple span:nth-child(3) {
+  animation-delay: 1s;
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+/* ==================== VOICE VISUALIZER ==================== */
+.voice-agent__visualizer {
+  position: absolute;
+  bottom: 70px;
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 40px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.voice-agent__bar {
+  width: 4px;
+  background: linear-gradient(to top, #4ECDC4, #45B7D1);
+  border-radius: 2px;
+  transition: height 0.1s ease;
+  animation: bar-bounce 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes bar-bounce {
+  from { transform: scaleY(0.3); }
+  to { transform: scaleY(1); }
+}
+
+/* ==================== CONFIDENCE BAR ==================== */
+.voice-agent__confidence {
+  width: 64px;
+  height: 3px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+  margin-top: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.voice-agent__confidence::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--confidence, 0%);
+  height: 100%;
+  background: linear-gradient(90deg, #FF6B6B, #FFEAA7, #55EFC4);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* ==================== ICON ANIMATIONS ==================== */
+.voice-agent__icon--pulse {
+  animation: icon-pulse 1s ease-in-out infinite;
+}
+
+.voice-agent__icon--sparkle {
+  animation: sparkle 0.6s ease-in-out infinite;
+}
+
+@keyframes icon-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+@keyframes sparkle {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.2) rotate(180deg); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(255, 107, 107, 0.5); }
+  50% { box-shadow: 0 0 40px rgba(255, 107, 107, 0.8); }
+}
+
+@keyframes pulse-ring {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(69, 183, 209, 0.4); }
+  50% { box-shadow: 0 0 0 15px rgba(69, 183, 209, 0); }
+}
+
+/* ==================== PANEL ==================== */
+.voice-agent__panel {
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  width: 320px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.voice-agent__panel--show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.voice-agent__panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.voice-agent__panel-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.voice-agent__close {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: all 0.2s;
+}
+
+.voice-agent__close:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.voice-agent__panel-content {
+  padding: 20px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* ==================== TRANSCRIPT ==================== */
+.voice-agent__transcript {
+  background: #F8F9FA;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.voice-agent__final {
+  font-size: 16px;
+  font-weight: 500;
+  color: #2D3436;
+  margin: 0 0 8px 0;
+}
+
+.voice-agent__interim {
+  font-size: 14px;
+  color: #636E72;
+  margin: 0;
+  font-style: italic;
+}
+
+/* ==================== HISTORY ==================== */
+.voice-agent__history {
+  margin-bottom: 16px;
+}
+
+.voice-agent__history h4,
+.voice-agent__commands h4 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #636E72;
+  margin: 0 0 12px 0;
+}
+
+.voice-agent__history ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.voice-agent__history li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #F1F3F5;
+  font-size: 13px;
+}
+
+.voice-agent__history li:last-child {
+  border-bottom: none;
+}
+
+.voice-agent__cmd-text {
+  color: #2D3436;
+  font-style: italic;
+}
+
+.voice-agent__cmd-action {
+  color: #4ECDC4;
+  font-weight: 500;
+}
+
+/* ==================== QUICK COMMANDS ==================== */
+.voice-agent__quick-cmds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.voice-agent__chip {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.voice-agent__chip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* ==================== CONTROLS ==================== */
+.voice-agent__controls {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #F1F3F5;
+}
+
+.voice-agent__ctrl {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
+  border: 1px solid #E9ECEF;
+  border-radius: 10px;
+  background: white;
+  color: #636E72;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.voice-agent__ctrl:hover {
+  background: #F8F9FA;
+  border-color: #DDE2E5;
+}
+
+.voice-agent__ctrl.active {
+  background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
+  color: white;
+  border-color: transparent;
+}
+
+/* ==================== UNSUPPORTED STATE ==================== */
+.voice-agent--unsupported {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.voice-agent--unsupported .voice-agent__icon {
+  background: #B2BEC3;
+}
+
+.voice-agent--unsupported .voice-agent__text {
+  font-size: 12px;
+  color: #636E72;
+}
+
+/* ==================== SIZE VARIANTS ==================== */
+.voice-agent--small .voice-agent__button {
+  width: 48px;
+  height: 48px;
+}
+
+.voice-agent--large .voice-agent__button {
+  width: 80px;
+  height: 80px;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 480px) {
+  .voice-agent__panel {
+    width: calc(100vw - 40px);
+    right: 20px;
+    left: 20px;
+  }
+  
+  .voice-agent--bottom-right,
+  .voice-agent--bottom-left {
+    bottom: 15px;
+  }
+  
+  .voice-agent--bottom-right {
+    right: 15px;
+  }
+  
+  .voice-agent--bottom-left {
+    left: 15px;
+  }
+}
+
+/* ==================== ANIMATIONS ==================== */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.voice-agent__panel-content > * {
+  animation: fade-in-up 0.3s ease-out forwards;
+}
+
+.voice-agent__panel-content > *:nth-child(1) { animation-delay: 0.05s; }
+.voice-agent__panel-content > *:nth-child(2) { animation-delay: 0.1s; }
+.voice-agent__panel-content > *:nth-child(3) { animation-delay: 0.15s; }
+.voice-agent__panel-content > *:nth-child(4) { animation-delay: 0.2s; }
