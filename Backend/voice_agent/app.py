@@ -266,7 +266,7 @@ startup()
 
 
 def search_and_play_song(song_name):
-    global current_playback_process
+
     global_stop_event.set()
     time.sleep(0.2)
     global_stop_event.clear()
@@ -310,7 +310,7 @@ def search_and_play_song(song_name):
 
 
 def process_user_command(new_command):
-    global conversation_history, current_playback_process
+
 
     global_stop_event.set()
     time.sleep(0.2)
