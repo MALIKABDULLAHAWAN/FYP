@@ -13,6 +13,8 @@ venv/
 Presentations/
 SRS/
 docs/
+
+
 # ─── Environment / secrets ──────────────────────────
 .env
 .env*
