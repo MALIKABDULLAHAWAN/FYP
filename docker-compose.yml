@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: dhyan
+      POSTGRES_USER: dhyan
+      POSTGRES_PASSWORD: dhyan
+    ports:
+      - "5432:5432"
+    volumes:
+      - dhyan_pg:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    # Create a dummy .env.docker if it doesn't exist to prevent warnings
+    env_file: 
+      - ./Backend/.env.docker
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80" # Map to 3000 instead of 80 to avoid local port conflicts
+    depends_on:
+      - api
+
+volumes:
+  dhyan_pg:

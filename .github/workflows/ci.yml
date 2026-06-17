@@ -1,4 +1,4 @@
-name: Python CI
+name: CI Pipeline
 
 on:
   push:
@@ -7,16 +7,15 @@ on:
     branches: [ main, master ]
 
 jobs:
-  build-and-test:
+  backend-ci:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.10'
+        python-version: '3.11'
 
     - name: Install dependencies
       run: |
@@ -26,6 +25,30 @@ jobs:
 
     - name: Syntax Check & Lint
       run: |
-        # stop the build if there are Python syntax errors or undefined names
-        python -m pip install flake8
+        # Stop the build if there are Python syntax errors or undefined names
+        python -m pip install flake8 black
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # Check formatting (dry-run)
+        black --check Backend/ || echo "Black formatting issues found, please format your code."
+
+  frontend-ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Lint
+      run: npm run lint
+
+    - name: Build
+      run: npm run build
