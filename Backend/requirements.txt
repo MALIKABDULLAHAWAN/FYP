@@ -14,7 +14,7 @@ requests>=2.31.0
 pygame==2.6.1
 
 # Voice Assistant Dependencies (Production optimized)
-SpeechRecognition==3.10.0
+SpeechRecognition==3.17.0
 pydub==0.25.1
 numpy==1.26.4
 
