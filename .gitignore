@@ -9,6 +9,9 @@ build/
 .venv/
 env/
 venv/
+# documentation/_build/
+Presentations/
+SRS/
 
 # ─── Environment / secrets ──────────────────────────
 .env
@@ -40,3 +43,8 @@ Thumbs.db
 *.log
 *.tmp
 *.bak
+
+# --- Temp / Agent -----------------------------------
+.kiro/
+.deepeval/
+scratch/

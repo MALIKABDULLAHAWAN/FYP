@@ -124,7 +124,7 @@ def transcribe_audio(audio_file):
 
 
 def process_command(user_id, command, language="en"):
-    global conversation_history, global_stop_event
+
 
     global_stop_event.set()
     time.sleep(0.2)
