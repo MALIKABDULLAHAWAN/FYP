@@ -43,3 +43,8 @@ Thumbs.db
 *.log
 *.tmp
 *.bak
+
+# --- Temp / Agent -----------------------------------
+.kiro/
+.deepeval/
+scratch/

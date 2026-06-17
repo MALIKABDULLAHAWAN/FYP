@@ -1,4 +1,0 @@
-pages\games\SpeechTherapy.jsx
-pages\LandingPage.jsx
-pages\Settings.jsx
-pages\TherapistConsole.jsx
