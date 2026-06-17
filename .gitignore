@@ -12,7 +12,7 @@ venv/
 # documentation/_build/
 Presentations/
 SRS/
-
+docs/
 # ─── Environment / secrets ──────────────────────────
 .env
 .env*

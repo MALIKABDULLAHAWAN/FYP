@@ -55,6 +55,7 @@ DHYAN bridges the gap between clinical ABA therapy and engaging, gamified learni
 
 ### High-Level Architecture Diagram
 ```
+
 ┌─────────────────────────────────────────────────────────────────┐
 │                         CLIENT LAYER                             │
 │  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────┐  │
